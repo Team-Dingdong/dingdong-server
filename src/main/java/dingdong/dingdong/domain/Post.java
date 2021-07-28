@@ -29,7 +29,8 @@ public class Post {
     @Column(length = 20,nullable = false)
     private String Image_url;
 
-    @Column(length = 20,nullable = false)
+    @OneToOne
+    @JoinColumn(name = "CATEGORY_ID")
     private String category_id;
 
     @Column(length = 20,nullable = false)

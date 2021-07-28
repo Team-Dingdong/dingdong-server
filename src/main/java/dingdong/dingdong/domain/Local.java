@@ -16,9 +16,8 @@ import javax.persistence.*;
 @Table(name = "Local")
 public class Local {
 
-    @Id
+    @Id @GeneratedValue(strategy =  GenerationType.IDENTITY)
     @Column(name = "LOCAL_ID")
-    @GeneratedValue(strategy =  GenerationType.IDENTITY)
     private long local_id;
 
     @Column(length = 30, nullable = false)

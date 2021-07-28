@@ -17,11 +17,10 @@ public class Rating {
 
     @OneToOne
     @JoinColumn(name = "USER_ID")
-    private long user_id;
+    private User user;
 
     @Column(length = 10,nullable = false)
     private int good;
-
     @Column(length = 10,nullable = false)
     private int bad;
 

@@ -27,6 +27,6 @@ public class Profile {
 
     @OneToOne
     @JoinColumn(name = "USER_ID")
-    private long user_id;
+    private User user;
 
 }

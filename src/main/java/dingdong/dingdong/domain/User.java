@@ -17,9 +17,8 @@ import java.time.LocalDateTime;
 @Table(name = "User")
 public class User {
 
-    @Id
+    @Id @GeneratedValue(strategy =  GenerationType.IDENTITY)
     @Column(name = "USER_ID")
-    @GeneratedValue(strategy =  GenerationType.IDENTITY)
     private long user_id;
 
     @Column(length = 20, nullable = false)

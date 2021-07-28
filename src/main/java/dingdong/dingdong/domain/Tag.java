@@ -14,9 +14,8 @@ import javax.persistence.*;
 @Data
 public class Tag {
 
-    @Id
-    @GeneratedValue(strategy =  GenerationType.IDENTITY)
-    @Column(name = "POST_ID", length = 10,nullable = false)
+    @Id @GeneratedValue(strategy =  GenerationType.IDENTITY)
+    @Column(name = "TAG_ID", length = 10, nullable = false)
     private long tag_id;
 
     @Column(length = 10,nullable = false)
