@@ -2,7 +2,12 @@ package dingdong.dingdong.domain.post;
 
 import lombok.*;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -18,4 +23,7 @@ public class Category {
 
     @Column(nullable = false)
     private String name;
+
+    @OneToMany(mappedBy = "category")
+    private List<Post> posts = new ArrayList<>();
 }
