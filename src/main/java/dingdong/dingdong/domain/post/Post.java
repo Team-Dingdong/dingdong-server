@@ -46,6 +46,10 @@ public class Post {
 
     public void setCategory(Category category) {
         this.category = category;
+
+        if(!category.getPosts().contains(this)) {
+            category.getPosts().add(this);
+        }
     }
 
     @ManyToOne
@@ -61,5 +65,11 @@ public class Post {
     }
 
     @OneToMany(mappedBy = "post")
-    private List<PostTag> tags = new ArrayList<>();
+    private List<PostTag> postTags = new ArrayList<>();
+
+    public void addPostTags(PostTag postTag) {
+        this.postTags.add(postTag);
+
+
+    }
 }
