@@ -27,7 +27,6 @@ public class Post {
     @Column(nullable = false)
     private Number cost;
 
-
     private Number people;
 
     private String bio;
