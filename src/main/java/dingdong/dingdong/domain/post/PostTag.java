@@ -6,10 +6,9 @@ import javax.persistence.*;
 
 @Entity
 @Getter
-@EqualsAndHashCode(of = "id")
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 public class PostTag {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
