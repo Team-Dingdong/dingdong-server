@@ -1,5 +1,6 @@
 package dingdong.dingdong.domain.user;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import dingdong.dingdong.domain.post.Post;
 import lombok.*;
 
@@ -48,7 +49,8 @@ public class User {
     @OneToOne(mappedBy = "user")
     private Rating rating;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @JsonManagedReference
     private List<Post> posts = new ArrayList<>();
 
 }

@@ -1,5 +1,6 @@
 package dingdong.dingdong.domain.post;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import dingdong.dingdong.domain.user.User;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
@@ -11,6 +12,7 @@ import java.util.List;
 
 @Entity
 @Getter
+@Setter
 @EqualsAndHashCode(of = "id")
 @Builder
 @AllArgsConstructor
@@ -25,9 +27,9 @@ public class Post {
     private String title;
 
     @Column(nullable = false)
-    private Number cost;
+    private int cost;
 
-    private Number people;
+    private int people;
 
     private String bio;
 
@@ -41,6 +43,7 @@ public class Post {
 
     @ManyToOne
     @JoinColumn(name = "category_id")
+    @JsonBackReference
     private Category category;
 
     public void setCategory(Category category) {
@@ -53,6 +56,7 @@ public class Post {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
+    @JsonBackReference
     private User user;
 
     public void setUser(User user) {
@@ -63,12 +67,10 @@ public class Post {
         }
     }
 
-    @OneToMany(mappedBy = "post")
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
     private List<PostTag> postTags = new ArrayList<>();
 
     public void addPostTags(PostTag postTag) {
         this.postTags.add(postTag);
-
-
     }
 }
