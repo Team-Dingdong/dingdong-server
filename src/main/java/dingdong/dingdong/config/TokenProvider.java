@@ -12,7 +12,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
-import dingdong.dingdong.dto.TokenDto;
+import dingdong.dingdong.dto.auth.TokenDto;
 
 import java.security.Key;
 import java.util.Arrays;
