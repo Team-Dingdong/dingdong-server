@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import dingdong.dingdong.dto.auth.ApplicationNaverSENS;
 import dingdong.dingdong.dto.auth.MessageRequestDto;
 import dingdong.dingdong.dto.auth.SendSmsResponseDto;
-import dingdong.dingdong.dto.auth.SmsRequestDto;
+import dingdong.dingdong.dto.auth.SendSmsRequestDto;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tomcat.util.codec.binary.Base64;
@@ -43,11 +43,11 @@ public class SmsService {
         messages.add(new MessageRequestDto(recipientPhoneNumber, content));
 
         // 전체 json에 대해 메시지를 만든다.
-        SmsRequestDto smsRequestDto = new SmsRequestDto("SMS", "COMM", "82", applicationNaverSENS.getSendFrom(), "Test message", messages);
+        SendSmsRequestDto sendSmsRequestDto = new SendSmsRequestDto("SMS", "COMM", "82", applicationNaverSENS.getSendFrom(), "Test message", messages);
 
         // 쌓아온 바디를 json 형태로 변환시켜준다.
         ObjectMapper objectMapper = new ObjectMapper();
-        String jsonBody = objectMapper.writeValueAsString(smsRequestDto);
+        String jsonBody = objectMapper.writeValueAsString(sendSmsRequestDto);
 
         // 헤더에서 여러 설정값들을 잡아준다.
         HttpHeaders headers = new HttpHeaders();

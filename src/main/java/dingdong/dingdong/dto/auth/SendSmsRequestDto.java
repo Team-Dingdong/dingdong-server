@@ -9,7 +9,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class SmsRequestDto {
+public class SendSmsRequestDto {
 
     private String type;
     private String contentType;
