@@ -2,7 +2,7 @@ package dingdong.dingdong.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import dingdong.dingdong.dto.auth.MessageRequestDto;
-import dingdong.dingdong.dto.auth.SendSmsResponseDto;
+import dingdong.dingdong.dto.auth.MessageResponseDto;
 import dingdong.dingdong.service.auth.SmsService;
 import dingdong.dingdong.util.exception.Result;
 import dingdong.dingdong.util.exception.ResultCode;
@@ -25,10 +25,11 @@ public class AuthController {
 
     private final SmsService smsService;
 
-    // 휴대폰 인증
+    // 휴대폰 인증 번호 전송
     @PostMapping("/send-sms")
-    public ResponseEntity<Result<SendSmsResponseDto>> sendSms(@RequestBody MessageRequestDto messageRequestDto) throws NoSuchAlgorithmException, URISyntaxException, UnsupportedEncodingException, InvalidKeyException, JsonProcessingException {
-        SendSmsResponseDto data = smsService.sendSms(messageRequestDto);
-        return Result.toResult(ResultCode.SENDSMS_SUCCESS, data);
+    public ResponseEntity<Result<MessageResponseDto>> sendSms(@RequestBody MessageRequestDto messageRequestDto) throws NoSuchAlgorithmException, URISyntaxException, UnsupportedEncodingException, InvalidKeyException, JsonProcessingException {
+        MessageResponseDto data = smsService.sendSms(messageRequestDto);
+        return Result.toResult(ResultCode.SEND_SMS_SUCCESS, data);
     }
+
 }

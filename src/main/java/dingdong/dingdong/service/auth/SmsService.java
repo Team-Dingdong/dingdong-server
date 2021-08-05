@@ -33,7 +33,7 @@ public class SmsService {
 
     private final ApplicationNaverSENS applicationNaverSENS;
 
-    public SendSmsResponseDto sendSms(MessageRequestDto messageRequestDto) throws JsonProcessingException, UnsupportedEncodingException, NoSuchAlgorithmException, InvalidKeyException, URISyntaxException {
+    public MessageResponseDto sendSms(MessageRequestDto messageRequestDto) throws JsonProcessingException, UnsupportedEncodingException, NoSuchAlgorithmException, InvalidKeyException, URISyntaxException {
         Long time = Timestamp.valueOf(LocalDateTime.now()).getTime();
         String random = makeRandom();
         String content = String.format("[띵-동] 인증번호 [%s] *타인에게 노출하지 마세요.", random);
@@ -71,7 +71,7 @@ public class SmsService {
         SendSmsResponseDto sendSmsResponseDto = restTemplate.postForObject(new URI("https://sens.apigw.ntruss.com/sms/v2/services/"+applicationNaverSENS.getServiceId()+"/messages"), body, SendSmsResponseDto.class);
         log.info(sendSmsResponseDto.getStatusCode());
 
-        return sendSmsResponseDto;
+        return new MessageResponseDto(sendSmsResponseDto.getRequestId(), sendSmsResponseDto.getRequestTime());
     }
 
     public String makeSignature(Long time) throws UnsupportedEncodingException, NoSuchAlgorithmException, InvalidKeyException {

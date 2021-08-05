@@ -20,7 +20,7 @@ public enum ResultCode {
 
     /* 201 CREATED */
     SIGNUP_SUCCESS(CREATED, "회원가입 성공"),
-    SENDSMS_SUCCESS(CREATED, "인증번호 전송 성공"),
+    SEND_SMS_SUCCESS(CREATED, "인증번호 전송 성공"),
 
     POST_CREATE_SUCCESS(CREATED, "포스트 생성 성공"),
     POST_LIKE_CREATE_SUCCESS(CREATED, "포스트 좋아요 생성 성공"),
