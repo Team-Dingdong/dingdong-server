@@ -1,4 +1,4 @@
-package dingdong.dingdong.dto;
+package dingdong.dingdong.dto.Post;
 
 import lombok.Data;
 
@@ -6,7 +6,7 @@ import lombok.Data;
 public class PostCreationRequest {
 
     private String title;
-    private int people;
+    private Number people;
     private int cost;
     private String bio;
     private String imageUrl;

@@ -2,21 +2,14 @@ package dingdong.dingdong.controller;
 
 
 import dingdong.dingdong.domain.post.Post;
-import dingdong.dingdong.domain.post.PostRepository;
-import dingdong.dingdong.domain.user.User;
-import dingdong.dingdong.domain.user.UserRepository;
-import dingdong.dingdong.dto.PostCreationRequest;
+import dingdong.dingdong.dto.Post.PostCreationRequest;
 import dingdong.dingdong.service.PostService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
-import java.net.URI;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/post")

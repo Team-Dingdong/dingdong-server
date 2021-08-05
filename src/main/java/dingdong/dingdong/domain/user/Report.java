@@ -8,16 +8,16 @@ import java.time.LocalDateTime;
 
 @Entity
 @Getter
-@EqualsAndHashCode(of = "id")
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 public class Report {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "report_id", nullable = false)
     private Long id;
 
+    @Column(nullable = false)
     private String reason;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -29,6 +29,5 @@ public class Report {
     private User receiver;
 
     @CreatedDate
-    @Column(nullable = false)
     private LocalDateTime reportDate;
 }

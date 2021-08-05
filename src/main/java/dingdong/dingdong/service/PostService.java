@@ -6,13 +6,11 @@ import dingdong.dingdong.domain.post.Post;
 import dingdong.dingdong.domain.post.PostRepository;
 import dingdong.dingdong.domain.user.User;
 import dingdong.dingdong.domain.user.UserRepository;
-import dingdong.dingdong.dto.PostCreationRequest;
+import dingdong.dingdong.dto.Post.PostCreationRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
-import javax.transaction.Transactional;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -65,7 +63,7 @@ public class PostService {
         post.setBio(request.getBio());
         post.setImageUrl(request.getImageUrl());
         post.setDone(false);
-        post.setPostDate(now());
+        //post.setPostDate(now());
         //post.setPostTags();
 
         return postRepository.save(post);

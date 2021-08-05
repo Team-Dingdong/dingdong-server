@@ -1,8 +1,11 @@
 package dingdong.dingdong.domain.user;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+
+import dingdong.dingdong.domain.BaseTimeEntity;
 import dingdong.dingdong.domain.post.Post;
 import lombok.*;
+import org.hibernate.annotations.DynamicUpdate;
+import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -11,11 +14,11 @@ import java.util.List;
 
 @Entity
 @Getter
-@EqualsAndHashCode(of = "id")
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
-public class User {
+@AllArgsConstructor
+@DynamicUpdate
+public class User extends BaseTimeEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id", nullable = false)
@@ -24,15 +27,13 @@ public class User {
     @Column(nullable = false)
     private String password;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String phone;
 
     @Column(nullable = false)
     private String role;
 
-    @Column(nullable = false)
-    private LocalDateTime regDate;
-
+    @LastModifiedDate
     private LocalDateTime localDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -50,7 +51,5 @@ public class User {
     private Rating rating;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    @JsonManagedReference
     private List<Post> posts = new ArrayList<>();
-
 }

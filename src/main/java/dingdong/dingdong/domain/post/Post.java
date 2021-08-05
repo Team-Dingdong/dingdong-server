@@ -1,23 +1,21 @@
 package dingdong.dingdong.domain.post;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+
+import dingdong.dingdong.domain.BaseTimeEntity;
 import dingdong.dingdong.domain.user.User;
 import lombok.*;
-import org.springframework.data.annotation.CreatedDate;
+import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Getter
 @Setter
-@EqualsAndHashCode(of = "id")
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Post {
+@DynamicUpdate
+public class Post extends BaseTimeEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "post_id", nullable = false)
@@ -29,21 +27,21 @@ public class Post {
     @Column(nullable = false)
     private int cost;
 
-    private int people;
+    @Column(nullable = false)
+    private Number people;
 
+
+    @Column(nullable = false)
     private String bio;
 
+    @Column(nullable = false)
     private String imageUrl;
 
     @Column(columnDefinition = "boolean default false")
     private boolean done;
 
-    @CreatedDate
-    private LocalDateTime postDate;
-
     @ManyToOne
     @JoinColumn(name = "category_id")
-    @JsonBackReference
     private Category category;
 
     public void setCategory(Category category) {
@@ -56,7 +54,6 @@ public class Post {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    @JsonBackReference
     private User user;
 
     public void setUser(User user) {
@@ -67,10 +64,4 @@ public class Post {
         }
     }
 
-    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
-    private List<PostTag> postTags = new ArrayList<>();
-
-    public void addPostTags(PostTag postTag) {
-        this.postTags.add(postTag);
-    }
 }

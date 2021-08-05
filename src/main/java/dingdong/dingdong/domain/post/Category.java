@@ -9,10 +9,9 @@ import java.util.List;
 
 @Entity
 @Getter
-@EqualsAndHashCode(of = "id")
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 public class Category {
 
     @Id
