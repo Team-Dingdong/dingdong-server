@@ -16,5 +16,5 @@ public class SendSmsRequestDto {
     private String countryCode;
     private String from;
     private String content;
-    private List<MessageRequestDto> messages;
+    private List<SendSmsMessage> messages;
 }

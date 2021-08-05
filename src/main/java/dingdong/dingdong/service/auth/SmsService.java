@@ -2,10 +2,7 @@ package dingdong.dingdong.service.auth;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import dingdong.dingdong.dto.auth.ApplicationNaverSENS;
-import dingdong.dingdong.dto.auth.MessageRequestDto;
-import dingdong.dingdong.dto.auth.SendSmsResponseDto;
-import dingdong.dingdong.dto.auth.SendSmsRequestDto;
+import dingdong.dingdong.dto.auth.*;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tomcat.util.codec.binary.Base64;
@@ -27,6 +24,7 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 @Slf4j
 @Data
@@ -35,15 +33,18 @@ public class SmsService {
 
     private final ApplicationNaverSENS applicationNaverSENS;
 
-    public SendSmsResponseDto sendSms(String recipientPhoneNumber, String content) throws JsonProcessingException, UnsupportedEncodingException, NoSuchAlgorithmException, InvalidKeyException, URISyntaxException {
+    public SendSmsResponseDto sendSms(MessageRequestDto messageRequestDto) throws JsonProcessingException, UnsupportedEncodingException, NoSuchAlgorithmException, InvalidKeyException, URISyntaxException {
         Long time = Timestamp.valueOf(LocalDateTime.now()).getTime();
-        List<MessageRequestDto> messages = new ArrayList<>();
+        String random = makeRandom();
+        String content = String.format("[띵-동] 인증번호 [%s] *타인에게 노출하지 마세요.", random);
+        SendSmsMessage sendSmsMessage = new SendSmsMessage(messageRequestDto.getTo(), content);
+        List<SendSmsMessage> messages = new ArrayList<>();
 
         // 보내는 사람에게 내용을 보냄
-        messages.add(new MessageRequestDto(recipientPhoneNumber, content));
+        messages.add(sendSmsMessage);
 
         // 전체 json에 대해 메시지를 만든다.
-        SendSmsRequestDto sendSmsRequestDto = new SendSmsRequestDto("SMS", "COMM", "82", applicationNaverSENS.getSendFrom(), "Test message", messages);
+        SendSmsRequestDto sendSmsRequestDto = new SendSmsRequestDto("SMS", "COMM", "82", applicationNaverSENS.getSendFrom(), "Default message", messages);
 
         // 쌓아온 바디를 json 형태로 변환시켜준다.
         ObjectMapper objectMapper = new ObjectMapper();
@@ -56,9 +57,9 @@ public class SmsService {
         headers.set("x-ncp-iam-access-key", applicationNaverSENS.getAccessKey());
 
         // 제일 중요한 signature 서명하기.
-        String sig = makeSignature(time);
-        log.info("sig -> " + sig);
-        headers.set("x-ncp-apigw-signature-v2", sig);
+        String sign = makeSignature(time);
+        log.info("signature -> " + sign);
+        headers.set("x-ncp-apigw-signature-v2", sign);
 
         // 위에서 조립한 jsonBody와 헤더를 조립한다.
         HttpEntity<String> body = new HttpEntity<>(jsonBody, headers);
@@ -100,5 +101,26 @@ public class SmsService {
         String encodeBase64String = Base64.encodeBase64String(rawHmac);
 
         return encodeBase64String;
+    }
+
+    String makeRandom() {
+        Random rand = new Random();
+        String numStr = "";
+
+        for(int i=0; i<6; i++) {
+
+            // 0~9까지 난수 생성
+            String num = Integer.toString(rand.nextInt(10));
+
+            // 중복된 값이 있는지 검사한다
+            if(!numStr.contains(num)) {
+                // 중복된 값이 없으면 numStr에 append
+                numStr += num;
+            } else {
+                // 생성된 난수가 중복되면 루틴을 다시 실행한다
+                i -= 1;
+            }
+        }
+        return numStr;
     }
 }

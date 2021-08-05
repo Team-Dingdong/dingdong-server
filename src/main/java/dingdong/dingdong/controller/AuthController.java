@@ -28,7 +28,7 @@ public class AuthController {
     // 휴대폰 인증
     @PostMapping("/send-sms")
     public ResponseEntity<Result<SendSmsResponseDto>> sendSms(@RequestBody MessageRequestDto messageRequestDto) throws NoSuchAlgorithmException, URISyntaxException, UnsupportedEncodingException, InvalidKeyException, JsonProcessingException {
-        SendSmsResponseDto data = smsService.sendSms("01084071066", "메세지 보내기!");
+        SendSmsResponseDto data = smsService.sendSms(messageRequestDto);
         return Result.toResult(ResultCode.SENDSMS_SUCCESS, data);
     }
 }

@@ -7,7 +7,8 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class MessageRequestDto {
+public class SendSmsMessage {
 
     private String to;
+    private String content;
 }
