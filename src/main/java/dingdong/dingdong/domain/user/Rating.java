@@ -6,10 +6,9 @@ import javax.persistence.*;
 
 @Entity
 @Getter
-@EqualsAndHashCode(of = "id")
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 public class Rating {
 
     @Id
@@ -25,5 +24,4 @@ public class Rating {
     private Number bad;
 
     private Number total;
-
 }
