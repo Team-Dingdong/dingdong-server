@@ -29,9 +29,6 @@ public class User extends BaseTimeEntity {
     @Column(nullable = false, unique = true)
     private String phone;
 
-    @Column(nullable = false)
-    private String role;
-
     @LastModifiedDate
     private LocalDateTime localDate;
 

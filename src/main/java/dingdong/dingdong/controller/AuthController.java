@@ -5,6 +5,11 @@ import dingdong.dingdong.dto.auth.CheckRequestDto;
 import dingdong.dingdong.dto.auth.MessageRequestDto;
 import dingdong.dingdong.dto.auth.MessageResponseDto;
 import dingdong.dingdong.service.auth.AuthService;
+
+import dingdong.dingdong.dto.auth.LoginRequestDto;
+import dingdong.dingdong.dto.auth.SignupRequestDto;
+import dingdong.dingdong.dto.auth.TokenDto;
+
 import dingdong.dingdong.util.exception.Result;
 import dingdong.dingdong.util.exception.ResultCode;
 import lombok.RequiredArgsConstructor;
@@ -38,5 +43,19 @@ public class AuthController {
     public ResponseEntity<Result> check(@RequestBody CheckRequestDto checkRequestDto) {
 
         return Result.toResult(ResultCode.LOGIN_SUCCESS);
+    }
+
+    // 로그인
+    @PostMapping("/login")
+    public ResponseEntity<Result<TokenDto>> login(@RequestBody LoginRequestDto loginRequestDto) {
+        TokenDto data = authService.login(loginRequestDto);
+        return Result.toResult(ResultCode.LOGIN_SUCCESS, data);
+    }
+
+    // 회원가입
+    @PostMapping("/signup")
+    public ResponseEntity<Result> signup(@RequestBody SignupRequestDto signupRequestDto) {
+        authService.signup(signupRequestDto);
+        return Result.toResult(ResultCode.SIGNUP_SUCCESS);
     }
 }
