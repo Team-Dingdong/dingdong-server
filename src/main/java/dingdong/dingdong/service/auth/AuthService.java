@@ -29,7 +29,7 @@ import java.util.Random;
 @Slf4j
 @Data
 @Service
-public class SmsService {
+public class AuthService {
 
     private final ApplicationNaverSENS applicationNaverSENS;
 

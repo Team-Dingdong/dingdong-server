@@ -1,7 +1,7 @@
 package dingdong.dingdong.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import dingdong.dingdong.service.auth.SmsService;
+import dingdong.dingdong.service.auth.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -20,6 +20,6 @@ public class AuthControllerTest {
     ObjectMapper objectMapper;
 
     @Autowired
-    SmsService smsService;
+    AuthService authService;
 
 }
