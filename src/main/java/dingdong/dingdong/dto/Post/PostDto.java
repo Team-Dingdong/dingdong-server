@@ -2,6 +2,7 @@ package dingdong.dingdong.dto.Post;
 
 import javax.validation.constraints.NotNull;
 
+import dingdong.dingdong.domain.post.Category;
 import dingdong.dingdong.domain.post.Post;
 import lombok.Data;
 import lombok.Getter;
@@ -18,7 +19,7 @@ public class PostDto {
     private String title;
 
     @NotNull
-    private Number people;
+    private int people;
 
     @NotNull
     private int cost;
@@ -26,14 +27,16 @@ public class PostDto {
     @NotNull
     private String bio;
 
+    @NotNull
+    private String local;
+
+    private LocalDateTime createdDate;
+
+    private LocalDateTime modifiedDate;
+
     private String imageUrl;
 
-    @NotNull
-    private LocalDateTime postDate;
-
-    //@NotNull
-    //private long category_id;
-    //private long post_tags_id;
+    private Long category_id;
 
     public PostDto(Post entity){
         this.title = entity.getTitle();
@@ -41,6 +44,9 @@ public class PostDto {
         this.cost = entity.getCost();
         this.bio = entity.getBio();
         this.imageUrl = entity.getImageUrl();
+        this.createdDate = entity.getCreatedDate();
+        this.modifiedDate = entity.getModifiedDate();
+        this.category_id = entity.getCategory().getId();
         //this.postDate = entity.getPostDate();
         //this.category_id = entity.getCategory();
         //this.user_id = user_id;

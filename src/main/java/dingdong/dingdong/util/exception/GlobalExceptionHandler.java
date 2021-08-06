@@ -26,7 +26,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return Result.toResult(e.getResultCode());
     }
 
-    @ExceptionHandler(ResourceNotFoundException.class)
+    @ExceptionHandler(value = {ResourceNotFoundException.class})
     protected ResponseEntity<Result> handleResourceNotFoundException(ResourceNotFoundException e){
         log.error("handleResourceNotFoundException : {}", e.getResultCode());
         return Result.toResult(e.getResultCode());

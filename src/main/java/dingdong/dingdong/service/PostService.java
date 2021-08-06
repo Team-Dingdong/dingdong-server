@@ -7,7 +7,13 @@ import dingdong.dingdong.domain.post.PostRepository;
 import dingdong.dingdong.domain.user.User;
 import dingdong.dingdong.domain.user.UserRepository;
 import dingdong.dingdong.dto.Post.PostCreationRequest;
+import dingdong.dingdong.dto.Post.PostDto;
+import dingdong.dingdong.util.exception.DuplicateException;
+import dingdong.dingdong.util.exception.ForbiddenException;
+import dingdong.dingdong.util.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
@@ -15,6 +21,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
+import static dingdong.dingdong.util.exception.ResultCode.*;
 import static java.time.LocalDateTime.now;
 
 @Service
@@ -25,17 +32,18 @@ public class PostService {
     private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
 
-    public Post loadPostById(Long id){
-        Optional<Post> post = postRepository.findById(id);
-        if(post.isPresent()){
-            return post.get();
-        }
-        throw new EntityNotFoundException("Cant find any post under given id");
+    public Page<Post> findPosts(Pageable pageable){
+        Page<Post> list = postRepository.findAll(pageable);
+        return list;
     }
 
-    public List<Post> loadPosts(){
-        return postRepository.findAll();
+    public PostDto findPostById(Long id){
+        Post entity = postRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(POST_NOT_FOUND));
+
+        return new PostDto(entity);
     }
+
 
     // post 생성
     //@Transactional
@@ -45,14 +53,15 @@ public class PostService {
         // User_id
         Optional<User> user = userRepository.findById(request.getUser_id());
         if(!user.isPresent()){
-            throw new NoSuchElementException("No value present");
+            throw new ResourceNotFoundException(MEMBER_NOT_FOUND);
         }
+
         post.setUser(user.get());
 
         // Category_id
         Optional<Category> category = categoryRepository.findById(request.getCategory_id());
         if(!category.isPresent()){
-            throw new NoSuchElementException("No value present");
+            throw new ResourceNotFoundException(CATEGORY_NOT_FOUND);
         }
         post.setCategory(category.get());
 
@@ -61,36 +70,36 @@ public class PostService {
         post.setPeople(request.getPeople());
         post.setCost(request.getCost());
         post.setBio(request.getBio());
+        post.setLocal(request.getLocal());
         post.setImageUrl(request.getImageUrl());
         post.setDone(false);
-        //post.setPostDate(now());
-        //post.setPostTags();
 
+        if (post == null){
+            throw new ForbiddenException(POST_CREATE_FAIL);
+        }
         return postRepository.save(post);
 
     }
     
     // post 제거
     public void deletePost(Long id){
-        Optional<Post> post = postRepository.findById(id);
-
-        postRepository.deleteById(id);
+        postRepository.delete(
+                postRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(POST_NOT_FOUND))
+        );
     }
 
     // post 수정
     public Post updatePost(Long id, PostCreationRequest request){
         Optional<Post> optionalPost = postRepository.findById(id);
-
-        if(optionalPost.isEmpty()){
-            throw new EntityNotFoundException("Post not present in the database");
+        if(!optionalPost.isPresent()){
+            throw new ResourceNotFoundException(POST_NOT_FOUND);
         }
-
         Post post = optionalPost.get();
 
         // Category_id
         Optional<Category> category = categoryRepository.findById(request.getCategory_id());
         if(!category.isPresent()){
-
+            throw new ResourceNotFoundException(CATEGORY_NOT_FOUND);
         }
         post.setCategory(category.get());
 
@@ -98,8 +107,8 @@ public class PostService {
         post.setPeople(request.getPeople());
         post.setCost(request.getCost());
         post.setBio(request.getBio());
+        post.setLocal(request.getLocal());
         post.setImageUrl(request.getImageUrl());
-        //post.setPostTags(request.getPost_tags_id());
 
         return postRepository.save(post);
     }

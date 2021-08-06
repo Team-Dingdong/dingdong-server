@@ -3,8 +3,14 @@ package dingdong.dingdong.controller;
 
 import dingdong.dingdong.domain.post.Post;
 import dingdong.dingdong.dto.Post.PostCreationRequest;
+import dingdong.dingdong.dto.Post.PostDto;
 import dingdong.dingdong.service.PostService;
+import dingdong.dingdong.util.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,27 +25,27 @@ public class PostApiController {
     private final PostService postService;
 
     // 모든 나누기 불러오기
-    @GetMapping("/all")
-    public List<Post> loadPosts(){
-        return postService.loadPosts();
+    @GetMapping("/")
+    public Page<Post> findPosts(@PageableDefault(size = 3, direction = Sort.Direction.DESC) Pageable pageable){
+        return postService.findPosts(pageable);
     }
     // 몇 개씩 줄 지 상의(페이징 넣기)
 
     // 특정 나누기 상세보기 불러오기
     @GetMapping("/{id}")
-    public Post loadPostById(@PathVariable Long id){
-        Post post = postService.loadPostById(id);
-        return post;
+    public PostDto findPostById(@PathVariable Long id){
+
+        return postService.findPostById(id);
     }
 
     // 나누기 삭제
-   @DeleteMapping("/delete/{id}")
+   @DeleteMapping("/{id}")
     public void deletePost(@PathVariable Long id){
        postService.deletePost(id);
     }
 
     // 나누기 생성
-    @PostMapping("/create")
+    @PostMapping("/")
     public ResponseEntity<Post> createPost(@Valid @RequestBody PostCreationRequest request) {
         return ResponseEntity.ok(postService.createPost(request));
     }
