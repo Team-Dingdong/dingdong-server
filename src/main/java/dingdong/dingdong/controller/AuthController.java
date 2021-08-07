@@ -41,7 +41,7 @@ public class AuthController {
     // 휴대폰 인증 번호 확인
     @PostMapping("/check")
     public ResponseEntity<Result> check(@RequestBody CheckRequestDto checkRequestDto) {
-
+        
         return Result.toResult(ResultCode.LOGIN_SUCCESS);
     }
 

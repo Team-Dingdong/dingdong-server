@@ -48,6 +48,7 @@ public class AuthService implements UserDetailsService {
     private final ApplicationNaverSENS applicationNaverSENS;
 
     private final UserRepository userRepository;
+    private final AuthRepository authRepository;
     private final RefreshTokenRepository refreshTokenRepository;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final TokenProvider tokenProvider;
@@ -102,6 +103,8 @@ public class AuthService implements UserDetailsService {
         userRepository.save(user);
     }
 
+    // 휴대폰 인증 번호 전송
+    @Transactional
     public MessageResponseDto sendSms(MessageRequestDto messageRequestDto) throws JsonProcessingException, UnsupportedEncodingException, NoSuchAlgorithmException, InvalidKeyException, URISyntaxException {
         Long time = Timestamp.valueOf(LocalDateTime.now()).getTime();
         String random = makeRandom();
@@ -140,6 +143,17 @@ public class AuthService implements UserDetailsService {
         SendSmsResponseDto sendSmsResponseDto = restTemplate.postForObject(new URI("https://sens.apigw.ntruss.com/sms/v2/services/"+applicationNaverSENS.getServiceId()+"/messages"), body, SendSmsResponseDto.class);
         log.info(sendSmsResponseDto.getStatusCode());
 
+        if(sendSmsResponseDto.getStatusCode().equals("202")) {
+            if(authRepository.existsByPhone(messageRequestDto.getTo())) {
+                Auth auth = authRepository.findByPhone(messageRequestDto.getTo());
+                auth.reauth(random, sendSmsResponseDto.getRequestId(), sendSmsResponseDto.getRequestTime(), false);
+                authRepository.save(auth);
+            } else {
+                Auth auth = new Auth(messageRequestDto.getTo(), random, sendSmsResponseDto.getRequestId(), sendSmsResponseDto.getRequestTime());
+                authRepository.save(auth);
+            }
+        }
+
         return new MessageResponseDto(sendSmsResponseDto.getRequestId(), sendSmsResponseDto.getRequestTime());
     }
 
@@ -172,7 +186,7 @@ public class AuthService implements UserDetailsService {
         return encodeBase64String;
     }
 
-    String makeRandom() {
+    public String makeRandom() {
         Random rand = new Random();
         String numStr = "";
 

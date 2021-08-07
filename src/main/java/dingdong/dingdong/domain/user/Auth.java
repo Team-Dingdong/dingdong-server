@@ -23,6 +23,9 @@ public class Auth {
     @Column(nullable = false, unique = true)
     private String phone;
 
+    @Column(nullable = false)
+    private String authNumber;
+
     @Column(nullable = false, unique = true)
     private String requestId;
 
@@ -31,4 +34,18 @@ public class Auth {
 
     @Column(nullable = false)
     private boolean done;
+
+    public Auth(String phone, String authNumber, String requestId, LocalDateTime requestTime) {
+        this.phone = phone;
+        this.authNumber = authNumber;
+        this.requestId = requestId;
+        this.requestTime = requestTime;
+    }
+
+    public void reauth(String authNumber, String requestId, LocalDateTime requestTime, boolean done) {
+        this.authNumber = authNumber;
+        this.requestId = requestId;
+        this.requestTime = requestTime;
+        this.done = done;
+    }
 }
