@@ -12,7 +12,6 @@ public class PostCreationRequest {
     private String bio;
     private String local;
     private String imageUrl;
-    //private LocalDateTime modifiedDate;
     private long category_id;
     private long user_id;
 }

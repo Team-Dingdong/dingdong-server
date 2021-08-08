@@ -19,9 +19,9 @@ public class Rating {
     @JoinColumn(name = "user_id")
     private User user;
 
-    private Number good;
+    private int good;
 
-    private Number bad;
+    private int bad;
 
-    private Number total;
+    private int total;
 }

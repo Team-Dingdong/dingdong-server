@@ -9,4 +9,6 @@ import org.springframework.stereotype.Repository;
 public interface PostRepository extends JpaRepository<Post, Long> {
 
     Page<Post> findAll(Pageable pageable); // findAll 페이징 처리
+
+    Page<Post> findByCategory_Id(Long category_id, Pageable pageable);
 }

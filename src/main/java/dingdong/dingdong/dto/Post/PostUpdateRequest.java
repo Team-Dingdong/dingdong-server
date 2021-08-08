@@ -13,6 +13,5 @@ public class PostUpdateRequest {
     private String bio;
     private String imageUrl;
     private String local;
-    //private LocalDateTime modifiedDate;
     private long category_id;
 }
