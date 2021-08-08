@@ -10,6 +10,7 @@ import static org.springframework.http.HttpStatus.*;
 @AllArgsConstructor
 public enum ResultCode {
 
+    /* 200 OK */
     LOGIN_SUCCESS(OK, "로그인 성공"),
     CHECK_EMAIL_SUCCESS(OK, "사용가능한 이메일입니다"),
     CHECK_NICKNAME_SUCCESS(OK, "사용가능한 닉네임입니다"),
@@ -17,7 +18,10 @@ public enum ResultCode {
     POST_READ_SUCCESS(OK, "포스트 조회 성공"),
     POST_DELETE_SUCCESS(OK, "포스트 삭제 성공"),
 
+    /* 201 CREATED */
     SIGNUP_SUCCESS(CREATED, "회원가입 성공"),
+    SEND_SMS_SUCCESS(CREATED, "인증번호 전송 성공"),
+
     POST_CREATE_SUCCESS(CREATED, "포스트 생성 성공"),
     POST_LIKE_CREATE_SUCCESS(CREATED, "포스트 좋아요 생성 성공"),
     POST_COMMENT_CREATE_SUCCESS(CREATED, "포스트 댓글 생성 성공"),
