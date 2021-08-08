@@ -7,6 +7,6 @@ import java.lang.annotation.*;
 @Target({ElementType.PARAMETER, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@AuthenticationPrincipal(expression = "@accountService.getUserInfo()")
+@AuthenticationPrincipal(expression = "@authService.getUserInfo()")
 public @interface CurrentUser {
 }

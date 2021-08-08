@@ -1,15 +1,8 @@
 package dingdong.dingdong.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import dingdong.dingdong.dto.auth.CheckRequestDto;
-import dingdong.dingdong.dto.auth.MessageRequestDto;
-import dingdong.dingdong.dto.auth.MessageResponseDto;
+import dingdong.dingdong.dto.auth.*;
 import dingdong.dingdong.service.auth.AuthService;
-
-import dingdong.dingdong.dto.auth.LoginRequestDto;
-import dingdong.dingdong.dto.auth.SignupRequestDto;
-import dingdong.dingdong.dto.auth.TokenDto;
-
 import dingdong.dingdong.util.exception.Result;
 import dingdong.dingdong.util.exception.ResultCode;
 import lombok.RequiredArgsConstructor;
@@ -38,24 +31,11 @@ public class AuthController {
         return Result.toResult(ResultCode.SEND_SMS_SUCCESS, data);
     }
 
-    // 휴대폰 인증 번호 확인
-    @PostMapping("/check")
-    public ResponseEntity<Result> check(@RequestBody CheckRequestDto checkRequestDto) {
-        
+    // 휴대폰 인증 번호 확인, 로그인 or 회원가입
+    @PostMapping("")
+    public ResponseEntity<Result> check(@RequestBody AuthRequestDto authRequestDto) {
+
         return Result.toResult(ResultCode.LOGIN_SUCCESS);
     }
 
-    // 로그인
-    @PostMapping("/login")
-    public ResponseEntity<Result<TokenDto>> login(@RequestBody LoginRequestDto loginRequestDto) {
-        TokenDto data = authService.login(loginRequestDto);
-        return Result.toResult(ResultCode.LOGIN_SUCCESS, data);
-    }
-
-    // 회원가입
-    @PostMapping("/signup")
-    public ResponseEntity<Result> signup(@RequestBody SignupRequestDto signupRequestDto) {
-        authService.signup(signupRequestDto);
-        return Result.toResult(ResultCode.SIGNUP_SUCCESS);
-    }
 }

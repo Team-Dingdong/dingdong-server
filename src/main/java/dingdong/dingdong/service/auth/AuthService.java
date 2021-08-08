@@ -27,8 +27,6 @@ import org.springframework.web.client.RestTemplate;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
-import javax.persistence.EntityExistsException;
-import javax.validation.Valid;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -61,19 +59,19 @@ public class AuthService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String phone) throws UsernameNotFoundException {
-        User user = userRepository.findByPhone(phone);
+        Auth auth = authRepository.findByPhone(phone);
 
-        if(user == null) {
+        if(auth == null) {
             throw new UsernameNotFoundException(phone);
         }
-        return new UserAccount(user);
+        return new UserAccount(auth);
     }
 
     // 로그인
     @Transactional
-    public TokenDto login(LoginRequestDto loginRequestDto) {
+    public TokenDto login(AuthRequestDto authRequestDto) {
         // 1. Login ID/PW 를 기반으로 AuthenticationToken 생성
-        UsernamePasswordAuthenticationToken authenticationToken = loginRequestDto.toAuthentication();
+        UsernamePasswordAuthenticationToken authenticationToken = authRequestDto.toAuthentication();
 
         // 2. 검증 (사용자 비밀번호 체크) 이 이루어지는 부분
         //    authenticate 메서드가 실행이 될 때 loadUserByUsername 메서드가 실행됨
@@ -96,11 +94,37 @@ public class AuthService implements UserDetailsService {
         return tokenDto;
     }
 
-    // 회원가입
+    // 회원가
     @Transactional
-    public void signup(@Valid SignupRequestDto signupRequestDto) throws EntityExistsException {
-        User user = signupRequestDto.toEntity(passwordEncoder);
-        userRepository.save(user);
+    public TokenDto signup(AuthRequestDto authRequestDto) {
+        // 1. Login ID/PW 를 기반으로 AuthenticationToken 생성
+        UsernamePasswordAuthenticationToken authenticationToken = authRequestDto.toAuthentication();
+
+        // 2. 검증 (사용자 비밀번호 체크) 이 이루어지는 부분
+        //    authenticate 메서드가 실행이 될 때 loadUserByUsername 메서드가 실행됨
+        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+
+        // 3. 인증 정보를 기반으로 JWT 토큰 생성
+        TokenDto tokenDto = tokenProvider.generateTokenDto(authentication);
+
+        // 4. RefreshToken 저장
+        RefreshToken refreshToken = RefreshToken.builder()
+                .phone(authentication.getName())
+                .tokenValue(tokenDto.getRefreshToken())
+                .build();
+
+        refreshTokenRepository.save(refreshToken);
+
+        SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+
+        // 5. 토큰 발급
+        return tokenDto;
+    }
+
+    // 휴대폰 인증 번호 확인
+    @Transactional
+    public void auth(AuthRequestDto authRequestDto) {
+
     }
 
     // 휴대폰 인증 번호 전송

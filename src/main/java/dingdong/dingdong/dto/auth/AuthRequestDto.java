@@ -1,21 +1,19 @@
 package dingdong.dingdong.dto.auth;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 
-@Getter
-@Setter
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class LoginRequestDto {
+public class AuthRequestDto {
 
     private String phone;
-    private String password;
+    private String authNumber;
 
     public UsernamePasswordAuthenticationToken toAuthentication() {
-        return new UsernamePasswordAuthenticationToken(phone, password);
+        return new UsernamePasswordAuthenticationToken(phone, authNumber);
     }
 }
