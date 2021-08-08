@@ -6,6 +6,8 @@ import dingdong.dingdong.config.TokenProvider;
 import dingdong.dingdong.domain.user.*;
 import dingdong.dingdong.dto.auth.*;
 import dingdong.dingdong.util.SecurityUtil;
+import dingdong.dingdong.util.exception.AuthTimeException;
+import dingdong.dingdong.util.exception.ResultCode;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tomcat.util.codec.binary.Base64;
@@ -33,9 +35,11 @@ import java.net.URISyntaxException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.sql.Timestamp;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 @Slf4j
@@ -94,37 +98,34 @@ public class AuthService implements UserDetailsService {
         return tokenDto;
     }
 
-    // 회원가
+    // 회원가입
     @Transactional
     public TokenDto signup(AuthRequestDto authRequestDto) {
-        // 1. Login ID/PW 를 기반으로 AuthenticationToken 생성
-        UsernamePasswordAuthenticationToken authenticationToken = authRequestDto.toAuthentication();
+        User user = new User(authRequestDto.getPhone());
+        userRepository.save(user);
 
-        // 2. 검증 (사용자 비밀번호 체크) 이 이루어지는 부분
-        //    authenticate 메서드가 실행이 될 때 loadUserByUsername 메서드가 실행됨
-        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
-
-        // 3. 인증 정보를 기반으로 JWT 토큰 생성
-        TokenDto tokenDto = tokenProvider.generateTokenDto(authentication);
-
-        // 4. RefreshToken 저장
-        RefreshToken refreshToken = RefreshToken.builder()
-                .phone(authentication.getName())
-                .tokenValue(tokenDto.getRefreshToken())
-                .build();
-
-        refreshTokenRepository.save(refreshToken);
-
-        SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-
-        // 5. 토큰 발급
-        return tokenDto;
+        return login(authRequestDto);
     }
 
     // 휴대폰 인증 번호 확인
     @Transactional
-    public void auth(AuthRequestDto authRequestDto) {
+    public Map<AuthType, TokenDto> auth(AuthRequestDto authRequestDto) {
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime requestTime = authRepository.findRequestTimeByPhone(authRequestDto.getPhone());
+        log.info("now -> {}", now);
+        log.info("requestTime -> {}", requestTime);
 
+        Duration duration = Duration.between(requestTime, now);
+        log.info("duration seconds -> {}", duration.getSeconds());
+        if(duration.getSeconds() > 300) {
+            throw new AuthTimeException(ResultCode.AUTH_TIME_ERROR);
+        }
+
+        if(userRepository.existsByPhone(authRequestDto.getPhone())) {
+            return Map.of(AuthType.LOGIN, login(authRequestDto));
+        } else {
+            return Map.of(AuthType.SIGNUP, signup(authRequestDto));
+        }
     }
 
     // 휴대폰 인증 번호 전송

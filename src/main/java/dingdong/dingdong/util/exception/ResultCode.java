@@ -28,6 +28,7 @@ public enum ResultCode {
 
     /* 400 BAD_REQUEST : 잘못된 요청 */
     AUTH_NUMBER_ERROR(BAD_REQUEST, "인증 번호가 옳지 않습니다"),
+    AUTH_TIME_ERROR(BAD_REQUEST, "인증 시간 초과하였습니다"),
 
     INVALID_REFRESH_TOKEN(BAD_REQUEST, "리프레시 토큰이 유효하지 않습니다"),
     MISMATCH_REFRESH_TOKEN(BAD_REQUEST, "리프레시 토큰의 유저 정보가 일치하지 않습니다"),
