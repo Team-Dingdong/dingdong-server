@@ -35,7 +35,7 @@ public class PostService {
     private final RatingRepository ratingRepository;
 
     // 홈화면 피드 GET
-    public Page<PostGetResponse> findPosts(Pageable pageable){
+    public ResponseEntity<?> findPosts(Pageable pageable){
         Page<Post> postList = postRepository.findAll(pageable);
 
         Page<PostGetResponse> pagingList = postList.map(
@@ -45,25 +45,26 @@ public class PostService {
                         post.getCreatedDate()
                 ));
 
-        return pagingList;
+        return Result.toResult(ResultCode.POST_READ_SUCCESS, pagingList);
     }
 
     // 나누기 피드 상세보기
-    public PostDetailResponse findPostById(Long id){
+    public ResponseEntity<?> findPostById(Long id){
 
         Optional<Post> post = postRepository.findById(id);
+
         if(!post.isPresent()){
-            throw new ResourceNotFoundException(POST_NOT_FOUND);
+            return Result.toResult(ResultCode.POST_NOT_FOUND);
         }
 
         Optional<Profile> profile = profileRepository.findByUser_id(post.get().getUser().getId());
         if(!profile.isPresent()){
-            throw new ResourceNotFoundException(PROFILE_NOT_FOUND);
+            return Result.toResult(ResultCode.PROFILE_NOT_FOUND);
         }
 
         Optional<Rating> rating = ratingRepository.findByUser_id(post.get().getUser().getId());
         if(!rating.isPresent()){
-            throw new ResourceNotFoundException(RATING_NOT_FOUND);
+            return Result.toResult(ResultCode.RATING_NOT_FOUND);
         }
 
         PostDetailResponse postDetail = new PostDetailResponse(post.get().getTitle(), post.get().getCost(),
@@ -71,15 +72,15 @@ public class PostService {
                 post.get().getLocal(), profile.get().getNickname(),
                 profile.get().getProfile_bio(), rating.get().getGood(), rating.get().getBad());
 
-        return postDetail;
+        return Result.toResult(ResultCode.POST_READ_SUCCESS, postDetail);
     }
 
     // 카테고리별로 나누기 피드 GET
-    public Page<PostGetResponse>  findPostByCategory_Id(Long id, Pageable pageable){
+    public ResponseEntity<?>  findPostByCategory_Id(Long id, Pageable pageable){
         Optional<Category> category = categoryRepository.findById(id);
 
         if(!category.isPresent()){
-            throw new ResourceNotFoundException(CATEGORY_NOT_FOUND);
+            return Result.toResult(ResultCode.CATEGORY_NOT_FOUND);
         }
 
         Page<Post> postList = postRepository.findByCategory_Id(category.get().getId(),  pageable);
@@ -90,22 +91,23 @@ public class PostService {
                         post.getBio(), post.getImageUrl(), post.getLocal(),
                         post.getCreatedDate()
                 ));
-        return pagingList;
+
+        return Result.toResult(ResultCode.POST_READ_SUCCESS, pagingList);
     }
 
 
     // 나누기 피드(post) 생성
-    public void createPost(PostCreationRequest request){
+    public ResponseEntity<?> createPost(PostCreationRequest request){
         Post post = new Post();
 
         if(request == null) {
-            throw new ForbiddenException(POST_CREATE_FAIL);
+            return Result.toResult(ResultCode.POST_CREATE_FAIL);
         }
 
         // User_id
         Optional<User> user = userRepository.findById(request.getUser_id());
         if(!user.isPresent()){
-            throw new ResourceNotFoundException(MEMBER_NOT_FOUND);
+            return Result.toResult(ResultCode.MEMBER_NOT_FOUND);
         }
 
         post.setUser(user.get());
@@ -113,7 +115,7 @@ public class PostService {
         // Category_id
         Optional<Category> category = categoryRepository.findById(request.getCategory_id());
         if(!category.isPresent()){
-            throw new ResourceNotFoundException(CATEGORY_NOT_FOUND);
+            return Result.toResult(ResultCode.CATEGORY_NOT_FOUND);
         }
         post.setCategory(category.get());
 
@@ -127,28 +129,33 @@ public class PostService {
             post.setDone(false);
 
             postRepository.save(post);
+            return Result.toResult(ResultCode.POST_CREATE_SUCCESS);
     }
     
     // 나누기 피드(post) 제거
-    public void deletePost(Long id){
-        postRepository.delete(
-                postRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(POST_NOT_FOUND))
-        );
+    public ResponseEntity<?>  deletePost(Long id){
+        Optional<Post> post = postRepository.findById(id);
+        if(!post.isPresent()) {
+            return Result.toResult(ResultCode.POST_NOT_FOUND);
+        }
+
+        postRepository.deleteById(post.get().getId());
+        return Result.toResult(ResultCode.POST_DELETE_SUCCESS);
     }
 
     // 나누기 피드(post) 수정
-    public void updatePost(Long id, PostUpdateRequest request){
+    public ResponseEntity<?> updatePost(Long id, PostUpdateRequest request){
 
         Optional<Post> optionalPost = postRepository.findById(id);
         if(!optionalPost.isPresent()){
-            throw new ResourceNotFoundException(POST_NOT_FOUND);
+            return Result.toResult(ResultCode.POST_NOT_FOUND);
         }
         Post post = optionalPost.get();
 
         // Category_id
         Optional<Category> category = categoryRepository.findById(request.getCategory_id());
         if(!category.isPresent()){
-            throw new ResourceNotFoundException(CATEGORY_NOT_FOUND);
+            return Result.toResult(ResultCode.CATEGORY_NOT_FOUND);
         }
         post.setCategory(category.get());
 
@@ -160,5 +167,6 @@ public class PostService {
         post.setImageUrl(request.getImageUrl());
 
         postRepository.save(post);
+        return Result.toResult(ResultCode.POST_UPDATE_SUCCESS);
     }
 }
