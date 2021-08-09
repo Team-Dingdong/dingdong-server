@@ -1,7 +1,14 @@
 package dingdong.dingdong.domain.user;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+
+import java.time.LocalDateTime;
 
 public interface AuthRepository extends JpaRepository<Auth, Long> {
-    Auth findByRequestId(String requestId);
+    boolean existsByPhone(String phone);
+    Auth findByPhone(String phone);
+
+    @Query("select a.requestTime from Auth a where a.phone = ?1")
+    LocalDateTime findRequestTimeByPhone(String phone);
 }

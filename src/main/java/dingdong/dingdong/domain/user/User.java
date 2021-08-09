@@ -23,14 +23,8 @@ public class User extends BaseTimeEntity {
     @Column(name = "user_id", nullable = false)
     private Long id;
 
-    @Column(nullable = false)
-    private String password;
-
     @Column(nullable = false, unique = true)
     private String phone;
-
-    @Column(nullable = false)
-    private String role;
 
     @LastModifiedDate
     private LocalDateTime localDate;
@@ -51,4 +45,8 @@ public class User extends BaseTimeEntity {
 
     @OneToMany(mappedBy = "user")
     private List<Post> posts = new ArrayList<>();
+
+    public User(String phone) {
+        this.phone = phone;
+    }
 }

@@ -2,7 +2,12 @@ package dingdong.dingdong.service.auth;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import dingdong.dingdong.config.TokenProvider;
+import dingdong.dingdong.domain.user.*;
 import dingdong.dingdong.dto.auth.*;
+import dingdong.dingdong.util.SecurityUtil;
+import dingdong.dingdong.util.exception.AuthTimeException;
+import dingdong.dingdong.util.exception.ResultCode;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tomcat.util.codec.binary.Base64;
@@ -10,7 +15,16 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import javax.crypto.Mac;
@@ -21,18 +35,101 @@ import java.net.URISyntaxException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.sql.Timestamp;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 @Slf4j
 @Data
 @Service
-public class AuthService {
+public class AuthService implements UserDetailsService {
 
     private final ApplicationNaverSENS applicationNaverSENS;
 
+    private final UserRepository userRepository;
+    private final AuthRepository authRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
+    private final AuthenticationManagerBuilder authenticationManagerBuilder;
+    private final TokenProvider tokenProvider;
+    private final PasswordEncoder passwordEncoder;
+
+    // 로그인한 유저 정보 반환 to @CurrentUser
+    public User getUserInfo() {
+        return userRepository.findByPhone(SecurityUtil.getUserName());
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String phone) throws UsernameNotFoundException {
+        Auth auth = authRepository.findByPhone(phone);
+
+        if(auth == null) {
+            throw new UsernameNotFoundException(phone);
+        }
+        return new UserAccount(auth);
+    }
+
+    // 로그인
+    @Transactional
+    public TokenDto login(AuthRequestDto authRequestDto) {
+        // 1. Login ID/PW 를 기반으로 AuthenticationToken 생성
+        UsernamePasswordAuthenticationToken authenticationToken = authRequestDto.toAuthentication();
+
+        // 2. 검증 (사용자 비밀번호 체크) 이 이루어지는 부분
+        //    authenticate 메서드가 실행이 될 때 loadUserByUsername 메서드가 실행됨
+        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+
+        // 3. 인증 정보를 기반으로 JWT 토큰 생성
+        TokenDto tokenDto = tokenProvider.generateTokenDto(authentication);
+
+        // 4. RefreshToken 저장
+        RefreshToken refreshToken = RefreshToken.builder()
+                .phone(authentication.getName())
+                .tokenValue(tokenDto.getRefreshToken())
+                .build();
+
+        refreshTokenRepository.save(refreshToken);
+
+        SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+
+        // 5. 토큰 발급
+        return tokenDto;
+    }
+
+    // 회원가입
+    @Transactional
+    public TokenDto signup(AuthRequestDto authRequestDto) {
+        User user = new User(authRequestDto.getPhone());
+        userRepository.save(user);
+
+        return login(authRequestDto);
+    }
+
+    // 휴대폰 인증 번호 확인
+    @Transactional
+    public Map<AuthType, TokenDto> auth(AuthRequestDto authRequestDto) {
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime requestTime = authRepository.findRequestTimeByPhone(authRequestDto.getPhone());
+        log.info("now -> {}", now);
+        log.info("requestTime -> {}", requestTime);
+
+        Duration duration = Duration.between(requestTime, now);
+        log.info("duration seconds -> {}", duration.getSeconds());
+        if(duration.getSeconds() > 300) {
+            throw new AuthTimeException(ResultCode.AUTH_TIME_ERROR);
+        }
+
+        if(userRepository.existsByPhone(authRequestDto.getPhone())) {
+            return Map.of(AuthType.LOGIN, login(authRequestDto));
+        } else {
+            return Map.of(AuthType.SIGNUP, signup(authRequestDto));
+        }
+    }
+
+    // 휴대폰 인증 번호 전송
+    @Transactional
     public MessageResponseDto sendSms(MessageRequestDto messageRequestDto) throws JsonProcessingException, UnsupportedEncodingException, NoSuchAlgorithmException, InvalidKeyException, URISyntaxException {
         Long time = Timestamp.valueOf(LocalDateTime.now()).getTime();
         String random = makeRandom();
@@ -71,6 +168,17 @@ public class AuthService {
         SendSmsResponseDto sendSmsResponseDto = restTemplate.postForObject(new URI("https://sens.apigw.ntruss.com/sms/v2/services/"+applicationNaverSENS.getServiceId()+"/messages"), body, SendSmsResponseDto.class);
         log.info(sendSmsResponseDto.getStatusCode());
 
+        if(sendSmsResponseDto.getStatusCode().equals("202")) {
+            if(authRepository.existsByPhone(messageRequestDto.getTo())) {
+                Auth auth = authRepository.findByPhone(messageRequestDto.getTo());
+                auth.reauth(random, sendSmsResponseDto.getRequestId(), sendSmsResponseDto.getRequestTime(), false);
+                authRepository.save(auth);
+            } else {
+                Auth auth = new Auth(messageRequestDto.getTo(), random, sendSmsResponseDto.getRequestId(), sendSmsResponseDto.getRequestTime());
+                authRepository.save(auth);
+            }
+        }
+
         return new MessageResponseDto(sendSmsResponseDto.getRequestId(), sendSmsResponseDto.getRequestTime());
     }
 
@@ -103,7 +211,7 @@ public class AuthService {
         return encodeBase64String;
     }
 
-    String makeRandom() {
+    public String makeRandom() {
         Random rand = new Random();
         String numStr = "";
 
