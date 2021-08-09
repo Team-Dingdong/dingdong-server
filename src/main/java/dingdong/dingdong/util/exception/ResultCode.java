@@ -16,6 +16,7 @@ public enum ResultCode {
 
     POST_READ_SUCCESS(OK, "포스트 조회 성공"),
     POST_DELETE_SUCCESS(OK, "포스트 삭제 성공"),
+    POST_UPDATE_SUCCESS(OK, "포스트 수정 성공"),
 
     SIGNUP_SUCCESS(CREATED, "회원가입 성공"),
     POST_CREATE_SUCCESS(CREATED, "포스트 생성 성공"),

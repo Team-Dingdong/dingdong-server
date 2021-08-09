@@ -11,9 +11,12 @@ import dingdong.dingdong.dto.Post.PostGetResponse;
 import dingdong.dingdong.dto.Post.PostUpdateRequest;
 import dingdong.dingdong.util.exception.ForbiddenException;
 import dingdong.dingdong.util.exception.ResourceNotFoundException;
+import dingdong.dingdong.util.exception.Result;
+import dingdong.dingdong.util.exception.ResultCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -47,6 +50,7 @@ public class PostService {
 
     // 나누기 피드 상세보기
     public PostDetailResponse findPostById(Long id){
+
         Optional<Post> post = postRepository.findById(id);
         if(!post.isPresent()){
             throw new ResourceNotFoundException(POST_NOT_FOUND);
@@ -71,8 +75,14 @@ public class PostService {
     }
 
     // 카테고리별로 나누기 피드 GET
-    public Page<PostGetResponse> findPostByCategory_Id(Long id, Pageable pageable){
-        Page<Post> postList = postRepository.findByCategory_Id(id, pageable);
+    public Page<PostGetResponse>  findPostByCategory_Id(Long id, Pageable pageable){
+        Optional<Category> category = categoryRepository.findById(id);
+
+        if(!category.isPresent()){
+            throw new ResourceNotFoundException(CATEGORY_NOT_FOUND);
+        }
+
+        Page<Post> postList = postRepository.findByCategory_Id(category.get().getId(),  pageable);
 
         Page<PostGetResponse> pagingList = postList.map(
                 post -> new PostGetResponse(
@@ -80,7 +90,6 @@ public class PostService {
                         post.getBio(), post.getImageUrl(), post.getLocal(),
                         post.getCreatedDate()
                 ));
-
         return pagingList;
     }
 
@@ -129,6 +138,7 @@ public class PostService {
 
     // 나누기 피드(post) 수정
     public void updatePost(Long id, PostUpdateRequest request){
+
         Optional<Post> optionalPost = postRepository.findById(id);
         if(!optionalPost.isPresent()){
             throw new ResourceNotFoundException(POST_NOT_FOUND);
