@@ -30,7 +30,7 @@ public class PostApiController {
     private final RatingRepository ratingRepository;
 
     // 모든 나누기 불러오기
-    @GetMapping("/")
+    @GetMapping("")
     public Page<PostGetResponse> findPosts(@PageableDefault(size = 3, direction = Sort.Direction.DESC) Pageable pageable) {
         return postService.findPosts(pageable);
     }
@@ -57,7 +57,7 @@ public class PostApiController {
     }
 
     // 나누기 생성
-    @PostMapping("/")
+    @PostMapping("")
     public void createPost(@Valid @RequestBody PostCreationRequest request) {
         postService.createPost(request);
     }
