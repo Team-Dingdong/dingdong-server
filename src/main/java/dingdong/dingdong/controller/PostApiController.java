@@ -28,52 +28,31 @@ import javax.validation.Valid;
 public class PostApiController {
 
     private final PostService postService;
-    private final UserRepository userRepository;
-    private final CategoryRepository categoryRepository;
-    private final RatingRepository ratingRepository;
 
     // 모든 나누기 불러오기
     @GetMapping("")
     public ResponseEntity<?> findPosts(@PageableDefault(size = 5, direction = Sort.Direction.DESC) Pageable pageable) {
 
-        try{
-            return postService.findPosts(pageable);
-        } catch(RuntimeException re){
-            return Result.toResult(ResultCode.VALID_ERROR);
-        } catch(Exception e){
-            return Result.toResult(ResultCode.INTER_SERVER_ERROR);
-        }
-
-
+            Page<PostGetResponse> pagingList = postService.findPosts(pageable);
+            return Result.toResult(ResultCode.POST_READ_SUCCESS, pagingList);
     }
 
     // 특정 나누기 상세보기 불러오기
     @GetMapping("/{id}")
     public ResponseEntity<?> findPostById(@PathVariable Long id){
 
-        try{
-            return postService.findPostById(id);
-        } catch(RuntimeException re){
-            return Result.toResult(ResultCode.VALID_ERROR);
-        } catch(Exception e){
-            return Result.toResult(ResultCode.INTER_SERVER_ERROR);
-        }
-
+            PostDetailResponse postDetail = postService.findPostById(id);
+            ResultCode message = ResultCode.POST_READ_SUCCESS;
+            return Result.toResult(message, postDetail);
     }
 
     // 카테고리 별로 나누기 피드들 불러오기
     @GetMapping("/category/{id}")
     public ResponseEntity<?> findPostByCategory_Id(@PathVariable Long id,
                                             @PageableDefault(size = 5, direction = Sort.Direction.DESC) Pageable pageable){
-        Page<PostGetResponse> postPage;
 
-        try{
-            return postService.findPostByCategory_Id(id, pageable);
-        } catch(RuntimeException re){
-            return Result.toResult(ResultCode.VALID_ERROR);
-        } catch(Exception e){
-            return Result.toResult(ResultCode.INTER_SERVER_ERROR);
-        }
+            Page<PostGetResponse> postPage = postService.findPostByCategory_Id(id, pageable);
+            return Result.toResult(ResultCode.POST_READ_SUCCESS, postPage);
 
     }
 
@@ -81,13 +60,8 @@ public class PostApiController {
     @PostMapping("")
     public ResponseEntity<?> createPost(@Valid @RequestBody PostCreationRequest request) {
 
-        try{
-            return postService.createPost(request);
-        } catch(RuntimeException re){
-            return Result.toResult(ResultCode.VALID_ERROR);
-        }catch(Exception e){
-            return Result.toResult(ResultCode.INTER_SERVER_ERROR);
-        }
+            postService.createPost(request);
+            return Result.toResult(ResultCode.POST_CREATE_SUCCESS);
 
     }
 
@@ -95,26 +69,15 @@ public class PostApiController {
    @DeleteMapping("/{id}")
     public ResponseEntity<?> deletePost(@PathVariable Long id){
 
-       try{
-           return postService.deletePost(id);
-       } catch(RuntimeException re){
-           return Result.toResult(ResultCode.VALID_ERROR);
-       }catch(Exception e){
-           return Result.toResult(ResultCode.INTER_SERVER_ERROR);
-       }
-
+           postService.deletePost(id);
+           return Result.toResult(ResultCode.POST_DELETE_SUCCESS);
     }
 
     // 나누기 수정
     @PatchMapping("/{id}")
     public ResponseEntity<?> updatePost(@RequestBody PostUpdateRequest request,
                                            @PathVariable Long id){
-        try{
-            return postService.updatePost(id, request);
-        } catch(RuntimeException re){
-            return Result.toResult(ResultCode.VALID_ERROR);
-        }catch(Exception e){
-            return Result.toResult(ResultCode.INTER_SERVER_ERROR);
-        }
+            postService.updatePost(id, request);
+            return Result.toResult(ResultCode.POST_UPDATE_SUCCESS);
     }
 }
