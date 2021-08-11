@@ -1,10 +1,9 @@
 package dingdong.dingdong.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import dingdong.dingdong.dto.auth.AuthRequestDto;
-import dingdong.dingdong.dto.auth.MessageRequestDto;
-import dingdong.dingdong.dto.auth.MessageResponseDto;
-import dingdong.dingdong.dto.auth.TokenDto;
+import dingdong.dingdong.domain.user.CurrentUser;
+import dingdong.dingdong.domain.user.User;
+import dingdong.dingdong.dto.auth.*;
 import dingdong.dingdong.service.auth.AuthService;
 import dingdong.dingdong.service.auth.AuthType;
 import dingdong.dingdong.util.exception.Result;
@@ -47,5 +46,12 @@ public class AuthController {
         } else {
             return Result.toResult(ResultCode.SIGNUP_SUCCESS, data.get(AuthType.SIGNUP));
         }
+    }
+
+    // 닉네임 설정
+    @PostMapping("/nickname")
+    public ResponseEntity<Result> auth(@CurrentUser User user, @RequestBody NicknameRequestDto nicknameRequestDto) {
+        authService.createNickname(user, nicknameRequestDto);
+        return Result.toResult(ResultCode.NICKNAME_CREATE_SUCCESS);
     }
 }

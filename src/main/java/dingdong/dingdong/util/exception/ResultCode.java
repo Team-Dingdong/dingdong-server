@@ -19,8 +19,10 @@ public enum ResultCode {
     POST_DELETE_SUCCESS(OK, "포스트 삭제 성공"),
 
     /* 201 CREATED */
-    SIGNUP_SUCCESS(CREATED, "회원가입 성공"),
-    SEND_SMS_SUCCESS(CREATED, "인증번호 전송 성공"),
+    SIGNUP_SUCCESS(CREATED, "회원 가입 성공"),
+    SEND_SMS_SUCCESS(CREATED, "인증 번호 전송 성공"),
+
+    NICKNAME_CREATE_SUCCESS(CREATED, "닉네임 설정 성공"),
 
     POST_CREATE_SUCCESS(CREATED, "포스트 생성 성공"),
     POST_LIKE_CREATE_SUCCESS(CREATED, "포스트 좋아요 생성 성공"),
@@ -46,15 +48,13 @@ public enum ResultCode {
     FORBIDDEN_MEMBER(FORBIDDEN, "해당 권한이 없습니다."),
 
     /* 404 NOT_FOUND : Resource 를 찾을 수 없음 */
-    MEMBER_NOT_FOUND(NOT_FOUND, "해당 유저 정보를 찾을 수 없습니다"),
+    USER_NOT_FOUND(NOT_FOUND, "해당 유저 정보를 찾을 수 없습니다"),
     REFRESH_TOKEN_NOT_FOUND(NOT_FOUND, "로그아웃 된 사용자입니다"),
     POST_NOT_FOUND(NOT_FOUND, "해당 포스트를 찾을 수 없습니다"),
 
     /* 409 CONFLICT : Resource 의 현재 상태와 충돌. 보통 중복된 데이터 존재 */
     DUPLICATE_RESOURCE(CONFLICT, "데이터가 이미 존재합니다"),
-    EMAIL_DUPLICATION(CONFLICT,"이미 사용 중인 이메일입니다"),
     NICKNAME_DUPLICATION(CONFLICT, "이미 사용 중인 닉네임입니다"),
-    LIKE_DUPLICATION(CONFLICT, "이미 좋아요한 글입니다"),
 
     /* 500 CONFLICT */
     AUTH_ERROR(INTERNAL_SERVER_ERROR, "인증 오류 발생"),

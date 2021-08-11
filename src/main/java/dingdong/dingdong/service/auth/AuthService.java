@@ -6,6 +6,7 @@ import dingdong.dingdong.config.TokenProvider;
 import dingdong.dingdong.domain.user.*;
 import dingdong.dingdong.dto.auth.*;
 import dingdong.dingdong.util.SecurityUtil;
+import dingdong.dingdong.util.exception.DuplicateException;
 import dingdong.dingdong.util.exception.JwtAuthException;
 import dingdong.dingdong.util.exception.ResultCode;
 import lombok.Data;
@@ -37,7 +38,10 @@ import java.security.NoSuchAlgorithmException;
 import java.sql.Timestamp;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
 
 @Slf4j
 @Data
@@ -48,6 +52,7 @@ public class AuthService implements UserDetailsService {
 
     private final UserRepository userRepository;
     private final AuthRepository authRepository;
+    private final ProfileRepository profileRepository;
     private final RefreshTokenRepository refreshTokenRepository;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final TokenProvider tokenProvider;
@@ -102,6 +107,20 @@ public class AuthService implements UserDetailsService {
         userRepository.save(user);
 
         return login(authRequestDto);
+    }
+
+    @Transactional
+    public void checkNickname(String nickname) {
+        if(profileRepository.existsByNickname(nickname)) {
+            throw new DuplicateException(ResultCode.NICKNAME_DUPLICATION);
+        }
+    }
+
+    @Transactional
+    public void createNickname(User user, NicknameRequestDto nicknameRequestDto) {
+        checkNickname(nicknameRequestDto.getNickname());
+        Profile profile = new Profile(user, nicknameRequestDto.getNickname());
+        profileRepository.save(profile);
     }
 
     // 휴대폰 인증 번호 확인

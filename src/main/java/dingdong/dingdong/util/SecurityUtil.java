@@ -13,8 +13,9 @@ public class SecurityUtil {
     public static String getUserName() {
         final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
+        log.info("{}", authentication);
         if (authentication == null || authentication.getName() == null) {
-            throw  new RuntimeException("Security Context 에 인증 정보가 없습니다.");
+            throw new RuntimeException("Security Context 에 인증 정보가 없습니다.");
         }
 
         return authentication.getName();
