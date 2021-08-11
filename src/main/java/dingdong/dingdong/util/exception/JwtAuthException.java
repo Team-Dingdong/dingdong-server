@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class AuthTimeException extends RuntimeException {
+public class JwtAuthException extends RuntimeException {
 
     private final ResultCode resultCode;
 }

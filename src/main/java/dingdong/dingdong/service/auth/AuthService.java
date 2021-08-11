@@ -6,7 +6,7 @@ import dingdong.dingdong.config.TokenProvider;
 import dingdong.dingdong.domain.user.*;
 import dingdong.dingdong.dto.auth.*;
 import dingdong.dingdong.util.SecurityUtil;
-import dingdong.dingdong.util.exception.AuthTimeException;
+import dingdong.dingdong.util.exception.JwtAuthException;
 import dingdong.dingdong.util.exception.ResultCode;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -37,10 +37,7 @@ import java.security.NoSuchAlgorithmException;
 import java.sql.Timestamp;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 @Slf4j
 @Data
@@ -64,10 +61,10 @@ public class AuthService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String phone) throws UsernameNotFoundException {
         Auth auth = authRepository.findByPhone(phone);
-
         if(auth == null) {
             throw new UsernameNotFoundException(phone);
         }
+
         return new UserAccount(auth);
     }
 
@@ -111,14 +108,14 @@ public class AuthService implements UserDetailsService {
     @Transactional
     public Map<AuthType, TokenDto> auth(AuthRequestDto authRequestDto) {
         LocalDateTime now = LocalDateTime.now();
-        LocalDateTime requestTime = authRepository.findRequestTimeByPhone(authRequestDto.getPhone());
+        LocalDateTime requestTime = authRepository.findRequestTimeByPhone(authRequestDto.getPhone()).orElseThrow(() -> new UsernameNotFoundException(authRequestDto.getPhone()));
         log.info("now -> {}", now);
         log.info("requestTime -> {}", requestTime);
 
         Duration duration = Duration.between(requestTime, now);
         log.info("duration seconds -> {}", duration.getSeconds());
         if(duration.getSeconds() > 300) {
-            throw new AuthTimeException(ResultCode.AUTH_TIME_ERROR);
+            throw new JwtAuthException(ResultCode.AUTH_TIME_ERROR);
         }
 
         if(userRepository.existsByPhone(authRequestDto.getPhone())) {

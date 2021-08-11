@@ -40,7 +40,7 @@ public class AuthController {
 
     // 휴대폰 인증 번호 확인, 로그인 or 회원가입
     @PostMapping("")
-    public ResponseEntity<Result<TokenDto>> check(@RequestBody AuthRequestDto authRequestDto) {
+    public ResponseEntity<Result<TokenDto>> auth(@RequestBody AuthRequestDto authRequestDto) {
         Map<AuthType, TokenDto> data = authService.auth(authRequestDto);
         if(data.containsKey(AuthType.LOGIN)) {
             return Result.toResult(ResultCode.LOGIN_SUCCESS, data.get(AuthType.LOGIN));

@@ -4,6 +4,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.InternalAuthenticationServiceException;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -38,10 +42,23 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return Result.toResult(e.getResultCode());
     }
 
-    @ExceptionHandler(AuthTimeException.class)
-    protected ResponseEntity<Result> handleAuthTimeException(AuthTimeException e) {
-        log.error("handleAuthTimeException : {}", e.getResultCode());
+    @ExceptionHandler(JwtAuthException.class)
+    protected ResponseEntity<Result> handleJwtAuthException(JwtAuthException e) {
+        log.error("handleJwtAuthException : {}", e.getResultCode());
         return Result.toResult(e.getResultCode());
+    }
+
+    @ExceptionHandler(AuthenticationException.class)
+    protected ResponseEntity<Result> handleAuthenticationException(AuthenticationException e) {
+        log.error("handleForbiddenException : {}", e.getMessage());
+        if(e instanceof BadCredentialsException) {
+            return Result.toResult(ResultCode.AUTH_FAIL);
+        } else if(e instanceof InternalAuthenticationServiceException) {
+            return Result.toResult(ResultCode.AUTH_NOT_FOUND);
+        } else if(e instanceof UsernameNotFoundException) {
+            return Result.toResult(ResultCode.AUTH_NOT_FOUND);
+        }
+        return Result.toResult(ResultCode.AUTH_ERROR);
     }
 
     @Override
