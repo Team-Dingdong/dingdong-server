@@ -1,5 +1,6 @@
 package dingdong.dingdong.dto.Post;
 
+import javax.persistence.Column;
 import javax.validation.constraints.NotNull;
 
 import dingdong.dingdong.domain.post.Category;
@@ -40,17 +41,30 @@ public class PostDetailResponse {
     @NotNull
     private String local;
 
+    @NotNull
     private LocalDateTime createdDate;
+
+    @NotNull
+    private LocalDateTime modifiedDate;
+
+    @NotNull
+    private int people;
+
+    @NotNull
+    private int gatheredPeople;
 
     private String imageUrl;
 
-    public PostDetailResponse(String title, int cost, String bio, String imageUrl, LocalDateTime createdDate,
-                              String local, String nickname, String profile_bio, int good, int bad){
+    public PostDetailResponse(String title, int cost, String bio, String imageUrl, LocalDateTime createdDate, LocalDateTime modifiedDate,
+                              int people, int gatheredPeople,String local, String nickname, String profile_bio, int good, int bad){
         this.title = title;
         this.cost = cost;
         this.bio = bio;
         this.imageUrl = imageUrl;
         this.createdDate = createdDate;
+        this.modifiedDate = modifiedDate;
+        this.people = people;
+        this.gatheredPeople = gatheredPeople;
         this.local = local;
         this.nickname = nickname;
         this.profile_bio = profile_bio;

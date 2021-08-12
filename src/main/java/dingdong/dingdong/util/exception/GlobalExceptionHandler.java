@@ -38,6 +38,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return Result.toResult(e.getResultCode());
     }
 
+    @ExceptionHandler(AuthTimeException.class)
+    protected ResponseEntity<Result> handleAuthTimeException(AuthTimeException e) {
+        log.error("handleAuthTimeException : {}", e.getResultCode());
+        return Result.toResult(e.getResultCode());
+    }
+
 
     @Override
     protected ResponseEntity handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {

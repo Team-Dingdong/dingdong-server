@@ -1,4 +1,4 @@
-package dingdong.dingdong.dto;
+package dingdong.dingdong.dto.auth;
 
 import lombok.Builder;
 import lombok.Data;

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import dingdong.dingdong.domain.BaseTimeEntity;
 import dingdong.dingdong.domain.user.User;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
@@ -30,6 +31,10 @@ public class Post extends BaseTimeEntity {
 
     @Column(nullable = false)
     private int people;
+
+    @Column(nullable = false)
+    @ColumnDefault("0")
+    private int gatheredPeople;
 
     @Column(nullable = false)
     private String local;

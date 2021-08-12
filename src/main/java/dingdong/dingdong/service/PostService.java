@@ -68,8 +68,8 @@ public class PostService {
         }
 
         PostDetailResponse postDetail = new PostDetailResponse(post.get().getTitle(), post.get().getCost(),
-                post.get().getBio(), post.get().getImageUrl(), post.get().getCreatedDate(),
-                post.get().getLocal(), profile.get().getNickname(),
+                post.get().getBio(), post.get().getImageUrl(), post.get().getCreatedDate(),post.get().getModifiedDate(),
+                post.get().getPeople(), post.get().getGatheredPeople(), post.get().getLocal(), profile.get().getNickname(),
                 profile.get().getProfile_bio(), rating.get().getGood(), rating.get().getBad());
 
         return postDetail;
@@ -126,6 +126,7 @@ public class PostService {
             post.setBio(request.getBio());
             post.setLocal(request.getLocal());
             post.setImageUrl(request.getImageUrl());
+
             post.setDone(false);
 
             postRepository.save(post);
