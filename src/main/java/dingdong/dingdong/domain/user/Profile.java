@@ -25,7 +25,7 @@ public class Profile {
     @Column(nullable = false)
     private String nickname;
 
-    private String bio;
+    private String profile_bio;
 
     private String profileImageUrl;
 

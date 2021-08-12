@@ -1,17 +1,18 @@
 package dingdong.dingdong.domain.post;
 
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import dingdong.dingdong.domain.BaseTimeEntity;
 import dingdong.dingdong.domain.user.User;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 
 @Entity
 @Getter
+@Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -26,10 +27,17 @@ public class Post extends BaseTimeEntity {
     private String title;
 
     @Column(nullable = false)
-    private Number cost;
+    private int cost;
 
     @Column(nullable = false)
-    private Number people;
+    private int people;
+
+    @Column(nullable = false)
+    @ColumnDefault("0")
+    private int gatheredPeople;
+
+    @Column(nullable = false)
+    private String local;
 
     @Column(nullable = false)
     private String bio;
@@ -42,6 +50,7 @@ public class Post extends BaseTimeEntity {
 
     @ManyToOne
     @JoinColumn(name = "category_id")
+    @JsonBackReference
     private Category category;
 
     public void setCategory(Category category) {
@@ -54,6 +63,7 @@ public class Post extends BaseTimeEntity {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
+    @JsonBackReference
     private User user;
 
     public void setUser(User user) {
@@ -63,4 +73,5 @@ public class Post extends BaseTimeEntity {
             user.getPosts().add(this);
         }
     }
+
 }

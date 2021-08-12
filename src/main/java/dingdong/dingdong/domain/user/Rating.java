@@ -1,6 +1,7 @@
 package dingdong.dingdong.domain.user;
 
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
 
@@ -19,9 +20,13 @@ public class Rating {
     @JoinColumn(name = "user_id")
     private User user;
 
-    private Number good;
+    @ColumnDefault("0")
+    private int good;
 
-    private Number bad;
+    @ColumnDefault("0")
+    private int bad;
 
-    private Number total;
+    @ColumnDefault("0")
+    private int total;
+
 }
