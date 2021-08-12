@@ -20,16 +20,19 @@ public enum ResultCode {
     POST_UPDATE_SUCCESS(OK, "포스트 수정 성공"),
 
     /* 201 CREATED */
-    SIGNUP_SUCCESS(CREATED, "회원가입 성공"),
-    SEND_SMS_SUCCESS(CREATED, "인증번호 전송 성공"),
+    SIGNUP_SUCCESS(CREATED, "회원 가입 성공"),
+    SEND_SMS_SUCCESS(CREATED, "인증 번호 전송 성공"),
+
+    NICKNAME_CREATE_SUCCESS(CREATED, "닉네임 설정 성공"),
 
     POST_CREATE_SUCCESS(CREATED, "포스트 생성 성공"),
     POST_LIKE_CREATE_SUCCESS(CREATED, "포스트 좋아요 생성 성공"),
     POST_COMMENT_CREATE_SUCCESS(CREATED, "포스트 댓글 생성 성공"),
 
     /* 400 BAD_REQUEST : 잘못된 요청 */
-    AUTH_NUMBER_ERROR(BAD_REQUEST, "인증 번호가 옳지 않습니다"),
-    AUTH_TIME_ERROR(BAD_REQUEST, "인증 시간 초과하였습니다"),
+    AUTH_NOT_FOUND(BAD_REQUEST, "해당 사용자의 인증 정보를 찾을 수 없습니다"),
+    AUTH_FAIL(BAD_REQUEST, "인증 번호가 옳지 않습니다"),
+    AUTH_TIME_ERROR(BAD_REQUEST, "인증 시간을 초과하였습니"),
 
     INVALID_REFRESH_TOKEN(BAD_REQUEST, "리프레시 토큰이 유효하지 않습니다"),
     MISMATCH_REFRESH_TOKEN(BAD_REQUEST, "리프레시 토큰의 유저 정보가 일치하지 않습니다"),
@@ -42,14 +45,13 @@ public enum ResultCode {
 
 
     /* 401 UNAUTHORIZED : 인증되지 않은 사용자 */
-    INVALID_AUTH_TOKEN(UNAUTHORIZED, "권한 정보가 없는 토큰입니다"),
-    UNAUTHORIZED_MEMBER(UNAUTHORIZED, "현재 내 계정 정보가 존재하지 않습니다"),
+    INVALID_AUTH_TOKEN(HttpStatus.UNAUTHORIZED, "권한 정보가 없는 토큰입니다"),
 
     /* 403 FORBIDDEN : 권한이 없는 사용자 */
     FORBIDDEN_MEMBER(FORBIDDEN, "해당 권한이 없습니다."),
 
     /* 404 NOT_FOUND : Resource 를 찾을 수 없음 */
-    MEMBER_NOT_FOUND(NOT_FOUND, "해당 유저 정보를 찾을 수 없습니다"),
+    USER_NOT_FOUND(NOT_FOUND, "해당 유저 정보를 찾을 수 없습니다"),
     REFRESH_TOKEN_NOT_FOUND(NOT_FOUND, "로그아웃 된 사용자입니다"),
     POST_NOT_FOUND(NOT_FOUND, "해당 포스트를 찾을 수 없습니다"),
     CATEGORY_NOT_FOUND(NOT_FOUND, "해당 카테고리를 찾을 수 없습니다."),
@@ -58,11 +60,10 @@ public enum ResultCode {
 
     /* 409 CONFLICT : Resource 의 현재 상태와 충돌. 보통 중복된 데이터 존재 */
     DUPLICATE_RESOURCE(CONFLICT, "데이터가 이미 존재합니다"),
-    EMAIL_DUPLICATION(CONFLICT,"이미 사용 중인 이메일입니다"),
     NICKNAME_DUPLICATION(CONFLICT, "이미 사용 중인 닉네임입니다"),
-    LIKE_DUPLICATION(CONFLICT, "이미 좋아요한 글입니다"),
 
     /* 500 CONFLICT */
+    AUTH_ERROR(INTERNAL_SERVER_ERROR, "인증 오류 발생"),
     INTER_SERVER_ERROR(INTERNAL_SERVER_ERROR, "서버 오류 발생"),
     ;
 

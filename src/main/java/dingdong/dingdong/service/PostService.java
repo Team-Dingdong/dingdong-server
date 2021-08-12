@@ -11,18 +11,14 @@ import dingdong.dingdong.dto.Post.PostGetResponse;
 import dingdong.dingdong.dto.Post.PostUpdateRequest;
 import dingdong.dingdong.util.exception.ForbiddenException;
 import dingdong.dingdong.util.exception.ResourceNotFoundException;
-import dingdong.dingdong.util.exception.Result;
-import dingdong.dingdong.util.exception.ResultCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
 import static dingdong.dingdong.util.exception.ResultCode.*;
-import static java.time.LocalDateTime.now;
 
 @Service
 @RequiredArgsConstructor
@@ -57,7 +53,7 @@ public class PostService {
             throw new ResourceNotFoundException(POST_NOT_FOUND);
         }
 
-        Optional<Profile> profile = profileRepository.findByUser_id(post.get().getUser().getId());
+        Optional<Profile> profile = profileRepository.findByUserId(post.get().getUser().getId());
         if(!profile.isPresent()){
             throw new ResourceNotFoundException(PROFILE_NOT_FOUND);
         }
@@ -107,7 +103,7 @@ public class PostService {
         // User_id
         Optional<User> user = userRepository.findById(request.getUser_id());
         if(!user.isPresent()){
-            throw new ResourceNotFoundException(MEMBER_NOT_FOUND);
+            throw new ResourceNotFoundException(USER_NOT_FOUND);
         }
 
         post.setUser(user.get());
@@ -151,8 +147,8 @@ public class PostService {
         }
         Post post = optionalPost.get();
 
-        // Category_id
-        Optional<Category> category = categoryRepository.findById(request.getCategory_id());
+        // CategoryId
+        Optional<Category> category = categoryRepository.findById(request.getCategoryId());
         if(!category.isPresent()){
             throw new ResourceNotFoundException(CATEGORY_NOT_FOUND);
         }

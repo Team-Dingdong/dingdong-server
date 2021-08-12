@@ -2,8 +2,6 @@ package dingdong.dingdong.dto.Post;
 
 import lombok.Data;
 
-import java.time.LocalDateTime;
-
 @Data
 public class PostUpdateRequest {
 
@@ -13,5 +11,5 @@ public class PostUpdateRequest {
     private String bio;
     private String imageUrl;
     private String local;
-    private long category_id;
+    private long categoryId;
 }

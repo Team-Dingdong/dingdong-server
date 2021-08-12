@@ -1,6 +1,9 @@
 package dingdong.dingdong.domain.user;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
@@ -15,7 +18,7 @@ public class Profile {
     private Long id;
 
     @MapsId
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")
     private User user;
 
@@ -25,4 +28,10 @@ public class Profile {
     private String profile_bio;
 
     private String profileImageUrl;
+
+    public Profile(User user, String nickname) {
+        this.id = user.getId();
+        this.user = user;
+        this.nickname = nickname;
+    }
 }

@@ -39,11 +39,11 @@ public class User extends BaseTimeEntity {
     @JoinColumn(name = "local2")
     private Local local2;
 
-    @OneToOne(mappedBy = "user")
-    private Profile profile;
-
-    @OneToOne(mappedBy = "user")
-    private Rating rating;
+//    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
+//    private Profile profile;
+//
+//    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
+//    private Rating rating;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     @JsonManagedReference
@@ -52,4 +52,5 @@ public class User extends BaseTimeEntity {
     public User(String phone) {
         this.phone = phone;
     }
+
 }
