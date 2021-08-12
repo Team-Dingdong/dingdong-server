@@ -1,5 +1,7 @@
 package dingdong.dingdong.domain.user;
 
+
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import dingdong.dingdong.domain.BaseTimeEntity;
 import dingdong.dingdong.domain.post.Post;
 import lombok.*;
@@ -43,7 +45,8 @@ public class User extends BaseTimeEntity {
     @OneToOne(mappedBy = "user")
     private Rating rating;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @JsonManagedReference
     private List<Post> posts = new ArrayList<>();
 
     public User(String phone) {

@@ -7,6 +7,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.EntityListeners;
 import javax.persistence.MappedSuperclass;
+import javax.persistence.PreUpdate;
 import java.time.LocalDateTime;
 
 @Getter
@@ -19,4 +20,10 @@ public abstract class BaseTimeEntity {
 
     @LastModifiedBy
     private LocalDateTime modifiedDate;
+
+    @PreUpdate
+    public void preUpdate(){
+        modifiedDate = LocalDateTime.now();
+    }
+
 }

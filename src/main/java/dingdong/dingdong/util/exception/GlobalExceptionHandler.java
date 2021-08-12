@@ -26,7 +26,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return Result.toResult(e.getResultCode());
     }
 
-    @ExceptionHandler(ResourceNotFoundException.class)
+    @ExceptionHandler(value = {ResourceNotFoundException.class})
     protected ResponseEntity<Result> handleResourceNotFoundException(ResourceNotFoundException e){
         log.error("handleResourceNotFoundException : {}", e.getResultCode());
         return Result.toResult(e.getResultCode());
@@ -43,6 +43,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         log.error("handleAuthTimeException : {}", e.getResultCode());
         return Result.toResult(e.getResultCode());
     }
+
 
     @Override
     protected ResponseEntity handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
