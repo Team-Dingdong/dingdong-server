@@ -1,11 +1,7 @@
-package dingdong.dingdong.dto.Post;
+package dingdong.dingdong.dto.post;
 
-import javax.persistence.Column;
 import javax.validation.constraints.NotNull;
 
-import dingdong.dingdong.domain.post.Category;
-import dingdong.dingdong.domain.post.Post;
-import dingdong.dingdong.domain.user.Profile;
 import lombok.Data;
 import lombok.Getter;
 
