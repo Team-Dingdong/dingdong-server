@@ -42,7 +42,7 @@ public class Post extends BaseTimeEntity {
     @Column(nullable = false)
     private String bio;
 
-    @Column(nullable = false)
+    @Column(columnDefinition = "TEXT")
     private String imageUrl;
 
     @Column(columnDefinition = "boolean default false")

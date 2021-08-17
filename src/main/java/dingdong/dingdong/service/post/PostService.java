@@ -1,4 +1,4 @@
-package dingdong.dingdong.service;
+package dingdong.dingdong.service.post;
 
 import dingdong.dingdong.domain.post.Category;
 import dingdong.dingdong.domain.post.CategoryRepository;
@@ -114,20 +114,12 @@ public class PostService {
 
 
     // 나누기 피드(post) 생성
-    public void createPost(PostCreationRequestDto request){
+    public void createPost(PostCreationRequestDto request) {
         Post post = new Post();
 
         if(request == null) {
             throw new ForbiddenException(POST_CREATE_FAIL);
         }
-
-        // User_id
-        Optional<User> user = userRepository.findById(request.getUser_id());
-        if(!user.isPresent()){
-            throw new ResourceNotFoundException(USER_NOT_FOUND);
-        }
-
-        post.setUser(user.get());
 
         // Category_id
         Optional<Category> category = categoryRepository.findById(request.getCategory_id());
@@ -136,14 +128,19 @@ public class PostService {
         }
         post.setCategory(category.get());
 
+        // User_id
+        Optional<User> user = userRepository.findById(request.getUser_id());
+        if(!user.isPresent()){
+            throw new ResourceNotFoundException(USER_NOT_FOUND);
+        }
+        post.setUser(user.get());
+
             // title, people, price, bio, imageUrl
             post.setTitle(request.getTitle());
             post.setPeople(request.getPeople());
             post.setCost(request.getCost());
             post.setBio(request.getBio());
             post.setLocal(request.getLocal());
-            post.setImageUrl(request.getImageUrl());
-
             post.setDone(false);
 
             postRepository.save(post);

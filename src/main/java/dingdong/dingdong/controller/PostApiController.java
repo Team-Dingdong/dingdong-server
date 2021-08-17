@@ -1,12 +1,13 @@
 package dingdong.dingdong.controller;
 
 
+import dingdong.dingdong.service.s3.S3Uploader;
 import dingdong.dingdong.domain.user.*;
 import dingdong.dingdong.dto.Post.PostCreationRequestDto;
 import dingdong.dingdong.dto.Post.PostDetailResponseDto;
 import dingdong.dingdong.dto.Post.PostGetResponseDto;
 import dingdong.dingdong.dto.Post.PostUpdateRequestDto;
-import dingdong.dingdong.service.PostService;
+import dingdong.dingdong.service.post.PostService;
 import dingdong.dingdong.util.exception.Result;
 import dingdong.dingdong.util.exception.ResultCode;
 import lombok.RequiredArgsConstructor;
@@ -17,19 +18,19 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
-
 @RestController
 @RequestMapping("/post")
 @RequiredArgsConstructor
 public class PostApiController {
 
+    //private final S3Service s3Service;
+    private final S3Uploader s3Uploader;
     private final PostService postService;
 
     // 모든 나누기 불러오기
     @GetMapping("")
     public ResponseEntity<?> findPosts(@CurrentUser User user, @PageableDefault(size = 5, direction = Sort.Direction.DESC) Pageable pageable) {
-
+// data로 바꾸기
             Long local1 = user.getLocal1().getId();
             Long local2 = user.getLocal2().getId();
             Page<PostGetResponseDto> pagingList = postService.findPosts(local1, local2, pageable);
@@ -69,9 +70,9 @@ public class PostApiController {
 
     // 나누기 생성
     @PostMapping("")
-    public ResponseEntity<?> createPost(@Valid @RequestBody PostCreationRequestDto request) {
+    public ResponseEntity<?> createPost(PostCreationRequestDto requestDto) {
 
-            postService.createPost(request);
+            postService.createPost(requestDto);
             return Result.toResult(ResultCode.POST_CREATE_SUCCESS);
 
     }
