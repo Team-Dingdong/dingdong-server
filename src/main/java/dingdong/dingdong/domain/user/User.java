@@ -9,7 +9,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicUpdate;
-import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -33,7 +32,6 @@ public class User extends BaseTimeEntity {
 
     private String authority;
 
-    @LastModifiedDate
     private LocalDateTime localDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -53,4 +51,9 @@ public class User extends BaseTimeEntity {
         this.authority = "ROLE_USER";
     }
 
+    public void setLocal(Local local1, Local local2) {
+        this.local1 = local1;
+        this.local2 = local2;
+        this.localDate = LocalDateTime.now();
+    }
 }

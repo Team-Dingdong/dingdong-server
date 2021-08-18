@@ -50,9 +50,15 @@ public class AuthController {
 
     // 닉네임 설정
     @PostMapping("/nickname")
-    public ResponseEntity<Result> auth(@CurrentUser User user, @RequestBody NicknameRequestDto nicknameRequestDto) {
-        authService.createNickname(user, nicknameRequestDto);
+    public ResponseEntity<Result> nickname(@CurrentUser User user, @RequestBody NicknameRequestDto nicknameRequestDto) {
+        authService.setNickname(user, nicknameRequestDto);
         return Result.toResult(ResultCode.NICKNAME_CREATE_SUCCESS);
     }
 
+    // 동네 인증
+    @PostMapping("/local")
+    public ResponseEntity<Result> local(@CurrentUser User user, @RequestBody LocalRequestDto localRequestDto) {
+        authService.setLocal(user, localRequestDto);
+        return Result.toResult(ResultCode.LOCAL_CREATE_SUCCESS);
+    }
 }

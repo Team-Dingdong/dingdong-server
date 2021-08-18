@@ -24,6 +24,7 @@ public enum ResultCode {
     SEND_SMS_SUCCESS(CREATED, "인증 번호 전송 성공"),
 
     NICKNAME_CREATE_SUCCESS(CREATED, "닉네임 설정 성공"),
+    LOCAL_CREATE_SUCCESS(CREATED, "동네 설정 성공"),
 
     POST_CREATE_SUCCESS(CREATED, "포스트 생성 성공"),
     POST_LIKE_CREATE_SUCCESS(CREATED, "포스트 좋아요 생성 성공"),

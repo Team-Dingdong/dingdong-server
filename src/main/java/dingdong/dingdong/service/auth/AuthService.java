@@ -55,6 +55,7 @@ public class AuthService implements UserDetailsService {
     private final AuthRepository authRepository;
     private final ProfileRepository profileRepository;
     private final RatingRepository ratingRepository;
+    private final LocalRepository localRepository;
     private final RefreshTokenRepository refreshTokenRepository;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final TokenProvider tokenProvider;
@@ -126,11 +127,20 @@ public class AuthService implements UserDetailsService {
 
     // 닉네임 설정
     @Transactional
-    public void createNickname(User user, NicknameRequestDto nicknameRequestDto) {
+    public void setNickname(User user, NicknameRequestDto nicknameRequestDto) {
         checkNickname(nicknameRequestDto.getNickname());
         Profile profile = profileRepository.findById(user.getId()).orElseThrow(() -> new ResourceNotFoundException(ResultCode.PROFILE_NOT_FOUND));
         profile.createNickname(nicknameRequestDto.getNickname());
         profileRepository.save(profile);
+    }
+
+    // 동네 인증
+    @Transactional
+    public void setLocal(User user, LocalRequestDto localRequestDto) {
+        Local local1 = localRepository.findByName(localRequestDto.getLocal1());
+        Local local2 = localRepository.findByName(localRequestDto.getLocal2());
+        user.setLocal(local1, local2);
+        userRepository.save(user);
     }
 
     // 휴대폰 인증 번호 확인
