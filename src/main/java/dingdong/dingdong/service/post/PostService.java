@@ -1,4 +1,4 @@
-package dingdong.dingdong.service;
+package dingdong.dingdong.service.post;
 
 import dingdong.dingdong.domain.post.Category;
 import dingdong.dingdong.domain.post.CategoryRepository;
