@@ -54,4 +54,5 @@ public class AuthController {
         authService.createNickname(user, nicknameRequestDto);
         return Result.toResult(ResultCode.NICKNAME_CREATE_SUCCESS);
     }
+
 }

@@ -29,4 +29,8 @@ public class Rating {
     @ColumnDefault("0")
     private int total;
 
+    public Rating(User user) {
+        this.id = user.getId();
+        this.user = user;
+    }
 }
