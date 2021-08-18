@@ -1,8 +1,6 @@
-package dingdong.dingdong.dto.Post;
+package dingdong.dingdong.dto.post;
 
 import lombok.Data;
-
-import java.time.LocalDateTime;
 
 @Data
 public class PostCreationRequest {

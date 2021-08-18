@@ -1,10 +1,10 @@
 package dingdong.dingdong.controller;
 
 
-import dingdong.dingdong.dto.Post.PostCreationRequest;
-import dingdong.dingdong.dto.Post.PostDetailResponse;
-import dingdong.dingdong.dto.Post.PostGetResponse;
-import dingdong.dingdong.dto.Post.PostUpdateRequest;
+import dingdong.dingdong.dto.post.PostCreationRequest;
+import dingdong.dingdong.dto.post.PostDetailResponse;
+import dingdong.dingdong.dto.post.PostGetResponse;
+import dingdong.dingdong.dto.post.PostUpdateRequest;
 import dingdong.dingdong.service.post.PostService;
 import dingdong.dingdong.util.exception.Result;
 import dingdong.dingdong.util.exception.ResultCode;
