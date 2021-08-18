@@ -11,8 +11,8 @@ public class UserAccount extends User {
 
     private Auth auth;
 
-    public UserAccount(Auth auth) {
-        super(auth.getPhone(), auth.getAuthNumber(), List.of(new SimpleGrantedAuthority("ROLE_USER")));
+    public UserAccount(Auth auth, String authority) {
+        super(auth.getPhone(), auth.getAuthNumber(), List.of(new SimpleGrantedAuthority(authority)));
         this.auth = auth;
     }
 }

@@ -4,9 +4,11 @@ package dingdong.dingdong.domain.user;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import dingdong.dingdong.domain.BaseTimeEntity;
 import dingdong.dingdong.domain.post.Post;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicUpdate;
-import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -28,7 +30,8 @@ public class User extends BaseTimeEntity {
     @Column(nullable = false, unique = true)
     private String phone;
 
-    @LastModifiedDate
+    private String authority;
+
     private LocalDateTime localDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -39,18 +42,18 @@ public class User extends BaseTimeEntity {
     @JoinColumn(name = "local2")
     private Local local2;
 
-//    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
-//    private Profile profile;
-//
-//    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
-//    private Rating rating;
-
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     @JsonManagedReference
     private List<Post> posts = new ArrayList<>();
 
     public User(String phone) {
         this.phone = phone;
+        this.authority = "ROLE_USER";
     }
 
+    public void setLocal(Local local1, Local local2) {
+        this.local1 = local1;
+        this.local2 = local2;
+        this.localDate = LocalDateTime.now();
+    }
 }
