@@ -14,5 +14,4 @@ public class PostCreationRequestDto {
     private String bio;
     private String local;
     private long category_id;
-    private long user_id;
 }

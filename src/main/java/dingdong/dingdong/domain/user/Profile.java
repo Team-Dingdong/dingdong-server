@@ -20,7 +20,6 @@ public class Profile {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @Column(nullable = false)
     private String nickname;
 
     private String profile_bio;
@@ -28,9 +27,12 @@ public class Profile {
     @Column(columnDefinition = "TEXT")
     private String profileImageUrl;
 
-    public Profile(User user, String nickname) {
+    public Profile(User user) {
         this.id = user.getId();
         this.user = user;
+    }
+
+    public void createNickname(String nickname) {
         this.nickname = nickname;
     }
 }

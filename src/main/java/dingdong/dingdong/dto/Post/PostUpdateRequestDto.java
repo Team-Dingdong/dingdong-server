@@ -11,5 +11,5 @@ public class PostUpdateRequestDto {
     private String bio;
     private String imageUrl;
     private String local;
-    private long categoryId;
+    private long category_id;
 }

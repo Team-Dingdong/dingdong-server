@@ -8,6 +8,7 @@ import dingdong.dingdong.dto.auth.*;
 import dingdong.dingdong.util.SecurityUtil;
 import dingdong.dingdong.util.exception.DuplicateException;
 import dingdong.dingdong.util.exception.JwtAuthException;
+import dingdong.dingdong.util.exception.ResourceNotFoundException;
 import dingdong.dingdong.util.exception.ResultCode;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -53,6 +54,8 @@ public class AuthService implements UserDetailsService {
     private final UserRepository userRepository;
     private final AuthRepository authRepository;
     private final ProfileRepository profileRepository;
+    private final RatingRepository ratingRepository;
+    private final LocalRepository localRepository;
     private final RefreshTokenRepository refreshTokenRepository;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final TokenProvider tokenProvider;
@@ -66,11 +69,12 @@ public class AuthService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String phone) throws UsernameNotFoundException {
         Auth auth = authRepository.findByPhone(phone);
-        if(auth == null) {
+        User user = userRepository.findByPhone(phone);
+        if(auth == null || user == null) {
             throw new UsernameNotFoundException(phone);
         }
 
-        return new UserAccount(auth);
+        return new UserAccount(auth, user.getAuthority());
     }
 
     // 로그인
@@ -104,11 +108,16 @@ public class AuthService implements UserDetailsService {
     @Transactional
     public TokenDto signup(AuthRequestDto authRequestDto) {
         User user = new User(authRequestDto.getPhone());
+        Profile profile = new Profile(user);
+        Rating rating = new Rating(user);
         userRepository.save(user);
+        profileRepository.save(profile);
+        ratingRepository.save(rating);
 
         return login(authRequestDto);
     }
 
+    // 닉네임 중복 확인
     @Transactional
     public void checkNickname(String nickname) {
         if(profileRepository.existsByNickname(nickname)) {
@@ -116,11 +125,22 @@ public class AuthService implements UserDetailsService {
         }
     }
 
+    // 닉네임 설정
     @Transactional
-    public void createNickname(User user, NicknameRequestDto nicknameRequestDto) {
+    public void setNickname(User user, NicknameRequestDto nicknameRequestDto) {
         checkNickname(nicknameRequestDto.getNickname());
-        Profile profile = new Profile(user, nicknameRequestDto.getNickname());
+        Profile profile = profileRepository.findById(user.getId()).orElseThrow(() -> new ResourceNotFoundException(ResultCode.PROFILE_NOT_FOUND));
+        profile.createNickname(nicknameRequestDto.getNickname());
         profileRepository.save(profile);
+    }
+
+    // 동네 인증
+    @Transactional
+    public void setLocal(User user, LocalRequestDto localRequestDto) {
+        Local local1 = localRepository.findByName(localRequestDto.getLocal1());
+        Local local2 = localRepository.findByName(localRequestDto.getLocal2());
+        user.setLocal(local1, local2);
+        userRepository.save(user);
     }
 
     // 휴대폰 인증 번호 확인

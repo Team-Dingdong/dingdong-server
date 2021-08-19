@@ -35,7 +35,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
                 .mvcMatchers( "/console", "api/v1/auth", "api/v1/auth/send-sms", "/api/docs").permitAll()
-                .antMatchers( "/post/**", "/S3/**","/chat/**").permitAll()
                 .anyRequest().authenticated();
         http.cors()
                 .disable();

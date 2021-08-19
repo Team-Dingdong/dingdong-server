@@ -73,7 +73,7 @@ public class PostService {
     }
 
     // 유저의 판매내역 리스트 (GET: 유저별로 출력되는 나누기 피드)
-    public Page<PostGetResponseDto>  findPostByUser_Id(Long id, Pageable pageable){
+    public Page<PostGetResponseDto> findPostByUser_Id(Long id, Pageable pageable){
         User user = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(USER_NOT_FOUND));
 
         Page<Post> postList = postRepository.findByUser_Id(user.getId(), pageable);
@@ -90,8 +90,7 @@ public class PostService {
 
 
     // 나누기 피드(post) 생성
-    @Transactional
-    public void createPost(PostCreationRequestDto request) {
+    public void createPost(Long id, PostCreationRequestDto request) {
         Post post = new Post();
         if(request == null) {
             throw new ForbiddenException(POST_CREATE_FAIL);
@@ -102,7 +101,7 @@ public class PostService {
         post.setCategory(category);
 
         // User_id
-        User user = userRepository.findById(request.getUser_id()).orElseThrow(() -> new ResourceNotFoundException(USER_NOT_FOUND) );
+        User user = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(USER_NOT_FOUND) );
         post.setUser(user);
 
             // title, people, price, bio, imageUrl
@@ -126,18 +125,12 @@ public class PostService {
     // 나누기 피드(post) 수정
     public void updatePost(Long id, PostUpdateRequestDto request){
 
-        Optional<Post> optionalPost = postRepository.findById(id);
-        if(!optionalPost.isPresent()){
-            throw new ResourceNotFoundException(POST_NOT_FOUND);
-        }
-        Post post = optionalPost.get();
+        Post optionalPost = postRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(POST_NOT_FOUND));
+        Post post = optionalPost;
 
         // CategoryId
-        Optional<Category> category = categoryRepository.findById(request.getCategoryId());
-        if(!category.isPresent()){
-            throw new ResourceNotFoundException(CATEGORY_NOT_FOUND);
-        }
-        post.setCategory(category.get());
+        Category category = categoryRepository.findById(request.getCategory_id()).orElseThrow(() -> new ResourceNotFoundException(CATEGORY_NOT_FOUND));
+        post.setCategory(category);
 
         post.setTitle(request.getTitle());
         post.setPeople(request.getPeople());
