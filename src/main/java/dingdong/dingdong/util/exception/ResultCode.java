@@ -15,6 +15,9 @@ public enum ResultCode {
     CHECK_EMAIL_SUCCESS(OK, "사용가능한 이메일입니다"),
     CHECK_NICKNAME_SUCCESS(OK, "사용가능한 닉네임입니다"),
 
+    PROFILE_READ_SUCCESS(OK, "프로필 조회 성공"),
+    PROFILE_UPDATE_SUCCESS(OK, "프로필 수정 성공"),
+
     POST_READ_SUCCESS(OK, "포스트 조회 성공"),
     POST_DELETE_SUCCESS(OK, "포스트 삭제 성공"),
     POST_UPDATE_SUCCESS(OK, "포스트 수정 성공"),
