@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 
 @Data
 @Getter
-public class PostGetResponse {
+public class PostGetResponseDto {
 
     @NotNull
     private String title;
@@ -32,8 +32,8 @@ public class PostGetResponse {
 
     private String imageUrl;
 
-    public PostGetResponse(String title, int people, int cost, String bio, String imageUrl,
-                           String local, LocalDateTime createdDate){
+    public PostGetResponseDto(String title, int people, int cost, String bio, String imageUrl,
+                              String local, LocalDateTime createdDate){
         this.title = title;
         this.people = people;
         this.cost = cost;

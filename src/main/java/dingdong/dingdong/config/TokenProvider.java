@@ -5,6 +5,7 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -20,6 +21,8 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.stream.Collectors;
 
+
+//@PropertySource(value = {"classpath:application.yml"})
 @Component
 @Slf4j
 public class TokenProvider {
