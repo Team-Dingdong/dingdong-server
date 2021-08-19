@@ -16,9 +16,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
-import java.util.Optional;
-
 import static dingdong.dingdong.util.exception.ResultCode.*;
 
 @Service
@@ -26,7 +23,6 @@ import static dingdong.dingdong.util.exception.ResultCode.*;
 public class PostService {
 
     private final PostRepository postRepository;
-    private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
     private final ProfileRepository profileRepository;
     private final RatingRepository ratingRepository;
@@ -47,20 +43,18 @@ public class PostService {
 
     // 나누기 피드 상세보기
     public PostDetailResponseDto findPostById(Long id){
-
         Post post = postRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(POST_NOT_FOUND));
         Profile profile = profileRepository.findByUserId(post.getUser().getId()).orElseThrow(() -> new ResourceNotFoundException(PROFILE_NOT_FOUND));
-        Rating rating = ratingRepository.findByUser_id(post.getUser().getId()).orElseThrow(() ->  new ResourceNotFoundException(RATING_NOT_FOUND));
+        Rating rating = ratingRepository.findByUserId(post.getUser().getId()).orElseThrow(() ->  new ResourceNotFoundException(RATING_NOT_FOUND));
 
         PostDetailResponseDto postDetail = new PostDetailResponseDto(post, profile, rating);
-
         return postDetail;
     }
 
     // 카테고리별로 나누기 피드 GET
-    public Page<PostGetResponseDto>  findPostByCategory_Id(Long local1, Long local2, Long id, Pageable pageable){
-        Category category = categoryRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(CATEGORY_NOT_FOUND));
-        Page<Post> postList = postRepository.findByCategory_Id(local1, local2, category.getId(),  pageable);
+    public Page<PostGetResponseDto> findPostByCategoryId(Long local1, Long local2, Long categoryId, Pageable pageable){
+        Category category = categoryRepository.findById(categoryId).orElseThrow(() -> new ResourceNotFoundException(CATEGORY_NOT_FOUND));
+        Page<Post> postList = postRepository.findByCategoryId(local1, local2, category.getId(),  pageable);
 
         Page<PostGetResponseDto> pagingList = postList.map(
                 post -> new PostGetResponseDto(
@@ -68,15 +62,12 @@ public class PostService {
                         post.getBio(), post.getImageUrl(), post.getLocal(),
                         post.getCreatedDate()
                 ));
-
         return pagingList;
     }
 
     // 유저의 판매내역 리스트 (GET: 유저별로 출력되는 나누기 피드)
-    public Page<PostGetResponseDto> findPostByUser_Id(Long id, Pageable pageable){
-        User user = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(USER_NOT_FOUND));
-
-        Page<Post> postList = postRepository.findByUser_Id(user.getId(), pageable);
+    public Page<PostGetResponseDto> findPostByUserId(User user, Pageable pageable){
+        Page<Post> postList = postRepository.findByUserId(user.getId(), pageable);
 
         Page<PostGetResponseDto> pagingList = postList.map(
                 post -> new PostGetResponseDto(
@@ -84,52 +75,48 @@ public class PostService {
                         post.getBio(), post.getImageUrl(), post.getLocal(),
                         post.getCreatedDate()
                 ));
-
         return pagingList;
     }
 
 
     // 나누기 피드(post) 생성
-    public void createPost(Long id, PostCreationRequestDto request) {
+    public void createPost(User user, PostCreationRequestDto request) {
         Post post = new Post();
         if(request == null) {
             throw new ForbiddenException(POST_CREATE_FAIL);
         }
 
-        // Category_id
-        Category category = categoryRepository.findById(request.getCategory_id()).orElseThrow(() -> new ResourceNotFoundException(CATEGORY_NOT_FOUND));
+        // CategoryId
+        Category category = categoryRepository.findById(request.getCategoryId()).orElseThrow(() -> new ResourceNotFoundException(CATEGORY_NOT_FOUND));
         post.setCategory(category);
 
-        // User_id
-        User user = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(USER_NOT_FOUND) );
+        // UserId
         post.setUser(user);
 
-            // title, people, price, bio, imageUrl
-            post.setTitle(request.getTitle());
-            post.setPeople(request.getPeople());
-            post.setCost(request.getCost());
-            post.setBio(request.getBio());
-            post.setLocal(request.getLocal());
-            post.setDone(false);
+        // title, people, price, bio, imageUrl
+        post.setTitle(request.getTitle());
+        post.setPeople(request.getPeople());
+        post.setCost(request.getCost());
+        post.setBio(request.getBio());
+        post.setLocal(request.getLocal());
+        post.setDone(false);
 
-            postRepository.save(post);
+        postRepository.save(post);
     }
     
     // 나누기 피드(post) 제거
     public void  deletePost(Long id){
         Post post = postRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(POST_NOT_FOUND));
-
         postRepository.deleteById(post.getId());
     }
 
     // 나누기 피드(post) 수정
     public void updatePost(Long id, PostUpdateRequestDto request){
-
         Post optionalPost = postRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(POST_NOT_FOUND));
         Post post = optionalPost;
 
         // CategoryId
-        Category category = categoryRepository.findById(request.getCategory_id()).orElseThrow(() -> new ResourceNotFoundException(CATEGORY_NOT_FOUND));
+        Category category = categoryRepository.findById(request.getCategoryId()).orElseThrow(() -> new ResourceNotFoundException(CATEGORY_NOT_FOUND));
         post.setCategory(category);
 
         post.setTitle(request.getTitle());

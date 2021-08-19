@@ -2,8 +2,8 @@ package dingdong.dingdong.controller;
 
 
 
-import dingdong.dingdong.service.s3.S3Uploader;
-import dingdong.dingdong.domain.user.*;
+import dingdong.dingdong.domain.user.CurrentUser;
+import dingdong.dingdong.domain.user.User;
 import dingdong.dingdong.dto.Post.PostCreationRequestDto;
 import dingdong.dingdong.dto.Post.PostDetailResponseDto;
 import dingdong.dingdong.dto.Post.PostGetResponseDto;
@@ -12,6 +12,7 @@ import dingdong.dingdong.service.post.PostService;
 import dingdong.dingdong.util.exception.Result;
 import dingdong.dingdong.util.exception.ResultCode;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -21,16 +22,17 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
+@Slf4j
 @RestController
-@RequestMapping("/post")
 @RequiredArgsConstructor
+@RequestMapping("/api/v1/post")
 public class PostController {
 
     private final PostService postService;
 
     // 모든 나누기 불러오기
     @GetMapping("")
-    public ResponseEntity<Result<Page<PostGetResponseDto>>>  findPosts(@CurrentUser User user, @PageableDefault(size = 5, direction = Sort.Direction.DESC) Pageable pageable) {
+    public ResponseEntity<Result<Page<PostGetResponseDto>>> findPosts(@CurrentUser User user, @PageableDefault(size = 5, direction = Sort.Direction.DESC) Pageable pageable) {
 
             Long local1 = user.getLocal1().getId();
             Long local2 = user.getLocal2().getId();
@@ -39,31 +41,28 @@ public class PostController {
     }
 
     // 특정 나누기 상세보기 불러오기
-    @GetMapping("/{post_id}")
-    public ResponseEntity<Result<PostDetailResponseDto>> findPostById(@PathVariable Long post_id) {
+    @GetMapping("/{postId}")
+    public ResponseEntity<Result<PostDetailResponseDto>> findPostById(@PathVariable Long postId) {
 
-        PostDetailResponseDto data = postService.findPostById(post_id);
+        PostDetailResponseDto data = postService.findPostById(postId);
         ResultCode message = ResultCode.POST_READ_SUCCESS;
         return Result.toResult(message, data);
 
     }
 
     // 카테고리 별로 나누기 피드들 불러오기
-    @GetMapping("/category/{id}")
-    public ResponseEntity<Result<Page<PostGetResponseDto>>>  findPostByCategory_Id(@CurrentUser User user, @PathVariable Long id,
-                                            @PageableDefault(size = 5, direction = Sort.Direction.DESC) Pageable pageable){
+    @GetMapping("/category/{categoryId}")
+    public ResponseEntity<Result<Page<PostGetResponseDto>>> findPostByCategoryId(@CurrentUser User user, @PathVariable Long categoryId, @PageableDefault(size = 5, direction = Sort.Direction.DESC) Pageable pageable){
             Long local1 = user.getLocal1().getId();
             Long local2 = user.getLocal2().getId();
-            Page<PostGetResponseDto> data = postService.findPostByCategory_Id(local1, local2, id, pageable);
+            Page<PostGetResponseDto> data = postService.findPostByCategoryId(local1, local2, categoryId, pageable);
             return Result.toResult(ResultCode.POST_READ_SUCCESS, data);
     }
 
     // 유저 별로 나누기 피드들 불러오기
     @GetMapping("/user")
-    public ResponseEntity<Result<Page<PostGetResponseDto>>> findPostByUser_Id(@CurrentUser User user, @PageableDefault(size = 5, direction = Sort.Direction.DESC) Pageable pageable){
-
-        Long id = user.getId();
-        Page<PostGetResponseDto> postPage = postService.findPostByUser_Id(id, pageable);
+    public ResponseEntity<Result<Page<PostGetResponseDto>>> findPostByUserId(@CurrentUser User user, @PageableDefault(size = 5, direction = Sort.Direction.DESC) Pageable pageable){
+        Page<PostGetResponseDto> postPage = postService.findPostByUserId(user, pageable);
         return Result.toResult(ResultCode.POST_READ_SUCCESS, postPage);
 
     }
@@ -71,9 +70,7 @@ public class PostController {
     // 나누기 생성
     @PostMapping("")
     public ResponseEntity<Result> createPost(@CurrentUser User user, @Valid @RequestBody PostCreationRequestDto requestDto) {
-
-        Long id = user.getId();
-        postService.createPost(id,requestDto);
+        postService.createPost(user, requestDto);
         return Result.toResult(ResultCode.POST_CREATE_SUCCESS);
 
     }
@@ -81,7 +78,6 @@ public class PostController {
     // 나누기 삭제
    @DeleteMapping("/{id}")
     public ResponseEntity<Result> deletePost(@PathVariable Long id){
-
            postService.deletePost(id);
            return Result.toResult(ResultCode.POST_DELETE_SUCCESS);
     }
@@ -89,7 +85,6 @@ public class PostController {
     // 나누기 수정
     @PatchMapping("/{id}")
     public ResponseEntity<Result> updatePost(@Valid @RequestBody PostUpdateRequestDto request, @PathVariable Long id){
-
             postService.updatePost(id, request);
             return Result.toResult(ResultCode.POST_UPDATE_SUCCESS);
     }
