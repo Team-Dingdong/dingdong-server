@@ -3,7 +3,7 @@ package dingdong.dingdong.dto.post;
 import lombok.Data;
 
 @Data
-public class PostUpdateRequest {
+public class PostUpdateRequestDto {
 
     private String title;
     private int people;
@@ -11,5 +11,5 @@ public class PostUpdateRequest {
     private String bio;
     private String imageUrl;
     private String local;
-    private long categoryId;
+    private Long categoryId;
 }

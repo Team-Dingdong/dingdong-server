@@ -1,15 +1,15 @@
 package dingdong.dingdong.dto.post;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
-public class PostCreationRequest {
+@NoArgsConstructor
+public class PostCreationRequestDto {
     private String title;
     private int people;
     private int cost;
     private String bio;
     private String local;
-    private String imageUrl;
-    private long category_id;
-    private long user_id;
+    private Long categoryId;
 }

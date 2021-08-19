@@ -1,15 +1,13 @@
 package dingdong.dingdong.domain.user;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Entity
 @Getter
 @Builder
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class Profile {
@@ -26,6 +24,7 @@ public class Profile {
 
     private String profile_bio;
 
+    @Column(columnDefinition = "TEXT")
     private String profileImageUrl;
 
     public Profile(User user) {
