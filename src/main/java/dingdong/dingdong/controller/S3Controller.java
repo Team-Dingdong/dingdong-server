@@ -1,5 +1,6 @@
 package dingdong.dingdong.controller;
 
+import dingdong.dingdong.domain.user.Profile;
 import dingdong.dingdong.service.s3.S3Uploader;
 import dingdong.dingdong.domain.post.Post;
 import dingdong.dingdong.domain.post.PostRepository;
@@ -15,6 +16,7 @@ import java.io.IOException;
 import java.util.Optional;
 
 import static dingdong.dingdong.util.exception.ResultCode.POST_NOT_FOUND;
+import static dingdong.dingdong.util.exception.ResultCode.PROFILE_NOT_FOUND;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -30,11 +32,8 @@ public class S3Controller {
     public void PostUpload(@RequestParam("data") MultipartFile file, @PathVariable Long id) throws IOException {
         String path = s3Uploader.upload(file, "static");
 
-        Optional<Post> optionalPost = postRepository.findById(id);
-        if(!optionalPost.isPresent()) {
-            throw new ResourceNotFoundException(POST_NOT_FOUND);
-        }
-        Post post = optionalPost.get();
+        Post optionalPost = postRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(POST_NOT_FOUND));
+        Post post = optionalPost;
 
         post.setImageUrl(path);
         postRepository.save(post);
@@ -45,17 +44,11 @@ public class S3Controller {
     public void ProfileUpload(@RequestParam("data") MultipartFile file, @PathVariable Long id) throws IOException {
         String path = s3Uploader.upload(file, "static");
 
-        /*
-        Optional<Profile> optionalProfile = profileRepository.findById(id);
-        if(!optionalProfile.isPresent()) {
-            throw new ResourceNotFoundException(PROFILE_NOT_FOUND);
-        }
-        Profile profile = optionalProfile.get();
+        Profile optionalProfile = profileRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(PROFILE_NOT_FOUND));
+        Profile profile = optionalProfile;
 
-        profile.setProfileImageUrl()
+        profile.setProfileImageUrl(path);
         profileRepository.save(profile);
-
-         */
     }
 
 }
