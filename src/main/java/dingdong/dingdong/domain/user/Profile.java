@@ -32,7 +32,7 @@ public class Profile {
         this.user = user;
     }
 
-    public void createNickname(String nickname) {
+    public void setNickname(String nickname) {
         this.nickname = nickname;
     }
 }
