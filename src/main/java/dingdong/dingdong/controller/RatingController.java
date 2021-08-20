@@ -2,6 +2,7 @@ package dingdong.dingdong.controller;
 
 import dingdong.dingdong.domain.user.CurrentUser;
 import dingdong.dingdong.domain.user.User;
+import dingdong.dingdong.dto.rating.RatingRequestDto;
 import dingdong.dingdong.dto.rating.RatingResponseDto;
 import dingdong.dingdong.service.rating.RatingService;
 import dingdong.dingdong.service.rating.RatingType;
@@ -29,8 +30,8 @@ public class RatingController {
 
     // 평가 생성
     @PostMapping("/{userId}")
-    public ResponseEntity<Result> createRating(@CurrentUser User user, @PathVariable Long userId, @RequestBody RatingType type) {
-        ratingService.createRating(user, userId, type);
+    public ResponseEntity<Result> createRating(@CurrentUser User user, @PathVariable Long userId, @RequestBody RatingRequestDto ratingRequestDto) {
+        ratingService.createRating(user, userId, ratingRequestDto);
         return Result.toResult(ResultCode.RATING_CREATE_SUCCESS);
     }
 

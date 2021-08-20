@@ -12,11 +12,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class RatingResponseDto {
 
-    private int good;
+    private Long good;
 
-    private int bad;
+    private Long bad;
 
-    private int total;
+    private Long total;
 
     public static RatingResponseDto from(Profile profile) {
         return RatingResponseDto.builder()

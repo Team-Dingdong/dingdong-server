@@ -27,7 +27,6 @@ public class PostService {
     private final PostRepository postRepository;
     private final CategoryRepository categoryRepository;
     private final ProfileRepository profileRepository;
-    private final RatingRepository ratingRepository;
 
     // 홈화면 피드 GET
     public Page<PostGetResponseDto> findPosts(Long local1, Long local2, Pageable pageable){

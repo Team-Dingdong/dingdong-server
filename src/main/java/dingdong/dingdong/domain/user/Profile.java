@@ -34,13 +34,17 @@ public class Profile {
     }
 
     @ColumnDefault("0")
-    private int good;
+    private Long good;
 
     @ColumnDefault("0")
-    private int bad;
-
+    private Long bad;
 
     public void setNickname(String nickname) {
         this.nickname = nickname;
+    }
+
+    public void setRating(Long good, Long bad) {
+        this.good = good;
+        this.bad = bad;
     }
 }

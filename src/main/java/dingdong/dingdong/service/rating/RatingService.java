@@ -1,6 +1,7 @@
 package dingdong.dingdong.service.rating;
 
 import dingdong.dingdong.domain.user.*;
+import dingdong.dingdong.dto.rating.RatingRequestDto;
 import dingdong.dingdong.dto.rating.RatingResponseDto;
 import dingdong.dingdong.util.exception.ResourceNotFoundException;
 import dingdong.dingdong.util.exception.ResultCode;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 public class RatingService {
 
     private final ProfileRepository profileRepository;
+    private final UserRepository userRepository;
     private final RatingRepository ratingRepository;
 
     // 평가 조회
@@ -23,8 +25,18 @@ public class RatingService {
     }
 
     // 평가 생성
-    public void createRating(User user, Long userId, RatingType type) {
-        Rating rating = ratingRepository.findByUserId(userId).orElseThrow(() -> new ResourceNotFoundException(ResultCode.RATING_NOT_FOUND));
+    public void createRating(User sender, Long userId, RatingRequestDto ratingRequestDto) {
+        User receiver = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException(ResultCode.USER_NOT_FOUND));
+        Rating rating = ratingRepository.findBySenderAndReceiver(sender, receiver).orElse(new Rating(sender, receiver));
+        rating.setType(ratingRequestDto.getType());
+        Long goodCount = ratingRepository.countByReceiverAndType(receiver, RatingType.GOOD);
+        log.info("goodCount -> {}", goodCount);
+        Long badCount = ratingRepository.countByReceiverAndType(receiver, RatingType.BAD);
+        log.info("badCount -> {}", badCount);
+        Profile receiverProfile = profileRepository.findByUserId(userId).orElseThrow(() -> new ResourceNotFoundException(ResultCode.PROFILE_NOT_FOUND));
+        receiverProfile.setRating(goodCount, badCount);
+        ratingRepository.save(rating);
+        profileRepository.save(receiverProfile);
     }
 
 }
