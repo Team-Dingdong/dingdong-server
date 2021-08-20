@@ -34,6 +34,7 @@ public class AuthController {
     @PostMapping("/send-sms")
     public ResponseEntity<Result<MessageResponseDto>> sendSms(@RequestBody MessageRequestDto messageRequestDto) throws NoSuchAlgorithmException, URISyntaxException, UnsupportedEncodingException, InvalidKeyException, JsonProcessingException {
         MessageResponseDto data = authService.sendSms(messageRequestDto);
+        log.error("휴대폰 인증번호 전송 에러");
         return Result.toResult(ResultCode.SEND_SMS_SUCCESS, data);
     }
 
@@ -41,6 +42,7 @@ public class AuthController {
     @PostMapping("")
     public ResponseEntity<Result<TokenDto>> auth(@RequestBody AuthRequestDto authRequestDto) {
         Map<AuthType, TokenDto> data = authService.auth(authRequestDto);
+        log.error("휴대폰 인증번호 인증 에러");
         if(data.containsKey(AuthType.LOGIN)) {
             return Result.toResult(ResultCode.LOGIN_SUCCESS, data.get(AuthType.LOGIN));
         } else {
@@ -52,6 +54,7 @@ public class AuthController {
     @PostMapping("/nickname")
     public ResponseEntity<Result> nickname(@CurrentUser User user, @RequestBody NicknameRequestDto nicknameRequestDto) {
         authService.setNickname(user, nicknameRequestDto);
+        log.error("닉네임 설정 에러");
         return Result.toResult(ResultCode.NICKNAME_CREATE_SUCCESS);
     }
 
@@ -59,6 +62,7 @@ public class AuthController {
     @PostMapping("/local")
     public ResponseEntity<Result> local(@CurrentUser User user, @RequestBody LocalRequestDto localRequestDto) {
         authService.setLocal(user, localRequestDto);
+        log.error("동네 인증 에러");
         return Result.toResult(ResultCode.LOCAL_CREATE_SUCCESS);
     }
 }

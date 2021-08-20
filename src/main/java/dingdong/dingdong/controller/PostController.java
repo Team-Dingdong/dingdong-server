@@ -9,6 +9,7 @@ import dingdong.dingdong.service.post.PostService;
 import dingdong.dingdong.util.exception.Result;
 import dingdong.dingdong.util.exception.ResultCode;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/v1/post")
 @RequiredArgsConstructor
@@ -29,10 +31,11 @@ public class PostController {
     @GetMapping("")
     public ResponseEntity<Result<Page<PostGetResponseDto>>>  findPosts(@CurrentUser User user, @PageableDefault(size = 5, direction = Sort.Direction.DESC) Pageable pageable) {
 
-            Long local1 = user.getLocal1().getId();
-            Long local2 = user.getLocal2().getId();
-            Page<PostGetResponseDto> data = postService.findPosts(local1, local2, pageable);
-            return Result.toResult(ResultCode.POST_READ_SUCCESS, data);
+        Long local1 = user.getLocal1().getId();
+        Long local2 = user.getLocal2().getId();
+        log.error("전체 나누기 불러오기 에러");
+        Page<PostGetResponseDto> data = postService.findPosts(local1, local2, pageable);
+        return Result.toResult(ResultCode.POST_READ_SUCCESS, data);
 
     }
 
@@ -41,6 +44,7 @@ public class PostController {
     public ResponseEntity<Result<PostDetailResponseDto>> findPostById(@PathVariable Long post_id) {
 
         PostDetailResponseDto data = postService.findPostById(post_id);
+        log.error("나누기 상세보기 에러");
         ResultCode message = ResultCode.POST_READ_SUCCESS;
         return Result.toResult(message, data);
 
@@ -52,6 +56,7 @@ public class PostController {
                                             @PageableDefault(size = 5, direction = Sort.Direction.DESC) Pageable pageable){
             Long local1 = user.getLocal1().getId();
             Long local2 = user.getLocal2().getId();
+            log.error("카테고리 별로 나누기 피드들 불러오기 에러");
             Page<PostGetResponseDto> data = postService.findPostByCategory_Id(local1, local2, id, pageable);
             return Result.toResult(ResultCode.POST_READ_SUCCESS, data);
     }
@@ -62,6 +67,7 @@ public class PostController {
 
         Long id = user.getId();
         Page<PostGetResponseDto> postPage = postService.findPostByUser_Id(id, pageable);
+        log.error("유저 별로 나누기 피드들 불러오기 에러");
         return Result.toResult(ResultCode.POST_READ_SUCCESS, postPage);
 
     }
@@ -72,6 +78,7 @@ public class PostController {
 
         Long id = user.getId();
         postService.createPost(id,requestDto);
+        log.error("나누기 생성 에러");
         return Result.toResult(ResultCode.POST_CREATE_SUCCESS);
 
     }
@@ -79,16 +86,17 @@ public class PostController {
     // 나누기 삭제
    @DeleteMapping("/{id}")
     public ResponseEntity<Result> deletePost(@PathVariable Long id){
-
-           postService.deletePost(id);
-           return Result.toResult(ResultCode.POST_DELETE_SUCCESS);
+        postService.deletePost(id);
+        log.error("나누기 삭제 에러");
+        return Result.toResult(ResultCode.POST_DELETE_SUCCESS);
     }
 
     // 나누기 수정
     @PatchMapping("/{id}")
     public ResponseEntity<Result> updatePost(@Valid @RequestBody PostUpdateRequestDto request, @PathVariable Long id){
 
-            postService.updatePost(id, request);
-            return Result.toResult(ResultCode.POST_UPDATE_SUCCESS);
+        postService.updatePost(id, request);
+        log.error("나누기 수정 에러");
+        return Result.toResult(ResultCode.POST_UPDATE_SUCCESS);
     }
 }

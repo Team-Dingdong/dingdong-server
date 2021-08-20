@@ -32,6 +32,8 @@ public class S3Controller {
     public void PostUpload(@RequestParam("data") MultipartFile file, @PathVariable Long id) throws IOException {
         String path = s3Uploader.upload(file, "static");
 
+        log.error("이미지 업데이트 에러");
+
         Post optionalPost = postRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(POST_NOT_FOUND));
         Post post = optionalPost;
 
@@ -43,6 +45,8 @@ public class S3Controller {
     @ResponseBody
     public void ProfileUpload(@RequestParam("data") MultipartFile file, @PathVariable Long id) throws IOException {
         String path = s3Uploader.upload(file, "static");
+
+        log.error("이미지 업데이트 에러");
 
         Profile optionalProfile = profileRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(PROFILE_NOT_FOUND));
         Profile profile = optionalProfile;
