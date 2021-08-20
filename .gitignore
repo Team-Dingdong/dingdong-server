@@ -2,6 +2,14 @@ HELP.md
 *.yml
 .gradle
 
+# image
+*.PNG
+*.png
+*.JPEG
+*.jpeg
+*.JPG
+*.jpg
+
 # build
 build/
 !gradle/wrapper/gradle-wrapper.jar
