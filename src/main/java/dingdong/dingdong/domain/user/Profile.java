@@ -1,6 +1,7 @@
 package dingdong.dingdong.domain.user;
 
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
 
@@ -31,6 +32,13 @@ public class Profile {
         this.id = user.getId();
         this.user = user;
     }
+
+    @ColumnDefault("0")
+    private int good;
+
+    @ColumnDefault("0")
+    private int bad;
+
 
     public void setNickname(String nickname) {
         this.nickname = nickname;

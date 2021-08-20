@@ -9,7 +9,7 @@ import dingdong.dingdong.service.s3.S3Uploader;
 import dingdong.dingdong.util.exception.DuplicateException;
 import dingdong.dingdong.util.exception.ResourceNotFoundException;
 import dingdong.dingdong.util.exception.ResultCode;
-import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,7 +19,7 @@ import java.io.IOException;
 import static dingdong.dingdong.util.exception.ResultCode.PROFILE_NOT_FOUND;
 
 @Slf4j
-@Data
+@RequiredArgsConstructor
 @Service
 public class ProfileService {
 

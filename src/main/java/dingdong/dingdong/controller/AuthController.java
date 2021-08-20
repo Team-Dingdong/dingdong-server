@@ -23,8 +23,8 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Map;
 
 @Slf4j
-@RestController
 @RequiredArgsConstructor
+@RestController
 @RequestMapping("/api/v1/auth")
 public class AuthController {
 

@@ -1,7 +1,9 @@
 package dingdong.dingdong.domain.user;
 
-import lombok.*;
-import org.hibernate.annotations.ColumnDefault;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
@@ -12,25 +14,17 @@ import javax.persistence.*;
 @AllArgsConstructor
 public class Rating {
 
-    @Id
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "rating_id", nullable = false)
     private Long id;
 
-    @MapsId
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "user_id")
-    private User user;
+    @ManyToOne
+    @JoinColumn(name = "from")
+    private User from;
 
-    @ColumnDefault("0")
-    private int good;
+    @Id
+    @ManyToOne
+    @JoinColumn(name = "to")
+    private User to;
 
-    @ColumnDefault("0")
-    private int bad;
-
-    @ColumnDefault("0")
-    private int total;
-
-    public Rating(User user) {
-        this.id = user.getId();
-        this.user = user;
-    }
 }
