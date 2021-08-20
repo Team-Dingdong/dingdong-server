@@ -1,7 +1,6 @@
 package dingdong.dingdong.domain.user;
 
 import lombok.*;
-import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
 
