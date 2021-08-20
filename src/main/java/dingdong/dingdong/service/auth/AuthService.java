@@ -130,7 +130,7 @@ public class AuthService implements UserDetailsService {
     public void setNickname(User user, NicknameRequestDto nicknameRequestDto) {
         checkNickname(nicknameRequestDto.getNickname());
         Profile profile = profileRepository.findById(user.getId()).orElseThrow(() -> new ResourceNotFoundException(ResultCode.PROFILE_NOT_FOUND));
-        profile.createNickname(nicknameRequestDto.getNickname());
+        profile.setNickname(nicknameRequestDto.getNickname());
         profileRepository.save(profile);
     }
 
