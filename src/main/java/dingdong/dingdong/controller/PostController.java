@@ -1,8 +1,5 @@
 package dingdong.dingdong.controller;
 
-
-
-import dingdong.dingdong.service.s3.S3Uploader;
 import dingdong.dingdong.domain.user.*;
 import dingdong.dingdong.dto.Post.PostCreationRequestDto;
 import dingdong.dingdong.dto.Post.PostDetailResponseDto;
@@ -22,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
 @RestController
-@RequestMapping("/post")
+@RequestMapping("/api/v1/post")
 @RequiredArgsConstructor
 public class PostController {
 
@@ -36,6 +33,7 @@ public class PostController {
             Long local2 = user.getLocal2().getId();
             Page<PostGetResponseDto> data = postService.findPosts(local1, local2, pageable);
             return Result.toResult(ResultCode.POST_READ_SUCCESS, data);
+
     }
 
     // 특정 나누기 상세보기 불러오기

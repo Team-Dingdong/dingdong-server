@@ -39,7 +39,7 @@ public class S3Controller {
         postRepository.save(post);
     }
 
-    @PostMapping("/profile/image/{id}")
+    @PatchMapping("/profile/image/{id}")
     @ResponseBody
     public void ProfileUpload(@RequestParam("data") MultipartFile file, @PathVariable Long id) throws IOException {
         String path = s3Uploader.upload(file, "static");
