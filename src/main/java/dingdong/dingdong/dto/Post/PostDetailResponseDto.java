@@ -6,14 +6,16 @@ import javax.validation.constraints.NotNull;
 import dingdong.dingdong.domain.post.Category;
 import dingdong.dingdong.domain.post.Post;
 import dingdong.dingdong.domain.user.Profile;
+import dingdong.dingdong.domain.user.Rating;
 import lombok.Data;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Data
 @Getter
-public class PostDetailResponse {
+public class PostDetailResponseDto {
 
     @NotNull
     private String title;
@@ -29,8 +31,6 @@ public class PostDetailResponse {
 
     @NotNull
     private Number bad;
-
-    //private String tag_name;
 
     @NotNull
     private int cost;
@@ -55,21 +55,19 @@ public class PostDetailResponse {
 
     private String imageUrl;
 
-    public PostDetailResponse(String title, int cost, String bio, String imageUrl, LocalDateTime createdDate, LocalDateTime modifiedDate,
-                              int people, int gatheredPeople,String local, String nickname, String profile_bio, int good, int bad){
-        this.title = title;
-        this.cost = cost;
-        this.bio = bio;
-        this.imageUrl = imageUrl;
-        this.createdDate = createdDate;
-        this.modifiedDate = modifiedDate;
-        this.people = people;
-        this.gatheredPeople = gatheredPeople;
-        this.local = local;
-        this.nickname = nickname;
-        this.profile_bio = profile_bio;
-        this.good = good;
-        this.bad = bad;
-
+    public PostDetailResponseDto(Post post, Profile profile, Rating rating){
+        this.title = post.getTitle();
+        this.cost = post.getCost();
+        this.bio = post.getBio();
+        this.imageUrl = post.getImageUrl();
+        this.createdDate = post.getCreatedDate();
+        this.modifiedDate = post.getModifiedDate();
+        this.people = post.getPeople();
+        this.gatheredPeople = post.getGatheredPeople();
+        this.local = post.getLocal();
+        this.nickname = profile.getNickname();
+        this.profile_bio = profile.getProfile_bio();
+        this.good = rating.getGood();
+        this.bad = rating.getBad();
     }
 }
