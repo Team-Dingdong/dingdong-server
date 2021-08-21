@@ -31,13 +31,13 @@ public class S3Controller {
     public void PostUpload(@RequestParam("data") MultipartFile file, @PathVariable Long postId) throws IOException {
         String path = s3Uploader.upload(file, "static");
         Post post = postRepository.findById(postId).orElseThrow(() -> new ResourceNotFoundException(POST_NOT_FOUND));
-        log.error("이미지 업데이트 에러");
+        //log.error("이미지 업데이트 에러");
 
         post.setImageUrl(path);
         postRepository.save(post);
     }
 
-    @PostMapping("/profile/{profileId}")
+    @PatchMapping("/profile/{profileId}")
     @ResponseBody
     public void ProfileUpload(@RequestParam("data") MultipartFile file, @PathVariable Long profileId) throws IOException {
         String path = s3Uploader.upload(file, "static");
