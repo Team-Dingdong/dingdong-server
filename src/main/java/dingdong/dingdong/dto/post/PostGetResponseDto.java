@@ -1,9 +1,7 @@
-package dingdong.dingdong.dto.Post;
+package dingdong.dingdong.dto.post;
 
 import javax.validation.constraints.NotNull;
 
-import dingdong.dingdong.domain.post.Category;
-import dingdong.dingdong.domain.post.Post;
 import lombok.Data;
 import lombok.Getter;
 

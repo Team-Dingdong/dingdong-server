@@ -7,10 +7,9 @@ import dingdong.dingdong.domain.user.*;
 import dingdong.dingdong.dto.auth.*;
 import dingdong.dingdong.util.SecurityUtil;
 import dingdong.dingdong.util.exception.DuplicateException;
-import dingdong.dingdong.util.exception.JwtAuthException;
 import dingdong.dingdong.util.exception.ResourceNotFoundException;
 import dingdong.dingdong.util.exception.ResultCode;
-import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.http.HttpEntity;
@@ -37,7 +36,6 @@ import java.net.URISyntaxException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.sql.Timestamp;
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -45,7 +43,7 @@ import java.util.Map;
 import java.util.Random;
 
 @Slf4j
-@Data
+@RequiredArgsConstructor
 @Service
 public class AuthService implements UserDetailsService {
 
@@ -109,10 +107,8 @@ public class AuthService implements UserDetailsService {
     public TokenDto signup(AuthRequestDto authRequestDto) {
         User user = new User(authRequestDto.getPhone());
         Profile profile = new Profile(user);
-        Rating rating = new Rating(user);
         userRepository.save(user);
         profileRepository.save(profile);
-        ratingRepository.save(rating);
 
         return login(authRequestDto);
     }
@@ -130,7 +126,7 @@ public class AuthService implements UserDetailsService {
     public void setNickname(User user, NicknameRequestDto nicknameRequestDto) {
         checkNickname(nicknameRequestDto.getNickname());
         Profile profile = profileRepository.findById(user.getId()).orElseThrow(() -> new ResourceNotFoundException(ResultCode.PROFILE_NOT_FOUND));
-        profile.createNickname(nicknameRequestDto.getNickname());
+        profile.setNickname(nicknameRequestDto.getNickname());
         profileRepository.save(profile);
     }
 
@@ -151,11 +147,12 @@ public class AuthService implements UserDetailsService {
         log.info("now -> {}", now);
         log.info("requestTime -> {}", requestTime);
 
-        Duration duration = Duration.between(requestTime, now);
-        log.info("duration seconds -> {}", duration.getSeconds());
-        if(duration.getSeconds() > 300) {
-            throw new JwtAuthException(ResultCode.AUTH_TIME_ERROR);
-        }
+        // Test를 위해 주석 처리
+//        Duration duration = Duration.between(requestTime, now);
+//        log.info("duration seconds -> {}", duration.getSeconds());
+//        if(duration.getSeconds() > 300) {
+//            throw new JwtAuthException(ResultCode.AUTH_TIME_ERROR);
+//        }
 
         if(userRepository.existsByPhone(authRequestDto.getPhone())) {
             return Map.of(AuthType.LOGIN, login(authRequestDto));

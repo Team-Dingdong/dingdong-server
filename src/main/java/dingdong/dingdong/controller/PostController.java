@@ -1,10 +1,12 @@
 package dingdong.dingdong.controller;
 
-import dingdong.dingdong.domain.user.*;
-import dingdong.dingdong.dto.Post.PostCreationRequestDto;
-import dingdong.dingdong.dto.Post.PostDetailResponseDto;
-import dingdong.dingdong.dto.Post.PostGetResponseDto;
-import dingdong.dingdong.dto.Post.PostUpdateRequestDto;
+import dingdong.dingdong.domain.user.CurrentUser;
+import dingdong.dingdong.domain.user.User;
+import dingdong.dingdong.dto.post.PostCreationRequestDto;
+import dingdong.dingdong.dto.post.PostDetailResponseDto;
+import dingdong.dingdong.dto.post.PostGetResponseDto;
+import dingdong.dingdong.dto.post.PostUpdateRequestDto;
+
 import dingdong.dingdong.service.post.PostService;
 import dingdong.dingdong.util.exception.Result;
 import dingdong.dingdong.util.exception.ResultCode;
@@ -20,9 +22,9 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
 @Slf4j
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v1/post")
-@RequiredArgsConstructor
 public class PostController {
 
     private final PostService postService;
@@ -47,26 +49,22 @@ public class PostController {
         log.error("나누기 상세보기 에러");
         ResultCode message = ResultCode.POST_READ_SUCCESS;
         return Result.toResult(message, data);
-
     }
 
     // 카테고리 별로 나누기 피드들 불러오기
-    @GetMapping("/category/{id}")
-    public ResponseEntity<Result<Page<PostGetResponseDto>>>  findPostByCategory_Id(@CurrentUser User user, @PathVariable Long id,
-                                            @PageableDefault(size = 5, direction = Sort.Direction.DESC) Pageable pageable){
-            Long local1 = user.getLocal1().getId();
-            Long local2 = user.getLocal2().getId();
-            log.error("카테고리 별로 나누기 피드들 불러오기 에러");
-            Page<PostGetResponseDto> data = postService.findPostByCategory_Id(local1, local2, id, pageable);
-            return Result.toResult(ResultCode.POST_READ_SUCCESS, data);
+    @GetMapping("/category/{categoryId}")
+    public ResponseEntity<Result<Page<PostGetResponseDto>>> findPostByCategoryId(@CurrentUser User user, @PathVariable Long categoryId, @PageableDefault(size = 5, direction = Sort.Direction.DESC) Pageable pageable){
+        Long local1 = user.getLocal1().getId();
+        Long local2 = user.getLocal2().getId();
+        log.error("카테고리 별로 나누기 피드들 불러오기 에러");
+        Page<PostGetResponseDto> data = postService.findPostByCategoryId(local1, local2, categoryId, pageable);
+        return Result.toResult(ResultCode.POST_READ_SUCCESS, data);
     }
 
     // 유저 별로 나누기 피드들 불러오기
     @GetMapping("/user")
-    public ResponseEntity<Result<Page<PostGetResponseDto>>> findPostByUser_Id(@CurrentUser User user, @PageableDefault(size = 5, direction = Sort.Direction.DESC) Pageable pageable){
-
-        Long id = user.getId();
-        Page<PostGetResponseDto> postPage = postService.findPostByUser_Id(id, pageable);
+    public ResponseEntity<Result<Page<PostGetResponseDto>>> findPostByUserId(@CurrentUser User user, @PageableDefault(size = 5, direction = Sort.Direction.DESC) Pageable pageable){
+        Page<PostGetResponseDto> postPage = postService.findPostByUserId(user, pageable);
         log.error("유저 별로 나누기 피드들 불러오기 에러");
         return Result.toResult(ResultCode.POST_READ_SUCCESS, postPage);
 
@@ -76,25 +74,25 @@ public class PostController {
     @PostMapping("")
     public ResponseEntity<Result> createPost(@CurrentUser User user, @Valid @RequestBody PostCreationRequestDto requestDto) {
 
-        Long id = user.getId();
-        postService.createPost(id,requestDto);
+        postService.createPost(user, requestDto);
         log.error("나누기 생성 에러");
         return Result.toResult(ResultCode.POST_CREATE_SUCCESS);
 
     }
 
     // 나누기 삭제
-   @DeleteMapping("/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Result> deletePost(@PathVariable Long id){
-        postService.deletePost(id);
+
+       postService.deletePost(id);
         log.error("나누기 삭제 에러");
-        return Result.toResult(ResultCode.POST_DELETE_SUCCESS);
+       return Result.toResult(ResultCode.POST_DELETE_SUCCESS);
+
     }
 
     // 나누기 수정
     @PatchMapping("/{id}")
     public ResponseEntity<Result> updatePost(@Valid @RequestBody PostUpdateRequestDto request, @PathVariable Long id){
-
         postService.updatePost(id, request);
         log.error("나누기 수정 에러");
         return Result.toResult(ResultCode.POST_UPDATE_SUCCESS);
