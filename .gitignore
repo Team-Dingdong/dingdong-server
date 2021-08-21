@@ -2,6 +2,8 @@ HELP.md
 *.yml
 .gradle
 
+<<<<<<< HEAD
+=======
 # image
 *.PNG
 *.png
@@ -9,6 +11,7 @@ HELP.md
 *.jpeg
 *.JPG
 *.jpg
+>>>>>>> 0cfe7e2303b99a18c3189217b10555aeb5f94bfc
 
 # build
 build/
