@@ -30,8 +30,8 @@ public class S3Controller {
     @ResponseBody
     public void PostUpload(@RequestParam("data") MultipartFile file, @PathVariable Long postId) throws IOException {
         String path = s3Uploader.upload(file, "static");
-
         Post post = postRepository.findById(postId).orElseThrow(() -> new ResourceNotFoundException(POST_NOT_FOUND));
+        log.error("이미지 업데이트 에러");
 
         post.setImageUrl(path);
         postRepository.save(post);
@@ -41,9 +41,9 @@ public class S3Controller {
     @ResponseBody
     public void ProfileUpload(@RequestParam("data") MultipartFile file, @PathVariable Long profileId) throws IOException {
         String path = s3Uploader.upload(file, "static");
-
         Profile profile = profileRepository.findById(profileId).orElseThrow(() -> new ResourceNotFoundException(PROFILE_NOT_FOUND));
 
+        log.error("이미지 업데이트 에러");
         profile.setProfileImageUrl(path);
         profileRepository.save(profile);
     }
