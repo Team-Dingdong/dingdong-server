@@ -17,10 +17,10 @@
         </layout>
 
         <!-- Hardcoded Log Group Name -->
-        <logGroupName>YAPP-log</logGroupName>
+        <logGroupName>Spring-log</logGroupName>
 
         <!-- Log Stream Name UUID Prefix -->
-        <logStreamUuidPrefix>YAPP/</logStreamUuidPrefix>
+        <logStreamUuidPrefix>mystream/</logStreamUuidPrefix>
 
         <!-- AWS Region -->
         <logRegion>ap-northeast-2</logRegion>
@@ -43,6 +43,7 @@
         <!-- possible values -->
 
         <retentionTimeDays>0</retentionTimeDays>
+
     </appender>
 
     <!-- A console output -->
