@@ -2,7 +2,6 @@ package dingdong.dingdong.dto.post;
 
 import dingdong.dingdong.domain.post.Post;
 import dingdong.dingdong.domain.user.Profile;
-import dingdong.dingdong.domain.user.Rating;
 import lombok.Data;
 import lombok.Getter;
 
