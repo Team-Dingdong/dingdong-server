@@ -10,7 +10,7 @@ import dingdong.dingdong.util.exception.DuplicateException;
 import dingdong.dingdong.util.exception.JwtAuthException;
 import dingdong.dingdong.util.exception.ResourceNotFoundException;
 import dingdong.dingdong.util.exception.ResultCode;
-import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.http.HttpEntity;
@@ -45,7 +45,7 @@ import java.util.Map;
 import java.util.Random;
 
 @Slf4j
-@Data
+@RequiredArgsConstructor
 @Service
 public class AuthService implements UserDetailsService {
 
@@ -109,10 +109,8 @@ public class AuthService implements UserDetailsService {
     public TokenDto signup(AuthRequestDto authRequestDto) {
         User user = new User(authRequestDto.getPhone());
         Profile profile = new Profile(user);
-        Rating rating = new Rating(user);
         userRepository.save(user);
         profileRepository.save(profile);
-        ratingRepository.save(rating);
 
         return login(authRequestDto);
     }

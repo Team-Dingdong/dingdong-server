@@ -1,15 +1,13 @@
 package dingdong.dingdong.dto.post;
 
-import javax.validation.constraints.NotNull;
-import dingdong.dingdong.domain.post.Category;
 import dingdong.dingdong.domain.post.Post;
 import dingdong.dingdong.domain.user.Profile;
 import dingdong.dingdong.domain.user.Rating;
 import lombok.Data;
 import lombok.Getter;
 
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 @Data
 @Getter
@@ -53,7 +51,7 @@ public class PostDetailResponseDto {
 
     private String imageUrl;
 
-    public PostDetailResponseDto(Post post, Profile profile, Rating rating){
+    public PostDetailResponseDto(Post post, Profile profile){
         this.title = post.getTitle();
         this.cost = post.getCost();
         this.bio = post.getBio();
@@ -65,7 +63,7 @@ public class PostDetailResponseDto {
         this.local = post.getLocal();
         this.nickname = profile.getNickname();
         this.profile_bio = profile.getProfile_bio();
-        this.good = rating.getGood();
-        this.bad = rating.getBad();
+        this.good = profile.getGood();
+        this.bad = profile.getBad();
     }
 }

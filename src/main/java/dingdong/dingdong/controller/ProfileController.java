@@ -11,13 +11,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
 @Slf4j
-@RestController
 @RequiredArgsConstructor
+@RestController
 @RequestMapping("/api/v1/profile")
 public class ProfileController {
 
@@ -37,10 +36,4 @@ public class ProfileController {
         return Result.toResult(ResultCode.PROFILE_UPDATE_SUCCESS);
     }
 
-
-    // 평가 조회
-
-    // 평가 생성
-
-    // 신고 하기
 }

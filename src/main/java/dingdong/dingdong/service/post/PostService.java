@@ -20,14 +20,13 @@ import org.springframework.stereotype.Service;
 
 import static dingdong.dingdong.util.exception.ResultCode.*;
 
-@Service
 @RequiredArgsConstructor
+@Service
 public class PostService {
 
     private final PostRepository postRepository;
     private final CategoryRepository categoryRepository;
     private final ProfileRepository profileRepository;
-    private final RatingRepository ratingRepository;
 
     // 홈화면 피드 GET
     public Page<PostGetResponseDto> findPosts(Long local1, Long local2, Pageable pageable){
@@ -47,9 +46,8 @@ public class PostService {
     public PostDetailResponseDto findPostById(Long id){
         Post post = postRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(POST_NOT_FOUND));
         Profile profile = profileRepository.findByUserId(post.getUser().getId()).orElseThrow(() -> new ResourceNotFoundException(PROFILE_NOT_FOUND));
-        Rating rating = ratingRepository.findByUserId(post.getUser().getId()).orElseThrow(() ->  new ResourceNotFoundException(RATING_NOT_FOUND));
 
-        PostDetailResponseDto postDetail = new PostDetailResponseDto(post, profile, rating);
+        PostDetailResponseDto postDetail = new PostDetailResponseDto(post, profile);
         return postDetail;
     }
 

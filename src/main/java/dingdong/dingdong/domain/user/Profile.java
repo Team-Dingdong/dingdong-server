@@ -1,6 +1,7 @@
 package dingdong.dingdong.domain.user;
 
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
 
@@ -27,6 +28,12 @@ public class Profile {
     @Column(columnDefinition = "TEXT")
     private String profileImageUrl;
 
+    @ColumnDefault("0")
+    private Long good;
+
+    @ColumnDefault("0")
+    private Long bad;
+
     public Profile(User user) {
         this.id = user.getId();
         this.user = user;
@@ -34,5 +41,10 @@ public class Profile {
 
     public void setNickname(String nickname) {
         this.nickname = nickname;
+    }
+
+    public void setRating(Long good, Long bad) {
+        this.good = good;
+        this.bad = bad;
     }
 }
