@@ -28,16 +28,16 @@ public class Profile {
     @Column(columnDefinition = "TEXT")
     private String profileImageUrl;
 
-    public Profile(User user) {
-        this.id = user.getId();
-        this.user = user;
-    }
-
     @ColumnDefault("0")
     private Long good;
 
     @ColumnDefault("0")
     private Long bad;
+
+    public Profile(User user) {
+        this.id = user.getId();
+        this.user = user;
+    }
 
     public void setNickname(String nickname) {
         this.nickname = nickname;

@@ -199,7 +199,7 @@ public class AuthService implements UserDetailsService {
         // restTemplate로 post 요청을 보낸다. 성공하면 202 코드가 반환된다.
         RestTemplate restTemplate = new RestTemplate();
         restTemplate.setRequestFactory(new HttpComponentsClientHttpRequestFactory());
-        SendSmsResponseDto sendSmsResponseDto = restTemplate.postForObject(new URI("https://sens.apigw.ntruss.com/sms/v2/services/"+applicationNaverSENS.getServiceId()+"/messages"), body, SendSmsResponseDto.class);
+        SendSmsResponseDto sendSmsResponseDto = restTemplate.postForObject(new URI("\"https://sens.apigw.ntruss.com/sms/v2/services/\"+applicationNaverSENS.getServiceId()+\"/messages\""), body, SendSmsResponseDto.class);
         log.info(sendSmsResponseDto.getStatusCode());
 
         if(sendSmsResponseDto.getStatusCode().equals("202")) {
@@ -214,6 +214,7 @@ public class AuthService implements UserDetailsService {
         }
 
         return new MessageResponseDto(sendSmsResponseDto.getRequestId(), sendSmsResponseDto.getRequestTime());
+
     }
 
     public String makeSignature(Long time) throws UnsupportedEncodingException, NoSuchAlgorithmException, InvalidKeyException {

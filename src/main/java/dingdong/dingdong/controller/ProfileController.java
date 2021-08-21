@@ -35,4 +35,5 @@ public class ProfileController {
         profileService.updateProfile(user, profileUpdateRequestDto);
         return Result.toResult(ResultCode.PROFILE_UPDATE_SUCCESS);
     }
+
 }
