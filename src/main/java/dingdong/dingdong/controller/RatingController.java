@@ -5,7 +5,6 @@ import dingdong.dingdong.domain.user.User;
 import dingdong.dingdong.dto.rating.RatingRequestDto;
 import dingdong.dingdong.dto.rating.RatingResponseDto;
 import dingdong.dingdong.service.rating.RatingService;
-import dingdong.dingdong.service.rating.RatingType;
 import dingdong.dingdong.util.exception.Result;
 import dingdong.dingdong.util.exception.ResultCode;
 import lombok.RequiredArgsConstructor;
@@ -21,10 +20,18 @@ public class RatingController {
 
     private final RatingService ratingService;
 
-    // 평가 조회
+    // 본인 평가 조회
     @GetMapping("")
     public ResponseEntity<Result<RatingResponseDto>> getRating(@CurrentUser User user) {
-        RatingResponseDto data = ratingService.getRating(user);
+        Long id = user.getId();
+        RatingResponseDto data = ratingService.getRating(id);
+        return Result.toResult(ResultCode.RATING_READ_SUCCESS, data);
+    }
+
+    // 평가 조회
+    @GetMapping("/{userId}")
+    public ResponseEntity<Result<RatingResponseDto>> getRating(@PathVariable Long userId) {
+        RatingResponseDto data = ratingService.getRating(userId);
         return Result.toResult(ResultCode.RATING_READ_SUCCESS, data);
     }
 

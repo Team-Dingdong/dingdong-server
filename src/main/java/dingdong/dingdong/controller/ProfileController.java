@@ -22,10 +22,18 @@ public class ProfileController {
 
     private final ProfileService profileService;
 
-    // 프로필 조회
+    // 본인 프로필 조회
     @GetMapping("")
-    public ResponseEntity<Result<ProfileResponseDto>> getProfile(@CurrentUser User user) {
-        ProfileResponseDto data = profileService.getProfile(user);
+    public ResponseEntity<Result<ProfileResponseDto>> getMyProfile(@CurrentUser User user) {
+        Long id = user.getId();
+        ProfileResponseDto data = profileService.getProfile(id);
+        return Result.toResult(ResultCode.PROFILE_READ_SUCCESS, data);
+    }
+
+    // 프로필 조회
+    @GetMapping("/{userId}")
+    public ResponseEntity<Result<ProfileResponseDto>> getProfile(@PathVariable Long userId) {
+        ProfileResponseDto data = profileService.getProfile(userId);
         return Result.toResult(ResultCode.PROFILE_READ_SUCCESS, data);
     }
 

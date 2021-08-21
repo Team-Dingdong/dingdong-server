@@ -28,8 +28,8 @@ public class ProfileService {
 
     // 프로필 조회
     @Transactional
-    public ProfileResponseDto getProfile(User user) {
-        Profile profile = profileRepository.findByUserId(user.getId()).orElseThrow(() -> new ResourceNotFoundException(ResultCode.PROFILE_NOT_FOUND));
+    public ProfileResponseDto getProfile(Long id) {
+        Profile profile = profileRepository.findByUserId(id).orElseThrow(() -> new ResourceNotFoundException(ResultCode.PROFILE_NOT_FOUND));
         return ProfileResponseDto.from(profile);
     }
 
