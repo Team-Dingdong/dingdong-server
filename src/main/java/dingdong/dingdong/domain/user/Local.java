@@ -8,9 +8,6 @@ import lombok.NoArgsConstructor;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Getter
@@ -26,9 +23,4 @@ public class Local {
     @Column(nullable = false)
     private String name;
 
-    @OneToMany(mappedBy = "local1")
-    private List<User> users1 = new ArrayList<>();
-
-    @OneToMany(mappedBy = "local2")
-    private List<User> users2 = new ArrayList<>();
 }

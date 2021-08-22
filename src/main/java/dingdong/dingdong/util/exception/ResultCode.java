@@ -15,6 +15,11 @@ public enum ResultCode {
     CHECK_EMAIL_SUCCESS(OK, "사용가능한 이메일입니다"),
     CHECK_NICKNAME_SUCCESS(OK, "사용가능한 닉네임입니다"),
 
+    PROFILE_READ_SUCCESS(OK, "프로필 조회 성공"),
+    PROFILE_UPDATE_SUCCESS(OK, "프로필 수정 성공"),
+
+    RATING_READ_SUCCESS(OK, "평가 조회 성공"),
+
     POST_READ_SUCCESS(OK, "포스트 조회 성공"),
     POST_DELETE_SUCCESS(OK, "포스트 삭제 성공"),
     POST_UPDATE_SUCCESS(OK, "포스트 수정 성공"),
@@ -24,6 +29,9 @@ public enum ResultCode {
     SEND_SMS_SUCCESS(CREATED, "인증 번호 전송 성공"),
 
     NICKNAME_CREATE_SUCCESS(CREATED, "닉네임 설정 성공"),
+    LOCAL_CREATE_SUCCESS(CREATED, "동네 설정 성공"),
+
+    RATING_CREATE_SUCCESS(CREATED, "평가 생성 성공"),
 
     POST_CREATE_SUCCESS(CREATED, "포스트 생성 성공"),
     POST_LIKE_CREATE_SUCCESS(CREATED, "포스트 좋아요 생성 성공"),
