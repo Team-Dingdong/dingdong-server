@@ -35,7 +35,7 @@ public class PostService {
         Page<PostGetResponseDto> pagingList = postList.map(
             post -> new PostGetResponseDto(
                 post.getTitle(), post.getPeople(), post.getCost(),
-                post.getBio(), post.getImageUrl(), post.getLocal(),
+                post.getBio(), post.getImageUrl1(), post.getLocal(),
                 post.getCreatedDate()
             ));
 
@@ -59,7 +59,7 @@ public class PostService {
         Page<PostGetResponseDto> pagingList = postList.map(
             post -> new PostGetResponseDto(
                 post.getTitle(), post.getPeople(), post.getCost(),
-                post.getBio(), post.getImageUrl(), post.getLocal(),
+                post.getBio(), post.getImageUrl1(), post.getLocal(),
                 post.getCreatedDate()
             ));
         return pagingList;
@@ -72,7 +72,7 @@ public class PostService {
         Page<PostGetResponseDto> pagingList = postList.map(
             post -> new PostGetResponseDto(
                 post.getTitle(), post.getPeople(), post.getCost(),
-                post.getBio(), post.getImageUrl(), post.getLocal(),
+                post.getBio(), post.getImageUrl1(), post.getLocal(),
                 post.getCreatedDate()
             ));
         return pagingList;
@@ -124,7 +124,6 @@ public class PostService {
         post.setCost(request.getCost());
         post.setBio(request.getBio());
         post.setLocal(request.getLocal());
-        post.setImageUrl(request.getImageUrl());
 
         postRepository.save(post);
     }

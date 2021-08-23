@@ -9,7 +9,6 @@ public class PostUpdateRequestDto {
     private int people;
     private int cost;
     private String bio;
-    private String imageUrl;
     private String local;
     private Long categoryId;
 }
