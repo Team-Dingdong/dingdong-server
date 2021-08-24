@@ -2,6 +2,7 @@ package dingdong.dingdong.domain.post;
 
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import dingdong.dingdong.domain.BaseTimeEntity;
 import dingdong.dingdong.domain.user.User;
 import lombok.*;
@@ -42,15 +43,11 @@ public class Post extends BaseTimeEntity {
     @Column(nullable = false)
     private String bio;
 
-    @Column(columnDefinition = "TEXT")
     private String imageUrl1;
 
-    @Column(columnDefinition = "TEXT")
     private String imageUrl2;
 
-    @Column(columnDefinition = "TEXT")
     private String imageUrl3;
-
 
     @Column(columnDefinition = "boolean default false")
     private boolean done;

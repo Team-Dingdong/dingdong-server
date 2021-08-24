@@ -29,14 +29,26 @@ public class PostController {
 
     private final PostService postService;
 
-    // 모든 나누기 불러오기
-    @GetMapping("")
-    public ResponseEntity<Result<Page<PostGetResponseDto>>>  findPosts(@CurrentUser User user, @PageableDefault(size = 5, direction = Sort.Direction.DESC) Pageable pageable) {
+    // 모든 나누기 불러오기(최신순으로)
+    @GetMapping("/sorted_by=desc(createdDate)")
+    public ResponseEntity<Result<Page<PostGetResponseDto>>> findPostsSortByCreatedDate(@CurrentUser User user, @PageableDefault(size = 5, direction = Sort.Direction.DESC) Pageable pageable) {
 
         Long local1 = user.getLocal1().getId();
         Long local2 = user.getLocal2().getId();
         log.error("전체 나누기 불러오기 에러");
-        Page<PostGetResponseDto> data = postService.findPosts(local1, local2, pageable);
+        Page<PostGetResponseDto> data = postService.findAllByCreateDate(local1, local2, pageable);
+        return Result.toResult(ResultCode.POST_READ_SUCCESS, data);
+
+    }
+
+    // 모든 나누기 불러오기(마감임박순으로)
+    @GetMapping("/sorted_by=desc(endDate)")
+    public ResponseEntity<Result<Page<PostGetResponseDto>>> findPostsSortByEndDate(@CurrentUser User user, @PageableDefault(size = 5, direction = Sort.Direction.DESC) Pageable pageable) {
+
+        Long local1 = user.getLocal1().getId();
+        Long local2 = user.getLocal2().getId();
+        log.error("전체 나누기 불러오기 에러");
+        Page<PostGetResponseDto> data = postService.findAllByEndDate(local1, local2, pageable);
         return Result.toResult(ResultCode.POST_READ_SUCCESS, data);
 
     }

@@ -28,9 +28,9 @@ public class PostService {
     private final CategoryRepository categoryRepository;
     private final ProfileRepository profileRepository;
 
-    // 홈화면 피드 GET
-    public Page<PostGetResponseDto> findPosts(Long local1, Long local2, Pageable pageable){
-        Page<Post> postList = postRepository.findAll(local1, local2, pageable);
+    // 홈화면 피드 GET(최신순으로 정렬)
+    public Page<PostGetResponseDto> findAllByCreateDate(Long local1, Long local2, Pageable pageable){
+        Page<Post> postList = postRepository.findAllByCreateDate(local1, local2, pageable);
 
         Page<PostGetResponseDto> pagingList = postList.map(
             post -> new PostGetResponseDto(
@@ -38,6 +38,20 @@ public class PostService {
                 post.getBio(), post.getImageUrl1(), post.getLocal(),
                 post.getCreatedDate()
             ));
+
+        return pagingList;
+    }
+
+    // 홈화면 피드 GET(마감일자 순으로 정렬)
+    public Page<PostGetResponseDto> findAllByEndDate(Long local1, Long local2, Pageable pageable){
+        Page<Post> postList = postRepository.findAllByEndDate(local1, local2, pageable);
+
+        Page<PostGetResponseDto> pagingList = postList.map(
+                post -> new PostGetResponseDto(
+                        post.getTitle(), post.getPeople(), post.getCost(),
+                        post.getBio(), post.getImageUrl1(), post.getLocal(),
+                        post.getCreatedDate()
+                ));
 
         return pagingList;
     }
