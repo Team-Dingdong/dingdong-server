@@ -6,10 +6,9 @@ import dingdong.dingdong.domain.post.Post;
 import dingdong.dingdong.domain.post.PostRepository;
 import dingdong.dingdong.domain.user.*;
 
-import dingdong.dingdong.dto.post.PostCreationRequestDto;
+import dingdong.dingdong.dto.post.PostRequestDto;
 import dingdong.dingdong.dto.post.PostDetailResponseDto;
 import dingdong.dingdong.dto.post.PostGetResponseDto;
-import dingdong.dingdong.dto.post.PostUpdateRequestDto;
 
 import dingdong.dingdong.util.exception.ForbiddenException;
 import dingdong.dingdong.util.exception.ResourceNotFoundException;
@@ -28,16 +27,24 @@ public class PostService {
     private final CategoryRepository categoryRepository;
     private final ProfileRepository profileRepository;
 
-    // 홈화면 피드 GET
-    public Page<PostGetResponseDto> findPosts(Long local1, Long local2, Pageable pageable){
-        Page<Post> postList = postRepository.findAll(local1, local2, pageable);
+    // 홈화면 피드 GET(최신순으로 정렬)
+    public Page<PostGetResponseDto> findAllByCreateDate(Long local1, Long local2, Pageable pageable){
+        Page<Post> postList = postRepository.findAllByCreateDate(local1, local2, pageable);
 
         Page<PostGetResponseDto> pagingList = postList.map(
-            post -> new PostGetResponseDto(
-                post.getTitle(), post.getPeople(), post.getCost(),
-                post.getBio(), post.getImageUrl(), post.getLocal(),
-                post.getCreatedDate()
-            ));
+            post -> PostGetResponseDto.from(post)
+        );
+
+        return pagingList;
+    }
+
+    // 홈화면 피드 GET(마감일자 순으로 정렬)
+    public Page<PostGetResponseDto> findAllByEndDate(Long local1, Long local2, Pageable pageable){
+        Page<Post> postList = postRepository.findAllByEndDate(local1, local2, pageable);
+
+        Page<PostGetResponseDto> pagingList = postList.map(
+                post ->  PostGetResponseDto.from(post)
+        );
 
         return pagingList;
     }
@@ -57,11 +64,8 @@ public class PostService {
         Page<Post> postList = postRepository.findByCategoryId(local1, local2, category.getId(),  pageable);
 
         Page<PostGetResponseDto> pagingList = postList.map(
-            post -> new PostGetResponseDto(
-                post.getTitle(), post.getPeople(), post.getCost(),
-                post.getBio(), post.getImageUrl(), post.getLocal(),
-                post.getCreatedDate()
-            ));
+            post -> PostGetResponseDto.from(post)
+        );
         return pagingList;
     }
 
@@ -70,17 +74,14 @@ public class PostService {
         Page<Post> postList = postRepository.findByUserId(user.getId(), pageable);
 
         Page<PostGetResponseDto> pagingList = postList.map(
-            post -> new PostGetResponseDto(
-                post.getTitle(), post.getPeople(), post.getCost(),
-                post.getBio(), post.getImageUrl(), post.getLocal(),
-                post.getCreatedDate()
-            ));
+            post -> PostGetResponseDto.from(post)
+        );
         return pagingList;
     }
 
 
     // 나누기 피드(post) 생성
-    public void createPost(User user, PostCreationRequestDto request) {
+    public void createPost(User user, PostRequestDto request) {
         Post post = new Post();
         if(request == null) {
             throw new ForbiddenException(POST_CREATE_FAIL);
@@ -88,18 +89,9 @@ public class PostService {
 
         // CategoryId
         Category category = categoryRepository.findById(request.getCategoryId()).orElseThrow(() -> new ResourceNotFoundException(CATEGORY_NOT_FOUND));
-        post.setCategory(category);
 
-        // UserId
+        post.setPost(category, request);
         post.setUser(user);
-
-        // title, people, price, bio, imageUrl
-        post.setTitle(request.getTitle());
-        post.setPeople(request.getPeople());
-        post.setCost(request.getCost());
-        post.setBio(request.getBio());
-        post.setLocal(request.getLocal());
-        post.setDone(false);
 
         postRepository.save(post);
     }
@@ -111,21 +103,25 @@ public class PostService {
     }
 
     // 나누기 피드(post) 수정
-    public void updatePost(Long id, PostUpdateRequestDto request){
-        Post optionalPost = postRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(POST_NOT_FOUND));
-        Post post = optionalPost;
+    public void updatePost(Long id, PostRequestDto request){
+        Post post = postRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(POST_NOT_FOUND));
 
         // CategoryId
         Category category = categoryRepository.findById(request.getCategoryId()).orElseThrow(() -> new ResourceNotFoundException(CATEGORY_NOT_FOUND));
-        post.setCategory(category);
 
-        post.setTitle(request.getTitle());
-        post.setPeople(request.getPeople());
-        post.setCost(request.getCost());
-        post.setBio(request.getBio());
-        post.setLocal(request.getLocal());
-        post.setImageUrl(request.getImageUrl());
-
+        post.setPost(category, request);
         postRepository.save(post);
     }
+
+    // 제목, 카테고리 검색 기능
+    public Page<PostGetResponseDto> searchPosts(String keyword, Long local1, Long local2, Pageable pageable){
+        Page<Post> postList = postRepository.findAllSearch(keyword, local1, local2, pageable);
+
+        Page<PostGetResponseDto> pagingList = postList.map(
+                post -> PostGetResponseDto.from(post)
+        );
+
+        return pagingList;
+    }
+
 }
