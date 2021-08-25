@@ -1,6 +1,7 @@
 package dingdong.dingdong.service.chat;
 
-import dingdong.dingdong.domain.chat.ChatRoom;
+import dingdong.dingdong.dto.chat.ChatRoom;
+import dingdong.dingdong.domain.post.Post;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -23,7 +24,7 @@ public class ChatService {
     // Redis
     private static final String CHAT_ROOMS = "CHAT_ROOM";
     private final RedisTemplate<String, Object> redisTemplate;
-    private HashOperations<String, String, ChatRoom> opsHashChatRoom;
+    private HashOperations<String, Long, ChatRoom> opsHashChatRoom;
     // 채팅방의 대화 메시지를 발행하기 위한 redis topic 정보. 서버별로 채팅방에 매치되는 topic정보를 Map에 넣어 roomId로 찾을수 있도록 한다.
     private Map<String, ChannelTopic> topics;
 
@@ -44,25 +45,8 @@ public class ChatService {
     /**
      * 채팅방 생성 : 서버간 채팅방 공유를 위해 redis hash에 저장한다.
      */
-    public ChatRoom createChatRoom(String name) {
-        ChatRoom chatRoom = new ChatRoom(name);
+    public void createChatRoom(Post post) {
+        ChatRoom chatRoom = ChatRoom.create(post);
         opsHashChatRoom.put(CHAT_ROOMS, chatRoom.getId(), chatRoom);
-        return chatRoom;
-    }
-
-    /**
-     * 채팅방 입장 : redis에 topic을 만들고 pub/sub 통신을 하기 위해 리스너를 설정한다.
-     */
-    public void enterChatRoom(String roomId) {
-        ChannelTopic topic = topics.get(roomId);
-        if (topic == null) {
-            topic = new ChannelTopic(roomId);
-            redisMessageListener.addMessageListener(redisSubscriber, topic);
-            topics.put(roomId, topic);
-        }
-    }
-
-    public ChannelTopic getTopic(String roomId) {
-        return topics.get(roomId);
     }
 }

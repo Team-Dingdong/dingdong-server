@@ -34,7 +34,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                .mvcMatchers( "/console", "api/v1/auth", "api/v1/auth/send-sms", "/api/docs").permitAll()
+                .mvcMatchers( "/console", "/", "/static/**", "/webjars/**", "/ws-stomp/**", "/api/v1/auth", "/api/v1/auth/send-sms", "/api/docs").permitAll()
                 .anyRequest().authenticated();
         http.cors()
                 .disable();
@@ -62,4 +62,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
     }
+
+
 }

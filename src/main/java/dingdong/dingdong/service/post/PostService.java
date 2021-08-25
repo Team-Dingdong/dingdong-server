@@ -11,6 +11,7 @@ import dingdong.dingdong.dto.post.PostDetailResponseDto;
 import dingdong.dingdong.dto.post.PostGetResponseDto;
 import dingdong.dingdong.dto.post.PostUpdateRequestDto;
 
+import dingdong.dingdong.service.chat.ChatService;
 import dingdong.dingdong.util.exception.ForbiddenException;
 import dingdong.dingdong.util.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +28,7 @@ public class PostService {
     private final PostRepository postRepository;
     private final CategoryRepository categoryRepository;
     private final ProfileRepository profileRepository;
+    private final ChatService chatService;
 
     // 홈화면 피드 GET
     public Page<PostGetResponseDto> findPosts(Long local1, Long local2, Pageable pageable){
@@ -102,6 +104,7 @@ public class PostService {
         post.setDone(false);
 
         postRepository.save(post);
+        chatService.createChatRoom(post);
     }
     
     // 나누기 피드(post) 제거

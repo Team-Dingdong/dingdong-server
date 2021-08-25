@@ -1,4 +1,4 @@
-package dingdong.dingdong.domain.chat;
+package dingdong.dingdong.dto.chat;
 
 import lombok.Data;
 
@@ -9,4 +9,5 @@ public class ChatMessage {
     private String roomId;
     private String sender;
     private String message;
+    private Long userCount;
 }
