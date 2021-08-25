@@ -26,6 +26,8 @@ public enum ResultCode {
 
     IMAGE_UPLOAD_SUCCESS(OK, "이미지 업로드 성공"),
 
+    SEARCH_SUCCESS(OK, "검색 성공"),
+
     /* 201 CREATED */
     SIGNUP_SUCCESS(CREATED, "회원 가입 성공"),
     SEND_SMS_SUCCESS(CREATED, "인증 번호 전송 성공"),

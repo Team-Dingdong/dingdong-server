@@ -5,7 +5,7 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public class PostCreationRequestDto {
+public class PostRequestDto {
     private String title;
     private int people;
     private int cost;

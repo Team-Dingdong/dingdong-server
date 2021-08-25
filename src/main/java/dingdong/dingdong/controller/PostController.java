@@ -2,10 +2,9 @@ package dingdong.dingdong.controller;
 
 import dingdong.dingdong.domain.user.CurrentUser;
 import dingdong.dingdong.domain.user.User;
-import dingdong.dingdong.dto.post.PostCreationRequestDto;
+import dingdong.dingdong.dto.post.PostRequestDto;
 import dingdong.dingdong.dto.post.PostDetailResponseDto;
 import dingdong.dingdong.dto.post.PostGetResponseDto;
-import dingdong.dingdong.dto.post.PostUpdateRequestDto;
 
 import dingdong.dingdong.service.post.PostService;
 import dingdong.dingdong.util.exception.Result;
@@ -84,7 +83,7 @@ public class PostController {
 
     // 나누기 생성
     @PostMapping("")
-    public ResponseEntity<Result> createPost(@CurrentUser User user, @Valid @RequestBody PostCreationRequestDto requestDto) {
+    public ResponseEntity<Result> createPost(@CurrentUser User user, @Valid @RequestBody PostRequestDto requestDto) {
 
         postService.createPost(user, requestDto);
         log.error("나누기 생성 에러");
@@ -104,9 +103,21 @@ public class PostController {
 
     // 나누기 수정
     @PatchMapping("/{id}")
-    public ResponseEntity<Result> updatePost(@Valid @RequestBody PostUpdateRequestDto request, @PathVariable Long id){
+    public ResponseEntity<Result> updatePost(@Valid @RequestBody PostRequestDto request, @PathVariable Long id){
         postService.updatePost(id, request);
         log.error("나누기 수정 에러");
         return Result.toResult(ResultCode.POST_UPDATE_SUCCESS);
     }
+
+    // 검색 기능 구현
+    //키워드로 제목과 카테고리 검색
+   @GetMapping("/search")
+    public ResponseEntity<Result<Page<PostGetResponseDto>>> search(@RequestParam(value = "keyword") String keyword, @CurrentUser User user, @PageableDefault(size = 5, direction = Sort.Direction.DESC) Pageable pageable) {
+
+        Long local1 = user.getLocal1().getId();
+        Long local2 = user.getLocal2().getId();
+        Page<PostGetResponseDto> data = postService.searchPosts(keyword, local1, local2, pageable);
+        return Result.toResult(ResultCode.SEARCH_SUCCESS, data);
+    }
+
 }

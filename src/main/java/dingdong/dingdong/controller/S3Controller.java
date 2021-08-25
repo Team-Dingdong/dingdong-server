@@ -44,8 +44,9 @@ public class S3Controller {
         Post post = postRepository.findById(postId).orElseThrow(() -> new ResourceNotFoundException(POST_NOT_FOUND));
 
         while(paths.size() < 3){
-            paths.add("empty");
+            paths.add("null");
         }
+
         post.setImageUrl1(paths.get(0));
         post.setImageUrl2(paths.get(1));
         post.setImageUrl3(paths.get(2));

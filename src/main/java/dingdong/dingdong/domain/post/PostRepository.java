@@ -28,4 +28,10 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     Page<Post> findByCategoryId(Long local1, Long local2, Long category_id, Pageable pageable);
 
     Page<Post> findByUserId(Long UserId, Pageable pageable);
+
+    @Query(value = "select * from post, user, category where post.user_id = user.user_id AND post.category_id = category.category_id AND" +
+            "(post.title LIKE %:keyword% OR  category.name LIKE %:keyword%)AND (user.local1 = :local1 or user.local2 = :local2)",
+            countQuery = "select count(*) from post",
+            nativeQuery = true)
+    Page<Post> findAllSearch(String keyword, Long local1,Long local2, Pageable pageable);
 }

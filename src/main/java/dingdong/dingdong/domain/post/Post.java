@@ -2,9 +2,9 @@ package dingdong.dingdong.domain.post;
 
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import dingdong.dingdong.domain.BaseTimeEntity;
 import dingdong.dingdong.domain.user.User;
+import dingdong.dingdong.dto.post.PostRequestDto;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicUpdate;
@@ -78,4 +78,14 @@ public class Post extends BaseTimeEntity {
         }
     }
 
+    // title, people, price, bio, local, done
+    public void setPost(Category category, PostRequestDto request) {
+        this.category = category;
+        this.title = request.getTitle();
+        this.people = request.getPeople();
+        this.cost = request.getCost();
+        this.bio = request.getBio();
+        this.local = request.getLocal();
+        this.done = false;
+    }
 }
