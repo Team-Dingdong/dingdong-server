@@ -16,13 +16,14 @@ function connect() {
     var socket = new SockJS('/ws-stomp');
     stompClient = Stomp.over(socket);
 
-    let headers = {Authorization: localStorage.getItem('access_token')};
+    let headers = {Authorization: "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIwMTAxMTExMTExMSIsImF1dGgiOiJST0xFX1VTRVIiLCJleHAiOjE2MzAwNzQxODR9.aukE4zCSf8uCH_Bwl8vl2xC2qt0D_164YPR_-xFT-xeLIgFkjkEnVS7JTOtn3T_8w0-nYibm7K_YPxndOv3U0A"};
 
     stompClient.connect(headers, function (frame) {
         setConnected(true);
         console.log('Connected: ' + frame);
-        stompClient.subscribe('/topic/chat/room/1', function (greeting) {
-            showGreeting(JSON.parse(greeting.body).content);
+        stompClient.subscribe('/topic/chat/room/1', function (message) {
+            console.log(message);
+            showGreeting(JSON.parse(message.body).content);
         });
     });
 }
@@ -36,7 +37,9 @@ function disconnect() {
 }
 
 function sendName() {
-    stompClient.send("/pub/chat/message", {}, JSON.stringify({'roomId':'1','sender':'hello', 'type':'ENTER', 'message': $("#name").val()}));
+    let headers = {Authorization: "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIwMTAxMTExMTExMSIsImF1dGgiOiJST0xFX1VTRVIiLCJleHAiOjE2MzAwNzYxNzZ9.11p5t1hfCYZw5zyrvwbSnGow-J3PIrqFB0Ov5FKng4pIQ728AEvZ415kIcxAWWDJFhaI3RcYlslROcdzU_sMaw"};
+
+    stompClient.send("/pub/chat/message", headers, JSON.stringify({'roomId':'1','sender':'test_nickname1', 'type':'TALK', 'message': $("#name").val()}));
 }
 
 function showGreeting(message) {

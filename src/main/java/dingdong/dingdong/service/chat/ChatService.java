@@ -15,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
 import java.util.List;
@@ -40,13 +41,13 @@ public class ChatService {
 
     public List<ChatRoomResponseDto> findAllRoom(User user) {
         log.info("opsHashChatRoom : {}", opsHashChatRoom.keys(CHAT_ROOMS));
-        log.info("opsHashChatRoom-value : {}", opsHashChatRoom.values("2"));
         List<ChatJoin> chatJoins = chatJoinRepository.findAllByUser(user);
         List<ChatRoom> chatRooms = chatJoins.stream().map(ChatJoin::getChatRoom).collect(Collectors.toList());
         List<ChatRoomResponseDto> data = chatRooms.stream().map(ChatRoomResponseDto::from).collect(Collectors.toList());
         return data;
     }
 
+    @Transactional
     public ChatRoomResponseDto findRoomById(String id) {
         RedisChatRoom redisChatRoom = opsHashChatRoom.get(CHAT_ROOMS, id);
         log.info("redisChatRoom : {}", redisChatRoom);

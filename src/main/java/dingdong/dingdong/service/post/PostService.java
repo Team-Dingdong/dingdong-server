@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import static dingdong.dingdong.util.exception.ResultCode.*;
 
@@ -83,6 +84,7 @@ public class PostService {
 
 
     // 나누기 피드(post) 생성
+    @Transactional
     public void createPost(User user, PostRequestDto request) {
         Post post = new Post();
         if(request == null) {

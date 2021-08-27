@@ -1,12 +1,14 @@
 package dingdong.dingdong.domain.chat;
 
 import dingdong.dingdong.domain.user.User;
+import dingdong.dingdong.dto.chat.RedisChatMessage;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -28,4 +30,13 @@ public class ChatMessage {
 
     private MessageType type;
     private String message;
+    private LocalDateTime sendTime;
+
+    public ChatMessage(ChatRoom chatRoom, User user, RedisChatMessage redisChatMessage) {
+        this.chatRoom = chatRoom;
+        this.sender = user;
+        this.type = redisChatMessage.getType();
+        this.message = redisChatMessage.getMessage();
+        this.sendTime = LocalDateTime.now();
+    }
 }

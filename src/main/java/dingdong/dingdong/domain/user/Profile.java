@@ -2,6 +2,7 @@ package dingdong.dingdong.domain.user;
 
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 
@@ -11,6 +12,7 @@ import javax.persistence.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@DynamicUpdate
 public class Profile {
 
     @Id
@@ -33,6 +35,18 @@ public class Profile {
 
     @ColumnDefault("0")
     private Long bad;
+
+    /**
+     * insert 되기전 (persist 되기전) 실행된다.
+     *
+     * null을 제외하고 insert 하기 위해 사용.
+     * 또는 @DynamicInsert를 사용하면 된다.
+     * */
+    @PrePersist
+    public void prePersist() {
+        this.good = this.good == null ? 0 : this.good;
+        this.bad = this.bad == null ? 0 : this.bad;
+    }
 
     public Profile(User user) {
         this.id = user.getId();

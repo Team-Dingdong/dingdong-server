@@ -14,8 +14,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 public class RedisChatRoom implements Serializable {
 
-    private String
-            roomId;
+    private String roomId;
     private String title;
 
     public RedisChatRoom(ChatRoom chatRoom) {

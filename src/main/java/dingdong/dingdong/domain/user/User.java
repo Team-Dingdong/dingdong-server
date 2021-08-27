@@ -46,6 +46,9 @@ public class User extends BaseTimeEntity {
     @JsonManagedReference
     private List<Post> posts = new ArrayList<>();
 
+    @OneToOne(mappedBy = "user")
+    private Profile profile;
+
     public User(String phone) {
         this.phone = phone;
         this.authority = "ROLE_USER";

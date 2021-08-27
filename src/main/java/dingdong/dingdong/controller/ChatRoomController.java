@@ -1,11 +1,12 @@
 package dingdong.dingdong.controller;
 
-import dingdong.dingdong.domain.post.Category;
 import dingdong.dingdong.domain.post.Post;
+import dingdong.dingdong.domain.post.PostRepository;
 import dingdong.dingdong.domain.user.CurrentUser;
 import dingdong.dingdong.domain.user.User;
 import dingdong.dingdong.dto.chat.ChatRoomResponseDto;
 import dingdong.dingdong.service.chat.ChatService;
+import dingdong.dingdong.util.exception.ResourceNotFoundException;
 import dingdong.dingdong.util.exception.Result;
 import dingdong.dingdong.util.exception.ResultCode;
 import lombok.RequiredArgsConstructor;
@@ -21,14 +22,14 @@ import java.util.List;
 @RequestMapping("/api/v1/chat")
 public class ChatRoomController {
 
+    private final PostRepository postRepository;
     private final ChatService chatService;
 
     // 채팅방 생성
     @PostMapping("/room")
     public ResponseEntity<Result> createRoom(@CurrentUser User user) {
-        String id = "2";
-        Category category = new Category(Long.parseLong(id), "육류");
-        Post post = new Post(Long.parseLong(id), "test_post", 2000, 4, 0, "정릉동", "hello", "url", false, category, user);
+        int id = 1;
+        Post post = postRepository.findById(Long.valueOf(id)).orElseThrow(() -> new ResourceNotFoundException(ResultCode.POST_NOT_FOUND));
         chatService.createChatRoom(post);
         return Result.toResult(ResultCode.CHAT_ROOM_CREATE_SUCCESS);
     }

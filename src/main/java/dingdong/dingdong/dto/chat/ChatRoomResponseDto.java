@@ -33,7 +33,7 @@ public class ChatRoomResponseDto {
                 .gatheredPeople(chatRoom.getPost().getGatheredPeople())
                 .lastChatMessage(chatRoom.getLastChatMessage())
                 .lastChatTime(chatRoom.getLastChatTime())
-                .imageUrl(chatRoom.getPost().getImageUrl())
+                .imageUrl(chatRoom.getPost().getImageUrl1())
                 .build();
     }
 }
