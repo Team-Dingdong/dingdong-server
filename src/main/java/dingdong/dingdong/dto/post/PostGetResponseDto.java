@@ -16,6 +16,9 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PostGetResponseDto {
+    
+    @NotNull
+    private Long id;
 
     @NotNull
     private String title;
@@ -38,6 +41,7 @@ public class PostGetResponseDto {
 
     public static PostGetResponseDto from(Post post) {
         return PostGetResponseDto.builder()
+                .id(post.getId())
                 .title(post.getTitle())
                 .people(post.getPeople())
                 .cost(post.getCost())
