@@ -7,8 +7,8 @@ import javax.persistence.*;
 
 @Entity
 @Getter
-@Builder
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class Profile {

@@ -1,7 +1,7 @@
 package dingdong.dingdong.service.chat;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import dingdong.dingdong.dto.chat.ChatMessage;
+import dingdong.dingdong.dto.chat.RedisChatMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
@@ -20,10 +20,13 @@ public class RedisSubscriber {
      */
     public void sendMessage(String publishMessage) {
         try {
+            log.info("publishMessage : {}", publishMessage);
             // ChatMessage 객채로 맵핑
-            ChatMessage chatMessage = objectMapper.readValue(publishMessage, ChatMessage.class);
+            RedisChatMessage redisChatMessage = objectMapper.readValue(publishMessage, RedisChatMessage.class);
+            log.info("redisChatMessage : {}", redisChatMessage);
             // 채팅방을 구독한 클라이언트에게 메시지 발송
-            messagingTemplate.convertAndSend("/sub/chat/room/" + chatMessage.getRoomId(), chatMessage);
+            messagingTemplate.convertAndSend("/sub/chat/room/" + redisChatMessage.getRoomId(), redisChatMessage);
+            //  + redisChatMessage.getRoomId()
         } catch (Exception e) {
             log.error("Exception {}", e);
         }

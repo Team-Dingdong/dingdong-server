@@ -1,52 +1,66 @@
 package dingdong.dingdong.service.chat;
 
-import dingdong.dingdong.dto.chat.ChatRoom;
+import dingdong.dingdong.domain.chat.ChatJoin;
+import dingdong.dingdong.domain.chat.ChatJoinRepository;
+import dingdong.dingdong.domain.chat.ChatRoom;
+import dingdong.dingdong.domain.chat.ChatRoomRepository;
 import dingdong.dingdong.domain.post.Post;
+import dingdong.dingdong.domain.user.User;
+import dingdong.dingdong.dto.chat.ChatRoomResponseDto;
+import dingdong.dingdong.dto.chat.RedisChatRoom;
+import dingdong.dingdong.util.exception.ResourceNotFoundException;
+import dingdong.dingdong.util.exception.ResultCode;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.listener.ChannelTopic;
-import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.stream.Collectors;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class ChatService {
-    // 채팅방(topic)에 발행되는 메시지를 처리할 Listner
-    private final RedisMessageListenerContainer redisMessageListener;
-    // 구독 처리 서비스
-    private final RedisSubscriber redisSubscriber;
+
+    private final ChatJoinRepository chatJoinRepository;
+    private final ChatRoomRepository chatRoomRepository;
+
     // Redis
-    private static final String CHAT_ROOMS = "CHAT_ROOM";
-    private final RedisTemplate<String, Object> redisTemplate;
-    private HashOperations<String, Long, ChatRoom> opsHashChatRoom;
-    // 채팅방의 대화 메시지를 발행하기 위한 redis topic 정보. 서버별로 채팅방에 매치되는 topic정보를 Map에 넣어 roomId로 찾을수 있도록 한다.
-    private Map<String, ChannelTopic> topics;
+    private static final String CHAT_ROOMS = "chatroom";
+    private final RedisTemplate<String, RedisChatRoom> redisTemplate;
+    private HashOperations<String, String, RedisChatRoom> opsHashChatRoom;
 
     @PostConstruct
     private void init() {
         opsHashChatRoom = redisTemplate.opsForHash();
-        topics = new HashMap<>();
     }
 
-    public List<ChatRoom> findAllRoom() {
-        return opsHashChatRoom.values(CHAT_ROOMS);
+    public List<ChatRoomResponseDto> findAllRoom(User user) {
+        log.info("opsHashChatRoom : {}", opsHashChatRoom.keys(CHAT_ROOMS));
+        log.info("opsHashChatRoom-value : {}", opsHashChatRoom.values("2"));
+        List<ChatJoin> chatJoins = chatJoinRepository.findAllByUser(user);
+        List<ChatRoom> chatRooms = chatJoins.stream().map(ChatJoin::getChatRoom).collect(Collectors.toList());
+        List<ChatRoomResponseDto> data = chatRooms.stream().map(ChatRoomResponseDto::from).collect(Collectors.toList());
+        return data;
     }
 
-    public ChatRoom findRoomById(String id) {
-        return opsHashChatRoom.get(CHAT_ROOMS, id);
+    public ChatRoomResponseDto findRoomById(String id) {
+        RedisChatRoom redisChatRoom = opsHashChatRoom.get(CHAT_ROOMS, id);
+        log.info("redisChatRoom : {}", redisChatRoom);
+        ChatRoom chatRoom = chatRoomRepository.findByPostId(Long.parseLong(redisChatRoom.getRoomId())).orElseThrow(() -> new ResourceNotFoundException(ResultCode.CHAT_ROOM_NOT_FOUND));
+        return ChatRoomResponseDto.from(chatRoom);
     }
 
     /**
      * 채팅방 생성 : 서버간 채팅방 공유를 위해 redis hash에 저장한다.
      */
     public void createChatRoom(Post post) {
-        ChatRoom chatRoom = ChatRoom.create(post);
-        opsHashChatRoom.put(CHAT_ROOMS, chatRoom.getId(), chatRoom);
+        ChatRoom chatRoom = new ChatRoom(post);
+        RedisChatRoom redisChatRoom = new RedisChatRoom(chatRoom);
+        opsHashChatRoom.put(CHAT_ROOMS, redisChatRoom.getRoomId(), redisChatRoom);
+        chatRoomRepository.save(chatRoom);
     }
 }

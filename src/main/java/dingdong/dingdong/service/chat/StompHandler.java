@@ -10,4 +10,17 @@ import org.springframework.stereotype.Component;
 @Component
 public class StompHandler implements ChannelInterceptor {
 
+//    private final TokenProvider tokenProvider;
+//
+//    @Override
+//    public Message<?> preSend(Message<?> message, MessageChannel channel) {
+//        StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
+//        log.info("message : {}", message);
+//        log.info("header : {}", message.getHeaders());
+//        log.info("token : {}", accessor.getNativeHeader("Authorization"));
+//        if(StompCommand.CONNECT.equals(accessor.getCommand())) {
+//            tokenProvider.validateToken(accessor.getFirstNativeHeader("Authorization").substring(7));
+//        }
+//        return message;
+//    }
 }

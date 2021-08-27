@@ -1,4 +1,4 @@
-package dingdong.dingdong.dto.chat;
+package dingdong.dingdong.domain.chat;
 
 public enum MessageType {
 

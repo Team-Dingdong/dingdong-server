@@ -15,10 +15,13 @@ function setConnected(connected) {
 function connect() {
     var socket = new SockJS('/ws-stomp');
     stompClient = Stomp.over(socket);
-    stompClient.connect({}, function (frame) {
+
+    let headers = {Authorization: localStorage.getItem('access_token')};
+
+    stompClient.connect(headers, function (frame) {
         setConnected(true);
         console.log('Connected: ' + frame);
-        stompClient.subscribe('/sub/chat/room', function (greeting) {
+        stompClient.subscribe('/topic/chat/room/1', function (greeting) {
             showGreeting(JSON.parse(greeting.body).content);
         });
     });
@@ -33,7 +36,7 @@ function disconnect() {
 }
 
 function sendName() {
-    stompClient.send("/pub/chat/message", {}, JSON.stringify({'message': $("#name").val()}));
+    stompClient.send("/pub/chat/message", {}, JSON.stringify({'roomId':'1','sender':'hello', 'type':'ENTER', 'message': $("#name").val()}));
 }
 
 function showGreeting(message) {
