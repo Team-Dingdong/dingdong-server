@@ -7,6 +7,7 @@ import lombok.Getter;
 
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @Getter
@@ -48,13 +49,19 @@ public class PostDetailResponseDto {
     @NotNull
     private int gatheredPeople;
 
-    private String imageUrl;
+    private String imageUrl1;
+
+    private String imageUrl2;
+
+    private String imageUrl3;
 
     public PostDetailResponseDto(Post post, Profile profile){
         this.title = post.getTitle();
         this.cost = post.getCost();
         this.bio = post.getBio();
-        this.imageUrl = post.getImageUrl();
+        this.imageUrl1 = post.getImageUrl1();
+        this.imageUrl2 = post.getImageUrl2();
+        this.imageUrl3 = post.getImageUrl3();
         this.createdDate = post.getCreatedDate();
         this.modifiedDate = post.getModifiedDate();
         this.people = post.getPeople();

@@ -26,6 +26,9 @@ public enum ResultCode {
 
     CHAT_ROOM_READ_ALL_SUCCESS(OK, "채팅방 전체 조회 성공"),
     CHAT_ROOM_READ_SUCCESS(OK, "채팅방 조회 성공"),
+    IMAGE_UPLOAD_SUCCESS(OK, "이미지 업로드 성공"),
+
+    SEARCH_SUCCESS(OK, "검색 성공"),
 
     /* 201 CREATED */
     SIGNUP_SUCCESS(CREATED, "회원 가입 성공"),
@@ -56,6 +59,7 @@ public enum ResultCode {
     POST_DELETE_FAIL(BAD_REQUEST, "포스트 삭제 실패"),
     POST_UPDATE_FAIL(BAD_REQUEST, "포스트 수정 실패"),
 
+    POSTNUMBER_NOT_FOUND(BAD_REQUEST, "해당 나누기를 업로드 할 수 없습니다."),
 
     /* 401 UNAUTHORIZED : 인증되지 않은 사용자 */
     INVALID_AUTH_TOKEN(HttpStatus.UNAUTHORIZED, "권한 정보가 없는 토큰입니다"),
