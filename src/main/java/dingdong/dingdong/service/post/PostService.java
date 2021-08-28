@@ -7,12 +7,14 @@ import dingdong.dingdong.dto.post.PostRequestDto;
 import dingdong.dingdong.dto.post.PostDetailResponseDto;
 import dingdong.dingdong.dto.post.PostGetResponseDto;
 
+import dingdong.dingdong.service.chat.ChatService;
 import dingdong.dingdong.util.exception.ForbiddenException;
 import dingdong.dingdong.util.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import static dingdong.dingdong.util.exception.ResultCode.*;
 
@@ -21,10 +23,11 @@ import static dingdong.dingdong.util.exception.ResultCode.*;
 public class PostService {
 
     private final PostRepository postRepository;
+    private final PostTagRepository postTagRepository;
     private final CategoryRepository categoryRepository;
     private final ProfileRepository profileRepository;
     private final TagRepository tagRepository;
-    private final PostTagRepository postTagRepository;
+    private final ChatService chatService;
 
     // 홈화면 피드 GET(최신순으로 정렬)
     public Page<PostGetResponseDto> findAllByCreateDate(Long local1, Long local2, Pageable pageable){
@@ -33,6 +36,7 @@ public class PostService {
         Page<PostGetResponseDto> pagingList = postList.map(
             post -> PostGetResponseDto.from(post)
         );
+
 
         return pagingList;
     }
@@ -52,7 +56,10 @@ public class PostService {
     public PostDetailResponseDto findPostById(Long id){
         Post post = postRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(POST_NOT_FOUND));
         Profile profile = profileRepository.findByUserId(post.getUser().getId()).orElseThrow(() -> new ResourceNotFoundException(PROFILE_NOT_FOUND));
-        PostDetailResponseDto postDetail = new PostDetailResponseDto(post, profile);
+        PostTag postTag = postTagRepository.findByPost(post).orElseThrow(() -> new ResourceNotFoundException(POSTTAG_NOT_FOUND));
+        Tag tag = tagRepository.findById(postTag.getId()).orElseThrow(() -> new ResourceNotFoundException(TAG_NOT_FOUND));
+
+        PostDetailResponseDto postDetail = new PostDetailResponseDto(post, profile, tag);
         return postDetail;
     }
 
@@ -79,6 +86,8 @@ public class PostService {
 
 
     // 나누기 피드(post) 생성
+
+    @Transactional
     public Long createPost(User user, PostRequestDto request) {
         Post post = new Post();
         if(request == null) {
@@ -91,8 +100,6 @@ public class PostService {
         post.setPost(category, request);
         post.setUser(user);
 
-        // post 테이블에 저장
-        postRepository.save(post);
         postRepository.flush();
 
         String str = request.getPostTag();
@@ -115,6 +122,7 @@ public class PostService {
             postTagRepository.save(postTag);
         }
 
+        chatService.createChatRoom(post);
         return post.getId();
 
     }

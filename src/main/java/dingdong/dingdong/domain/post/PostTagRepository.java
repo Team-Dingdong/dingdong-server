@@ -7,4 +7,6 @@ import java.util.Optional;
 
 @Repository
 public interface PostTagRepository extends JpaRepository<PostTag, Long> {
+
+    Optional<PostTag> findByPost(Post post);
 }

@@ -24,6 +24,8 @@ public enum ResultCode {
     POST_DELETE_SUCCESS(OK, "포스트 삭제 성공"),
     POST_UPDATE_SUCCESS(OK, "포스트 수정 성공"),
 
+    CHAT_ROOM_READ_ALL_SUCCESS(OK, "채팅방 전체 조회 성공"),
+    CHAT_ROOM_READ_SUCCESS(OK, "채팅방 조회 성공"),
     IMAGE_UPLOAD_SUCCESS(OK, "이미지 업로드 성공"),
 
     TAG_UPDATE_SUCCESS(OK, "해시태그 업로드 성공"),
@@ -42,6 +44,8 @@ public enum ResultCode {
     POST_CREATE_SUCCESS(CREATED, "포스트 생성 성공"),
     POST_LIKE_CREATE_SUCCESS(CREATED, "포스트 좋아요 생성 성공"),
     POST_COMMENT_CREATE_SUCCESS(CREATED, "포스트 댓글 생성 성공"),
+
+    CHAT_ROOM_CREATE_SUCCESS(CREATED, "채팅방 생성 성공"),
 
     /* 400 BAD_REQUEST : 잘못된 요청 */
     AUTH_NOT_FOUND(BAD_REQUEST, "해당 사용자의 인증 정보를 찾을 수 없습니다"),
@@ -71,9 +75,12 @@ public enum ResultCode {
     USER_NOT_FOUND(NOT_FOUND, "해당 유저 정보를 찾을 수 없습니다"),
     REFRESH_TOKEN_NOT_FOUND(NOT_FOUND, "로그아웃 된 사용자입니다"),
     POST_NOT_FOUND(NOT_FOUND, "해당 포스트를 찾을 수 없습니다"),
-    CATEGORY_NOT_FOUND(NOT_FOUND, "해당 카테고리를 찾을 수 없습니다."),
-    PROFILE_NOT_FOUND(NOT_FOUND, "해당 프로필을 찾을 수 없습니다."),
-    RATING_NOT_FOUND(NOT_FOUND, "해당 유저에 대한 평가를 찾을 수 없습니다."),
+    CATEGORY_NOT_FOUND(NOT_FOUND, "해당 카테고리를 찾을 수 없습니다"),
+    PROFILE_NOT_FOUND(NOT_FOUND, "해당 프로필을 찾을 수 없습니다"),
+    RATING_NOT_FOUND(NOT_FOUND, "해당 유저에 대한 평가를 찾을 수 없습니다"),
+    CHAT_ROOM_NOT_FOUND(NOT_FOUND, "해당 채팅방을 찾을 수 없습니다"),
+    POSTTAG_NOT_FOUND(NOT_FOUND, "해당 PostTag를 찾을 수 없습니다"),
+    TAG_NOT_FOUND(NOT_FOUND, "해당 태그를 찾을 수 없습니다"),
 
     /* 409 CONFLICT : Resource 의 현재 상태와 충돌. 보통 중복된 데이터 존재 */
     DUPLICATE_RESOURCE(CONFLICT, "데이터가 이미 존재합니다"),

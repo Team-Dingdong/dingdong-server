@@ -16,7 +16,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PostGetResponseDto {
-
+    
     @NotNull
     private Long id;
 
@@ -38,6 +38,8 @@ public class PostGetResponseDto {
     private LocalDateTime createdDate;
 
     private String imageUrl1;
+
+    private String tag;
 
     public static PostGetResponseDto from(Post post) {
         return PostGetResponseDto.builder()

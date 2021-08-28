@@ -1,9 +1,11 @@
 package dingdong.dingdong.dto.post;
 
 import dingdong.dingdong.domain.post.Post;
+import dingdong.dingdong.domain.post.Tag;
 import dingdong.dingdong.domain.user.Profile;
 import lombok.Data;
 import lombok.Getter;
+import lombok.Setter;
 
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
@@ -11,6 +13,7 @@ import java.util.List;
 
 @Data
 @Getter
+@Setter
 public class PostDetailResponseDto {
 
     @NotNull
@@ -57,7 +60,7 @@ public class PostDetailResponseDto {
 
     private String tag;
 
-    public PostDetailResponseDto(Post post, Profile profile){
+    public PostDetailResponseDto(Post post, Profile profile, Tag tag){
         this.title = post.getTitle();
         this.cost = post.getCost();
         this.bio = post.getBio();
@@ -73,5 +76,6 @@ public class PostDetailResponseDto {
         this.profile_bio = profile.getProfile_bio();
         this.good = profile.getGood();
         this.bad = profile.getBad();
+        this.tag = tag.getName();
     }
 }
