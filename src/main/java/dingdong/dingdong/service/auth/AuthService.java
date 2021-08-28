@@ -135,6 +135,9 @@ public class AuthService implements UserDetailsService {
     public void setLocal(User user, LocalRequestDto localRequestDto) {
         Local local1 = localRepository.findByName(localRequestDto.getLocal1());
         Local local2 = localRepository.findByName(localRequestDto.getLocal2());
+        if(local1 == null || local2 == null) {
+            throw new ResourceNotFoundException(ResultCode.LOCAL_NOT_FOUND);
+        }
         user.setLocal(local1, local2);
         userRepository.save(user);
     }

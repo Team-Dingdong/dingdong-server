@@ -1,10 +1,7 @@
 package dingdong.dingdong.service.chat;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import dingdong.dingdong.domain.chat.ChatMessage;
-import dingdong.dingdong.domain.chat.ChatRoom;
-import dingdong.dingdong.domain.chat.ChatRoomRepository;
-import dingdong.dingdong.domain.chat.MessageType;
+import dingdong.dingdong.domain.chat.*;
 import dingdong.dingdong.domain.user.User;
 import dingdong.dingdong.domain.user.UserRepository;
 import dingdong.dingdong.dto.chat.RedisChatMessage;
@@ -23,6 +20,7 @@ public class RedisSubscriber {
     private final ObjectMapper objectMapper;
     private final SimpMessageSendingOperations messagingTemplate;
     private final ChatRoomRepository chatRoomRepository;
+    private final ChatMessageRepository chatMessageRepository;
     private final UserRepository userRepository;
 
     /**
@@ -39,17 +37,22 @@ public class RedisSubscriber {
             // 채팅방을 구독한 클라이언트에게 메시지 발송
             messagingTemplate.convertAndSend("/sub/chat/room/" + redisChatMessage.getRoomId(), redisChatMessage);
 
+            // 메시지로부터 채팅방 DB 찾기
             ChatRoom chatRoom = chatRoomRepository.findByPostId(Long.parseLong(redisChatMessage.getRoomId())).orElseThrow(() -> new ResourceNotFoundException(ResultCode.CHAT_ROOM_NOT_FOUND));
+
+            // 메시지로부터 회원 DB 찾기
             User user = userRepository.findByPhone(redisChatMessage.getSender());
             if(user == null) {
                 throw new ResourceNotFoundException(ResultCode.USER_NOT_FOUND);
             }
-            ChatMessage chatMessage = new ChatMessage(chatRoom, user, redisChatMessage);
-            log.info("chatRoom : {}", chatRoom);
-            log.info("chatMessage : {}", chatMessage);
+
             if(MessageType.ENTER.equals(redisChatMessage.getType())) {
 
             }
+            // 메시지 DB에 저장하기 위해 객체 생성
+            ChatMessage chatMessage = new ChatMessage(chatRoom, user, redisChatMessage);
+            chatMessageRepository.save(chatMessage);
+
         } catch (Exception e) {
             log.error("Exception {}", e);
         }

@@ -75,6 +75,7 @@ public enum ResultCode {
     PROFILE_NOT_FOUND(NOT_FOUND, "해당 프로필을 찾을 수 없습니다"),
     RATING_NOT_FOUND(NOT_FOUND, "해당 유저에 대한 평가를 찾을 수 없습니다"),
     CHAT_ROOM_NOT_FOUND(NOT_FOUND, "해당 채팅방을 찾을 수 없습니다"),
+    LOCAL_NOT_FOUND(NOT_FOUND, "해당 동네를 찾을 수 없습니다"),
 
     /* 409 CONFLICT : Resource 의 현재 상태와 충돌. 보통 중복된 데이터 존재 */
     DUPLICATE_RESOURCE(CONFLICT, "데이터가 이미 존재합니다"),
