@@ -10,12 +10,14 @@ import dingdong.dingdong.dto.post.PostRequestDto;
 import dingdong.dingdong.dto.post.PostDetailResponseDto;
 import dingdong.dingdong.dto.post.PostGetResponseDto;
 
+import dingdong.dingdong.service.chat.ChatService;
 import dingdong.dingdong.util.exception.ForbiddenException;
 import dingdong.dingdong.util.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import static dingdong.dingdong.util.exception.ResultCode.*;
 
@@ -26,6 +28,7 @@ public class PostService {
     private final PostRepository postRepository;
     private final CategoryRepository categoryRepository;
     private final ProfileRepository profileRepository;
+    private final ChatService chatService;
 
     // 홈화면 피드 GET(최신순으로 정렬)
     public Page<PostGetResponseDto> findAllByCreateDate(Long local1, Long local2, Pageable pageable){
@@ -81,6 +84,7 @@ public class PostService {
 
 
     // 나누기 피드(post) 생성
+    @Transactional
     public void createPost(User user, PostRequestDto request) {
         Post post = new Post();
         if(request == null) {
@@ -94,6 +98,7 @@ public class PostService {
         post.setUser(user);
 
         postRepository.save(post);
+        chatService.createChatRoom(post);
     }
     
     // 나누기 피드(post) 제거

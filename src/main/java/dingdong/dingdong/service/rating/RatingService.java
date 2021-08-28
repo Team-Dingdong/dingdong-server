@@ -20,7 +20,8 @@ public class RatingService {
 
     // 평가 조회
     public RatingResponseDto getRating(Long id) {
-        Profile profile = profileRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(ResultCode.PROFILE_NOT_FOUND));
+        Profile profile = profileRepository.findByUserId(id).orElseThrow(() -> new ResourceNotFoundException(ResultCode.PROFILE_NOT_FOUND));
+        log.info("profile : {}", profile);
         return RatingResponseDto.from(profile);
     }
 
@@ -31,13 +32,15 @@ public class RatingService {
         Rating rating = ratingRepository.findBySenderAndReceiver(sender, receiver).orElse(new Rating(sender, receiver));
         rating.setType(ratingRequestDto.getType());
 
+        ratingRepository.save(rating);
+
         Long goodCount = ratingRepository.countByReceiverAndType(receiver, RatingType.GOOD);
         Long badCount = ratingRepository.countByReceiverAndType(receiver, RatingType.BAD);
+        log.info("goodCount : {}, badCount : {}", goodCount, badCount);
 
         Profile receiverProfile = profileRepository.findByUserId(userId).orElseThrow(() -> new ResourceNotFoundException(ResultCode.PROFILE_NOT_FOUND));
         receiverProfile.setRating(goodCount, badCount);
 
-        ratingRepository.save(rating);
         profileRepository.save(receiverProfile);
     }
 
