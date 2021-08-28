@@ -1,9 +1,6 @@
 package dingdong.dingdong.service.post;
 
-import dingdong.dingdong.domain.post.Category;
-import dingdong.dingdong.domain.post.CategoryRepository;
-import dingdong.dingdong.domain.post.Post;
-import dingdong.dingdong.domain.post.PostRepository;
+import dingdong.dingdong.domain.post.*;
 import dingdong.dingdong.domain.user.*;
 
 import dingdong.dingdong.dto.post.PostRequestDto;
@@ -26,6 +23,8 @@ public class PostService {
     private final PostRepository postRepository;
     private final CategoryRepository categoryRepository;
     private final ProfileRepository profileRepository;
+    private final TagRepository tagRepository;
+    private final PostTagRepository postTagRepository;
 
     // 홈화면 피드 GET(최신순으로 정렬)
     public Page<PostGetResponseDto> findAllByCreateDate(Long local1, Long local2, Pageable pageable){
@@ -53,7 +52,6 @@ public class PostService {
     public PostDetailResponseDto findPostById(Long id){
         Post post = postRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(POST_NOT_FOUND));
         Profile profile = profileRepository.findByUserId(post.getUser().getId()).orElseThrow(() -> new ResourceNotFoundException(PROFILE_NOT_FOUND));
-
         PostDetailResponseDto postDetail = new PostDetailResponseDto(post, profile);
         return postDetail;
     }
@@ -81,7 +79,7 @@ public class PostService {
 
 
     // 나누기 피드(post) 생성
-    public void createPost(User user, PostRequestDto request) {
+    public Long createPost(User user, PostRequestDto request) {
         Post post = new Post();
         if(request == null) {
             throw new ForbiddenException(POST_CREATE_FAIL);
@@ -93,7 +91,32 @@ public class PostService {
         post.setPost(category, request);
         post.setUser(user);
 
+        // post 테이블에 저장
         postRepository.save(post);
+        postRepository.flush();
+
+        String str = request.getPostTag();
+        str.substring(1);
+        String[] array = str.split("#");
+
+        for(int i = 0; i < array.length; i++) {
+            Tag tag = new Tag();
+            if (!tagRepository.existsByName(array[i])) {
+                tag.setName(array[i]);
+                tagRepository.save(tag);
+                tagRepository.flush();
+            } else {
+                tag = tagRepository.findByName(array[i]);
+            }
+
+            PostTag postTag = new PostTag();
+            postTag.setPost(post);
+            postTag.setTag(tag);
+            postTagRepository.save(postTag);
+        }
+
+        return post.getId();
+
     }
     
     // 나누기 피드(post) 제거
@@ -115,7 +138,13 @@ public class PostService {
 
     // 제목, 카테고리 검색 기능
     public Page<PostGetResponseDto> searchPosts(String keyword, Long local1, Long local2, Pageable pageable){
-        Page<Post> postList = postRepository.findAllSearch(keyword, local1, local2, pageable);
+
+        Page<Post> postList;
+        if(keyword.contains("#")){
+            postList = postRepository.findAllSearchByTag(keyword.substring(1), local1, local2, pageable);
+        }else{
+            postList = postRepository.findAllSearch(keyword, local1, local2, pageable);
+        }
 
         Page<PostGetResponseDto> pagingList = postList.map(
                 post -> PostGetResponseDto.from(post)

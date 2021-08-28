@@ -55,6 +55,8 @@ public class PostDetailResponseDto {
 
     private String imageUrl3;
 
+    private String tag;
+
     public PostDetailResponseDto(Post post, Profile profile){
         this.title = post.getTitle();
         this.cost = post.getCost();

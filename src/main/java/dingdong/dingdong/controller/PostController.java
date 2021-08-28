@@ -83,11 +83,11 @@ public class PostController {
 
     // 나누기 생성
     @PostMapping("")
-    public ResponseEntity<Result> createPost(@CurrentUser User user, @Valid @RequestBody PostRequestDto requestDto) {
+    public ResponseEntity<Result<Long>> createPost(@CurrentUser User user, @Valid @RequestBody PostRequestDto requestDto) {
 
-        postService.createPost(user, requestDto);
+        Long postId = postService.createPost(user, requestDto);
         log.error("나누기 생성 에러");
-        return Result.toResult(ResultCode.POST_CREATE_SUCCESS);
+        return Result.toResult(ResultCode.POST_CREATE_SUCCESS, postId );
 
     }
 
