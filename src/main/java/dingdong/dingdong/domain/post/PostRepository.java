@@ -10,7 +10,8 @@ import org.springframework.stereotype.Repository;
 public interface PostRepository extends JpaRepository<Post, Long> {
 
     // 홈화면 최신순 정렬
-    @Query(value = "select * from post, user where post.user_id = user.user_id and (user.local1 = :local1 or user.local2 = :local2)",
+    @Query(value = "select * from post, user where post.user_id = user.user_id" +
+            "(user.local1 = :local1 or user.local2 = :local2)",
             countQuery = "select count(*) from post",
             nativeQuery = true)
     Page<Post> findAllByCreateDate(Long local1,Long local2, Pageable pageable);
@@ -34,4 +35,10 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             countQuery = "select count(*) from post",
             nativeQuery = true)
     Page<Post> findAllSearch(String keyword, Long local1,Long local2, Pageable pageable);
+
+    @Query(value = "select * from post, user, post_tag, tag where post.user_id = user.user_id AND post.post_id = post_tag.post_id AND post_tag.tag_id = tag.tag_id AND" +
+            "(user.local1 = :local1 or user.local2 = :local2) AND (tag.name LIKE %:keyword% )",
+            countQuery = "select count(*) from post",
+            nativeQuery = true)
+    Page<Post> findAllSearchByTag(String keyword, Long local1,Long local2, Pageable pageable);
 }

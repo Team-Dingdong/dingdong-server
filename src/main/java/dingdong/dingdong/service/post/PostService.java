@@ -1,9 +1,6 @@
 package dingdong.dingdong.service.post;
 
-import dingdong.dingdong.domain.post.Category;
-import dingdong.dingdong.domain.post.CategoryRepository;
-import dingdong.dingdong.domain.post.Post;
-import dingdong.dingdong.domain.post.PostRepository;
+import dingdong.dingdong.domain.post.*;
 import dingdong.dingdong.domain.user.*;
 
 import dingdong.dingdong.dto.post.PostRequestDto;
@@ -26,8 +23,10 @@ import static dingdong.dingdong.util.exception.ResultCode.*;
 public class PostService {
 
     private final PostRepository postRepository;
+    private final PostTagRepository postTagRepository;
     private final CategoryRepository categoryRepository;
     private final ProfileRepository profileRepository;
+    private final TagRepository tagRepository;
     private final ChatService chatService;
 
     // 홈화면 피드 GET(최신순으로 정렬)
@@ -37,6 +36,7 @@ public class PostService {
         Page<PostGetResponseDto> pagingList = postList.map(
             post -> PostGetResponseDto.from(post)
         );
+
 
         return pagingList;
     }
@@ -56,8 +56,10 @@ public class PostService {
     public PostDetailResponseDto findPostById(Long id){
         Post post = postRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(POST_NOT_FOUND));
         Profile profile = profileRepository.findByUserId(post.getUser().getId()).orElseThrow(() -> new ResourceNotFoundException(PROFILE_NOT_FOUND));
+        PostTag postTag = postTagRepository.findByPost(post).orElseThrow(() -> new ResourceNotFoundException(POSTTAG_NOT_FOUND));
+        Tag tag = tagRepository.findById(postTag.getId()).orElseThrow(() -> new ResourceNotFoundException(TAG_NOT_FOUND));
 
-        PostDetailResponseDto postDetail = new PostDetailResponseDto(post, profile);
+        PostDetailResponseDto postDetail = new PostDetailResponseDto(post, profile, tag);
         return postDetail;
     }
 
@@ -84,8 +86,9 @@ public class PostService {
 
 
     // 나누기 피드(post) 생성
+
     @Transactional
-    public void createPost(User user, PostRequestDto request) {
+    public Long createPost(User user, PostRequestDto request) {
         Post post = new Post();
         if(request == null) {
             throw new ForbiddenException(POST_CREATE_FAIL);
@@ -97,8 +100,31 @@ public class PostService {
         post.setPost(category, request);
         post.setUser(user);
 
-        postRepository.save(post);
+        postRepository.flush();
+
+        String str = request.getPostTag();
+        str.substring(1);
+        String[] array = str.split("#");
+
+        for(int i = 0; i < array.length; i++) {
+            Tag tag = new Tag();
+            if (!tagRepository.existsByName(array[i])) {
+                tag.setName(array[i]);
+                tagRepository.save(tag);
+                tagRepository.flush();
+            } else {
+                tag = tagRepository.findByName(array[i]);
+            }
+
+            PostTag postTag = new PostTag();
+            postTag.setPost(post);
+            postTag.setTag(tag);
+            postTagRepository.save(postTag);
+        }
+
         chatService.createChatRoom(post);
+        return post.getId();
+
     }
     
     // 나누기 피드(post) 제거
@@ -120,7 +146,13 @@ public class PostService {
 
     // 제목, 카테고리 검색 기능
     public Page<PostGetResponseDto> searchPosts(String keyword, Long local1, Long local2, Pageable pageable){
-        Page<Post> postList = postRepository.findAllSearch(keyword, local1, local2, pageable);
+
+        Page<Post> postList;
+        if(keyword.contains("#")){
+            postList = postRepository.findAllSearchByTag(keyword.substring(1), local1, local2, pageable);
+        }else{
+            postList = postRepository.findAllSearch(keyword, local1, local2, pageable);
+        }
 
         Page<PostGetResponseDto> pagingList = postList.map(
                 post -> PostGetResponseDto.from(post)
