@@ -1,9 +1,12 @@
 package dingdong.dingdong.service.chat;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import dingdong.dingdong.domain.chat.*;
-import dingdong.dingdong.domain.user.ProfileRepository;
+import dingdong.dingdong.domain.chat.ChatMessage;
+import dingdong.dingdong.domain.chat.ChatRoom;
+import dingdong.dingdong.domain.chat.ChatRoomRepository;
+import dingdong.dingdong.domain.chat.MessageType;
 import dingdong.dingdong.domain.user.User;
+import dingdong.dingdong.domain.user.UserRepository;
 import dingdong.dingdong.dto.chat.RedisChatMessage;
 import dingdong.dingdong.util.exception.ResourceNotFoundException;
 import dingdong.dingdong.util.exception.ResultCode;
@@ -20,8 +23,7 @@ public class RedisSubscriber {
     private final ObjectMapper objectMapper;
     private final SimpMessageSendingOperations messagingTemplate;
     private final ChatRoomRepository chatRoomRepository;
-    private final ChatMessageRepository chatMessageRepository;
-    private final ProfileRepository profileRepository;
+    private final UserRepository userRepository;
 
     /**
      * Redis에서 메시지가 발행(publish)되면 대기하고 있던 Redis Subscriber가 해당 메시지를 받아 처리한다.
@@ -38,7 +40,10 @@ public class RedisSubscriber {
             messagingTemplate.convertAndSend("/sub/chat/room/" + redisChatMessage.getRoomId(), redisChatMessage);
 
             ChatRoom chatRoom = chatRoomRepository.findByPostId(Long.parseLong(redisChatMessage.getRoomId())).orElseThrow(() -> new ResourceNotFoundException(ResultCode.CHAT_ROOM_NOT_FOUND));
-            User user = profileRepository.findByNickname(redisChatMessage.getSender()).orElseThrow(() -> new ResourceNotFoundException(ResultCode.USER_NOT_FOUND)).getUser();
+            User user = userRepository.findByPhone(redisChatMessage.getSender());
+            if(user == null) {
+                throw new ResourceNotFoundException(ResultCode.USER_NOT_FOUND);
+            }
             ChatMessage chatMessage = new ChatMessage(chatRoom, user, redisChatMessage);
             log.info("chatRoom : {}", chatRoom);
             log.info("chatMessage : {}", chatMessage);
