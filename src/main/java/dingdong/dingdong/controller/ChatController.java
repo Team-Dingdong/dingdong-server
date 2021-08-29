@@ -18,7 +18,6 @@ public class ChatController {
 
     private final RedisTemplate redisTemplate;
     private final ChannelTopic channelTopic;
-
     private final TokenProvider tokenProvider;
 
     /**

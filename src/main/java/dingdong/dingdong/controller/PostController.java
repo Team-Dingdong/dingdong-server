@@ -28,26 +28,39 @@ public class PostController {
 
     private final PostService postService;
 
-    // 모든 나누기 불러오기(최신순으로)
+    // 홈화면, 모든 나누기 불러오기(최신순으로)
     @GetMapping("/sorted_by=desc(createdDate)")
     public ResponseEntity<Result<Page<PostGetResponseDto>>> findPostsSortByCreatedDate(@CurrentUser User user, @PageableDefault(size = 5, direction = Sort.Direction.DESC) Pageable pageable) {
 
-        Long local1 = user.getLocal1().getId();
-        Long local2 = user.getLocal2().getId();
-        Page<PostGetResponseDto> data = postService.findAllByCreateDate(local1, local2, pageable);
-        return Result.toResult(ResultCode.POST_READ_SUCCESS, data);
+        Page<PostGetResponseDto> data;
 
+        if(user.getLocal1() == null && user.getLocal2() == null){
+            // user가 local 정보를 설정 안 한 경우
+            data = postService.findAllByCreateDate(pageable);
+        } else {
+            // user가 local 정보를 설정한 경우(local 정보에 기반하여 나누기 get)
+            Long local1 = user.getLocal1().getId();
+            Long local2 = user.getLocal2().getId();
+            data = postService.findAllByCreateDateWithLocal(local1, local2, pageable);
+        }
+        return Result.toResult(ResultCode.POST_READ_SUCCESS, data);
     }
 
-    // 모든 나누기 불러오기(마감임박순으로)
+    // 홈화면, 모든 나누기 불러오기(마감임박순으로)
     @GetMapping("/sorted_by=desc(endDate)")
     public ResponseEntity<Result<Page<PostGetResponseDto>>> findPostsSortByEndDate(@CurrentUser User user, @PageableDefault(size = 5, direction = Sort.Direction.DESC) Pageable pageable) {
 
-        Long local1 = user.getLocal1().getId();
-        Long local2 = user.getLocal2().getId();
-        Page<PostGetResponseDto> data = postService.findAllByEndDate(local1, local2, pageable);
+        Page<PostGetResponseDto> data;
+        if(user.getLocal1() == null && user.getLocal2() == null){
+            // user가 local 정보를 설정 안 한 경우
+            data = postService.findAllByEndDate(pageable);
+        } else {
+            // user가 local 정보를 설정한 경우(local 정보에 기반하여 나누기 get)
+            Long local1 = user.getLocal1().getId();
+            Long local2 = user.getLocal2().getId();
+            data = postService.findAllByEndDateWithLocal(local1, local2, pageable);
+        }
         return Result.toResult(ResultCode.POST_READ_SUCCESS, data);
-
     }
 
     // 특정 나누기 상세보기 불러오기
@@ -55,18 +68,40 @@ public class PostController {
     public ResponseEntity<Result<PostDetailResponseDto>> findPostById(@PathVariable Long post_id) {
 
         PostDetailResponseDto data = postService.findPostById(post_id);
-        log.error("나누기 상세보기 에러");
         ResultCode message = ResultCode.POST_READ_SUCCESS;
         return Result.toResult(message, data);
     }
 
-    // 카테고리 별로 나누기 피드들 불러오기
-    @GetMapping("/category/{categoryId}")
-    public ResponseEntity<Result<Page<PostGetResponseDto>>> findPostByCategoryId(@CurrentUser User user, @PathVariable Long categoryId, @PageableDefault(size = 5, direction = Sort.Direction.DESC) Pageable pageable){
-        Long local1 = user.getLocal1().getId();
-        Long local2 = user.getLocal2().getId();
-        log.error("카테고리 별로 나누기 피드들 불러오기 에러");
-        Page<PostGetResponseDto> data = postService.findPostByCategoryId(local1, local2, categoryId, pageable);
+    // 카테고리별로 최신순으로 나누기 피드들 불러오기
+    @GetMapping("/category/sorted_by=desc(createdDate)/{categoryId}")
+    public ResponseEntity<Result<Page<PostGetResponseDto>>> findPostByCategoryIdSortByCreatedDate(@CurrentUser User user, @PathVariable Long categoryId, @PageableDefault(size = 5, direction = Sort.Direction.DESC) Pageable pageable){
+
+        Page<PostGetResponseDto> data;
+        if(user.getLocal1() == null && user.getLocal2() == null){
+            // user가 local 정보를 설정 안 한 경우
+            data = postService.findPostByCategoryId(categoryId, pageable);
+        } else {
+            // user가 local 정보를 설정한 경우(local 정보에 기반하여 나누기 get)
+            Long local1 = user.getLocal1().getId();
+            Long local2 = user.getLocal2().getId();
+            data = postService.findPostByCategoryIdWithLocal(local1, local2, categoryId, pageable);
+        }
+        return Result.toResult(ResultCode.POST_READ_SUCCESS, data);
+    }
+
+    @GetMapping("/category/sorted_by=desc(endDate)/{categoryId}")
+    public ResponseEntity<Result<Page<PostGetResponseDto>>> findPostByCategoryIdSortByEndDate(@CurrentUser User user, @PathVariable Long categoryId, @PageableDefault(size = 5, direction = Sort.Direction.DESC) Pageable pageable){
+
+        Page<PostGetResponseDto> data;
+        if(user.getLocal1() == null && user.getLocal2() == null){
+            // user가 local 정보를 설정 안 한 경우
+            data = postService.findPostByCategoryIdSortByEndDate(categoryId, pageable);
+        } else {
+            // user가 local 정보를 설정한 경우(local 정보에 기반하여 나누기 get)
+            Long local1 = user.getLocal1().getId();
+            Long local2 = user.getLocal2().getId();
+            data = postService.findPostByCategoryIdSortByEndDateWithLocal(local1, local2, categoryId, pageable);
+        }
         return Result.toResult(ResultCode.POST_READ_SUCCESS, data);
     }
 
@@ -74,7 +109,6 @@ public class PostController {
     @GetMapping("/user")
     public ResponseEntity<Result<Page<PostGetResponseDto>>> findPostByUserId(@CurrentUser User user, @PageableDefault(size = 5, direction = Sort.Direction.DESC) Pageable pageable){
         Page<PostGetResponseDto> postPage = postService.findPostByUserId(user, pageable);
-        log.error("유저 별로 나누기 피드들 불러오기 에러");
         return Result.toResult(ResultCode.POST_READ_SUCCESS, postPage);
 
     }
@@ -84,7 +118,6 @@ public class PostController {
     public ResponseEntity<Result<Long>> createPost(@CurrentUser User user, @Valid @RequestBody PostRequestDto requestDto) {
 
         Long postId = postService.createPost(user, requestDto);
-        log.error("나누기 생성 에러");
         return Result.toResult(ResultCode.POST_CREATE_SUCCESS, postId );
 
     }
@@ -94,7 +127,6 @@ public class PostController {
     public ResponseEntity<Result> deletePost(@PathVariable Long id){
 
        postService.deletePost(id);
-        log.error("나누기 삭제 에러");
        return Result.toResult(ResultCode.POST_DELETE_SUCCESS);
 
     }
@@ -103,7 +135,6 @@ public class PostController {
     @PatchMapping("/{id}")
     public ResponseEntity<Result> updatePost(@Valid @RequestBody PostRequestDto request, @PathVariable Long id){
         postService.updatePost(id, request);
-        log.error("나누기 수정 에러");
         return Result.toResult(ResultCode.POST_UPDATE_SUCCESS);
     }
 
