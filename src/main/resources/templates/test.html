@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chat WebSocket</title>
+    <link href="/webjars/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <script src="/webjars/jquery/jquery.min.js"></script>
+    <script src="/webjars/sockjs-client/sockjs.min.js"></script>
+    <script src="/webjars/stomp-websocket/stomp.min.js"></script>
+    <script type="text/javascript">
+        var stompClient = null;
+
+        function setConnected(connected) {
+            document.getElementById('connect').disabled = connected;
+            document.getElementById('disconnect').disabled = !connected;
+            document.getElementById('conversationDiv').style.visibility
+                = connected ? 'visible' : 'hidden';
+            document.getElementById('response').innerHTML = '';
+        }
+
+        function connect() {
+            var authorization = document.getElementById('authorization').value;
+            var header = {Authorization: authorization};
+            var roomId = document.getElementById('roomId').value;
+
+            var socket = new SockJS('/ws-stomp');
+            stompClient = Stomp.over(socket);
+            stompClient.connect(header, function(frame) {
+                setConnected(true);
+                console.log('Connected: ' + frame);
+                stompClient.subscribe('/topic/chat/room/'+roomId, function(messageOutput) {
+                    showMessageOutput(JSON.parse(messageOutput.body));
+                });
+                stompClient.send("/pub/chat/message", header,
+                    JSON.stringify({'roomId':roomId, 'type':'ENTER'}));
+            });
+        }
+
+        function disconnect() {
+            if(stompClient != null) {
+                stompClient.disconnect();
+            }
+            setConnected(false);
+            console.log("Disconnected");
+        }
+
+        function sendMessage() {
+            var authorization = document.getElementById('authorization').value;
+            var header = {Authorization: authorization};
+            var roomId = document.getElementById('roomId').value;
+            var message = document.getElementById('message').value;
+            stompClient.send("/pub/chat/message", header,
+                JSON.stringify({'roomId':roomId, 'type':'TALK', 'message': message}));
+        }
+
+        function showMessageOutput(messageOutput) {
+            var response = document.getElementById('response');
+            var p = document.createElement('p');
+            p.style.wordWrap = 'break-word';
+            p.appendChild(document.createTextNode(messageOutput.sender + ": " + messageOutput.message));
+            response.appendChild(p);
+        }
+    </script>
+</head>
+<body onload="disconnect()">
+<div>
+    <div>
+        <label for="authorization">Authorization</label>
+        <input type="text" id="authorization" placeholder="Enter Authorization"/>
+    </div>
+    <div>
+        <label for="roomId">RoomId</label>
+        <input type="text" id="roomId" placeholder="Enter RoomId"/>
+    </div>
+    <br />
+    <div>
+        <button id="connect" onclick="connect();">Connect</button>
+        <button id="disconnect" disabled="disabled" onclick="disconnect();">
+            Disconnect
+        </button>
+    </div>
+    <br />
+    <div id="conversationDiv">
+        <input type="text" id="message" placeholder="Write a message..."/>
+        <button id="sendMessage" onclick="sendMessage();">Send</button>
+        <p id="response"></p>
+    </div>
+</div>
+
+</body>
+</html>

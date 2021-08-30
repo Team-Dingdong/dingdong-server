@@ -58,6 +58,7 @@ public class ChatService {
     /**
      * 채팅방 생성 : 서버간 채팅방 공유를 위해 redis hash에 저장한다.
      */
+    @Transactional
     public void createChatRoom(Post post) {
         ChatRoom chatRoom = new ChatRoom(post);
         RedisChatRoom redisChatRoom = new RedisChatRoom(chatRoom);
