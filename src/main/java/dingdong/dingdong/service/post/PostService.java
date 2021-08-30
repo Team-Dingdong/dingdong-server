@@ -1,5 +1,6 @@
 package dingdong.dingdong.service.post;
 
+import dingdong.dingdong.domain.chat.ChatRoomRepository;
 import dingdong.dingdong.domain.post.*;
 import dingdong.dingdong.domain.user.*;
 
@@ -16,6 +17,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 import static dingdong.dingdong.util.exception.ResultCode.*;
 
 @RequiredArgsConstructor
@@ -27,22 +30,22 @@ public class PostService {
     private final CategoryRepository categoryRepository;
     private final ProfileRepository profileRepository;
     private final TagRepository tagRepository;
+    private final ChatRoomRepository chatRoomRepository;
     private final ChatService chatService;
 
     // 홈화면 피드 GET(최신순으로 정렬)
-    public Page<PostGetResponseDto> findAllByCreateDate(Long local1, Long local2, Pageable pageable){
+    public Page<PostGetResponseDto> findAllByCreateDateWithLocal(Long local1, Long local2, Pageable pageable){
         Page<Post> postList = postRepository.findAllByCreateDate(local1, local2, pageable);
 
         Page<PostGetResponseDto> pagingList = postList.map(
             post -> PostGetResponseDto.from(post)
         );
 
-
         return pagingList;
     }
 
     // 홈화면 피드 GET(마감일자 순으로 정렬)
-    public Page<PostGetResponseDto> findAllByEndDate(Long local1, Long local2, Pageable pageable){
+    public Page<PostGetResponseDto> findAllByEndDateWithLocal(Long local1, Long local2, Pageable pageable){
         Page<Post> postList = postRepository.findAllByEndDate(local1, local2, pageable);
 
         Page<PostGetResponseDto> pagingList = postList.map(
@@ -56,15 +59,15 @@ public class PostService {
     public PostDetailResponseDto findPostById(Long id){
         Post post = postRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(POST_NOT_FOUND));
         Profile profile = profileRepository.findByUserId(post.getUser().getId()).orElseThrow(() -> new ResourceNotFoundException(PROFILE_NOT_FOUND));
-        PostTag postTag = postTagRepository.findByPost(post).orElseThrow(() -> new ResourceNotFoundException(POSTTAG_NOT_FOUND));
-        Tag tag = tagRepository.findById(postTag.getId()).orElseThrow(() -> new ResourceNotFoundException(TAG_NOT_FOUND));
+        List<String> tagList = tagRepository.findAllByPost_Id(id);
 
-        PostDetailResponseDto postDetail = new PostDetailResponseDto(post, profile, tag);
+        PostDetailResponseDto postDetail = new PostDetailResponseDto(post, profile, tagList);
         return postDetail;
+
     }
 
     // 카테고리별로 나누기 피드 GET
-    public Page<PostGetResponseDto> findPostByCategoryId(Long local1, Long local2, Long categoryId, Pageable pageable){
+    public Page<PostGetResponseDto> findPostByCategoryIdWithLocal(Long local1, Long local2, Long categoryId, Pageable pageable){
         Category category = categoryRepository.findById(categoryId).orElseThrow(() -> new ResourceNotFoundException(CATEGORY_NOT_FOUND));
         Page<Post> postList = postRepository.findByCategoryId(local1, local2, category.getId(),  pageable);
 
@@ -84,9 +87,60 @@ public class PostService {
         return pagingList;
     }
 
+    // 홈화면 피드 GET(최신순으로 정렬)(유저의 local 정보가 없는 경우)
+    public Page<PostGetResponseDto> findAllByCreateDate(Pageable pageable){
+        Page<Post> postList = postRepository.findAllByCreateDateNotLocal(pageable);
+
+        Page<PostGetResponseDto> pagingList = postList.map(
+                post -> PostGetResponseDto.from(post)
+        );
+        return pagingList;
+    }
+
+    // 홈화면 피드 GET(마감임박순으로 정렬)(유저의 local 정보가 없는 경우)
+    public Page<PostGetResponseDto> findAllByEndDate(Pageable pageable){
+        Page<Post> postList = postRepository.findAllByEndDateNotLocal(pageable);
+
+        Page<PostGetResponseDto> pagingList = postList.map(
+                post -> PostGetResponseDto.from(post)
+        );
+        return pagingList;
+    }
+
+    // 카테고리화면 피드 GET(최신순으로 정렬)(유저의 local 정보가 없는 경우)
+    public Page<PostGetResponseDto> findPostByCategoryId(Long categoryId, Pageable pageable){
+        Category category = categoryRepository.findById(categoryId).orElseThrow(() -> new ResourceNotFoundException(CATEGORY_NOT_FOUND));
+        Page<Post> postList = postRepository.findPostByCategoryIdNotLocal(category.getId(),  pageable);
+
+        Page<PostGetResponseDto> pagingList = postList.map(
+                post -> PostGetResponseDto.from(post)
+        );
+        return pagingList;
+    }
+
+    // 카테고리화면 피드 GET(마감임박순으로 정렬)(유저의 local 정보에 기반하여 GET)
+    public Page<PostGetResponseDto> findPostByCategoryIdSortByEndDateWithLocal(Long local1, Long local2,Long categoryId, Pageable pageable){
+        Category category = categoryRepository.findById(categoryId).orElseThrow(() -> new ResourceNotFoundException(CATEGORY_NOT_FOUND));
+        Page<Post> postList = postRepository.findPostByCategoryIdSortByEndDate(local1, local2, category.getId(),  pageable);
+
+        Page<PostGetResponseDto> pagingList = postList.map(
+                post -> PostGetResponseDto.from(post)
+        );
+        return pagingList;
+    }
+
+    // 카테고리화면 피드 GET(마감임박순으로 정렬)(유저의 local 정보가 없는 경우)
+    public Page<PostGetResponseDto> findPostByCategoryIdSortByEndDate(Long categoryId, Pageable pageable){
+        Category category = categoryRepository.findById(categoryId).orElseThrow(() -> new ResourceNotFoundException(CATEGORY_NOT_FOUND));
+        Page<Post> postList = postRepository.findPostByCategoryIdNotLocalSortByEndDate(category.getId(),  pageable);
+
+        Page<PostGetResponseDto> pagingList = postList.map(
+                post -> PostGetResponseDto.from(post)
+        );
+        return pagingList;
+    }
 
     // 나누기 피드(post) 생성
-
     @Transactional
     public Long createPost(User user, PostRequestDto request) {
         Post post = new Post();
@@ -103,8 +157,7 @@ public class PostService {
         postRepository.flush();
 
         String str = request.getPostTag();
-        str.substring(1);
-        String[] array = str.split("#");
+        String[] array = (str.substring(1)).split("#");
 
         for(int i = 0; i < array.length; i++) {
             Tag tag = new Tag();
@@ -130,7 +183,9 @@ public class PostService {
     // 나누기 피드(post) 제거
     public void  deletePost(Long id){
         Post post = postRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(POST_NOT_FOUND));
-        postRepository.deleteById(post.getId());
+        postTagRepository.deleteByPost(post);
+        chatRoomRepository.deleteByPost(post);
+        //postRepository.deleteById(post.getId());
     }
 
     // 나누기 피드(post) 수정
@@ -142,16 +197,54 @@ public class PostService {
 
         post.setPost(category, request);
         postRepository.save(post);
+
+        postRepository.flush();
+
+        String str = request.getPostTag();
+        String[] array = (str.substring(1)).split("#");
+
+        postTagRepository.deleteByPost(post);
+
+        for(int i = 0; i < array.length; i++) {
+            Tag tag = new Tag();
+            if (!tagRepository.existsByName(array[i])) {
+                tag.setName(array[i]);
+                tagRepository.save(tag);
+                tagRepository.flush();
+            } else {
+                tag = tagRepository.findByName(array[i]);
+            }
+
+            PostTag postTag = new PostTag();
+            postTag.setPost(post);
+            postTag.setTag(tag);
+            postTagRepository.save(postTag);
+        }
     }
 
-    // 제목, 카테고리 검색 기능
-    public Page<PostGetResponseDto> searchPosts(String keyword, Long local1, Long local2, Pageable pageable){
+
+    public Page<PostGetResponseDto> searchPosts(String keyword,Pageable pageable){
+        Page<Post> postList;
+        if(keyword.contains("#")){
+            postList = postRepository.findAllSearchByTag(keyword.substring(1), pageable);
+        }else{
+            postList = postRepository.findAllSearch(keyword, pageable);
+        }
+
+        Page<PostGetResponseDto> pagingList = postList.map(
+                post -> PostGetResponseDto.from(post)
+        );
+
+        return pagingList;
+    }
+    // 제목, 카테고리 검색 기능(local 정보에 기반하여 검색)
+    public Page<PostGetResponseDto> searchPostsWithLocal(String keyword, Long local1, Long local2, Pageable pageable){
 
         Page<Post> postList;
         if(keyword.contains("#")){
-            postList = postRepository.findAllSearchByTag(keyword.substring(1), local1, local2, pageable);
+            postList = postRepository.findAllSearchByTagWithLocal(keyword.substring(1), local1, local2, pageable);
         }else{
-            postList = postRepository.findAllSearch(keyword, local1, local2, pageable);
+            postList = postRepository.findAllSearchWithLocal(keyword, local1, local2, pageable);
         }
 
         Page<PostGetResponseDto> pagingList = postList.map(

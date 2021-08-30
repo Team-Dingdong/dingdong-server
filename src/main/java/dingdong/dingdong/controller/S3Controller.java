@@ -44,7 +44,7 @@ public class S3Controller {
         Post post = postRepository.findById(postId).orElseThrow(() -> new ResourceNotFoundException(POST_NOT_FOUND));
 
         while(paths.size() < 3){
-            paths.add("null");
+            paths.add("https://dingdongbucket.s3.ap-northeast-2.amazonaws.com/static/default_post.png");
         }
 
         post.setImageUrl1(paths.get(0));

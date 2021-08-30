@@ -10,6 +10,7 @@ import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Getter
@@ -43,10 +44,13 @@ public class Post extends BaseTimeEntity {
     @Column(nullable = false)
     private String bio;
 
+    @Column(columnDefinition = "varchar(255) default 'https://dingdongbucket.s3.ap-northeast-2.amazonaws.com/static/default_post.png'")
     private String imageUrl1;
 
+    @Column(columnDefinition = "varchar(255) default 'https://dingdongbucket.s3.ap-northeast-2.amazonaws.com/static/default_post.png'")
     private String imageUrl2;
 
+    @Column(columnDefinition = "varchar(255) default 'https://dingdongbucket.s3.ap-northeast-2.amazonaws.com/static/default_post.png'")
     private String imageUrl3;
 
     @Column(columnDefinition = "boolean default false")
@@ -77,6 +81,9 @@ public class Post extends BaseTimeEntity {
             user.getPosts().add(this);
         }
     }
+
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PostTag> postTags;
 
     // title, people, price, bio, local, done
     public void setPost(Category category, PostRequestDto request) {
