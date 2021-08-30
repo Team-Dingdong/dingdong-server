@@ -1,5 +1,7 @@
 var stompClient = null;
 
+let headers = {Authorization: "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIwMTAxMTExMTExMSIsImF1dGgiOiJST0xFX1VTRVIiLCJleHAiOjE2MzAxNTgzNTJ9.64-fJxu9I1T8zLCkh_1197SRNS7Gf3WlpRCInghXNzGDg3M-ydK5rMDAuhUrvu5PY1D-jQ5VU1KT618kUr3Scg"};
+
 function setConnected(connected) {
     $("#connect").prop("disabled", connected);
     $("#disconnect").prop("disabled", !connected);
@@ -15,8 +17,6 @@ function setConnected(connected) {
 function connect() {
     var socket = new SockJS('/ws-stomp');
     stompClient = Stomp.over(socket);
-
-    let headers = {Authorization: "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIwMTAxMTExMTExMSIsImF1dGgiOiJST0xFX1VTRVIiLCJleHAiOjE2MzAwNzQxODR9.aukE4zCSf8uCH_Bwl8vl2xC2qt0D_164YPR_-xFT-xeLIgFkjkEnVS7JTOtn3T_8w0-nYibm7K_YPxndOv3U0A"};
 
     stompClient.connect(headers, function (frame) {
         setConnected(true);
@@ -37,9 +37,7 @@ function disconnect() {
 }
 
 function sendName() {
-    let headers = {Authorization: "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIwMTAxMTExMTExMSIsImF1dGgiOiJST0xFX1VTRVIiLCJleHAiOjE2MzAwNzYxNzZ9.11p5t1hfCYZw5zyrvwbSnGow-J3PIrqFB0Ov5FKng4pIQ728AEvZ415kIcxAWWDJFhaI3RcYlslROcdzU_sMaw"};
-
-    stompClient.send("/pub/chat/message", headers, JSON.stringify({'roomId':'1','sender':'test_nickname1', 'type':'TALK', 'message': $("#name").val()}));
+    stompClient.send("/pub/chat/message", {}, JSON.stringify({'roomId':'1','sender':'test_nickname1', 'type':'ENTER', 'message': $("#name").val()}));
 }
 
 function showGreeting(message) {

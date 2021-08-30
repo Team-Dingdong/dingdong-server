@@ -15,6 +15,7 @@ import org.springframework.data.redis.listener.adapter.MessageListenerAdapter;
 import org.springframework.data.redis.repository.configuration.EnableRedisRepositories;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
+import org.springframework.web.socket.messaging.DefaultSimpUserRegistry;
 
 @RequiredArgsConstructor
 @Configuration
@@ -69,5 +70,14 @@ public class RedisConfig {
         redisTemplate.setKeySerializer(new StringRedisSerializer());
         redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<>(String.class));
         return redisTemplate;
+    }
+
+    /**
+     * SimpUser 사용을 위해 설정
+     */
+    @Bean
+    public DefaultSimpUserRegistry defaultSimpUserRegistry() {
+        DefaultSimpUserRegistry userRegistry = new DefaultSimpUserRegistry();
+        return userRegistry;
     }
 }

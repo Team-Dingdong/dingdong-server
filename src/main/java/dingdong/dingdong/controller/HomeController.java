@@ -8,6 +8,6 @@ public class HomeController {
 
     @GetMapping("/")
     public String home() throws Exception {
-        return "index"; //note that this says .html
+        return "test"; //note that this says .html
     }
 }
