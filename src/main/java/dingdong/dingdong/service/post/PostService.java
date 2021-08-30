@@ -197,16 +197,54 @@ public class PostService {
 
         post.setPost(category, request);
         postRepository.save(post);
+
+        postRepository.flush();
+
+        String str = request.getPostTag();
+        String[] array = (str.substring(1)).split("#");
+
+        postTagRepository.deleteByPost(post);
+
+        for(int i = 0; i < array.length; i++) {
+            Tag tag = new Tag();
+            if (!tagRepository.existsByName(array[i])) {
+                tag.setName(array[i]);
+                tagRepository.save(tag);
+                tagRepository.flush();
+            } else {
+                tag = tagRepository.findByName(array[i]);
+            }
+
+            PostTag postTag = new PostTag();
+            postTag.setPost(post);
+            postTag.setTag(tag);
+            postTagRepository.save(postTag);
+        }
     }
 
-    // 제목, 카테고리 검색 기능
-    public Page<PostGetResponseDto> searchPosts(String keyword, Long local1, Long local2, Pageable pageable){
+
+    public Page<PostGetResponseDto> searchPosts(String keyword,Pageable pageable){
+        Page<Post> postList;
+        if(keyword.contains("#")){
+            postList = postRepository.findAllSearchByTag(keyword.substring(1), pageable);
+        }else{
+            postList = postRepository.findAllSearch(keyword, pageable);
+        }
+
+        Page<PostGetResponseDto> pagingList = postList.map(
+                post -> PostGetResponseDto.from(post)
+        );
+
+        return pagingList;
+    }
+    // 제목, 카테고리 검색 기능(local 정보에 기반하여 검색)
+    public Page<PostGetResponseDto> searchPostsWithLocal(String keyword, Long local1, Long local2, Pageable pageable){
 
         Page<Post> postList;
         if(keyword.contains("#")){
-            postList = postRepository.findAllSearchByTag(keyword.substring(1), local1, local2, pageable);
+            postList = postRepository.findAllSearchByTagWithLocal(keyword.substring(1), local1, local2, pageable);
         }else{
-            postList = postRepository.findAllSearch(keyword, local1, local2, pageable);
+            postList = postRepository.findAllSearchWithLocal(keyword, local1, local2, pageable);
         }
 
         Page<PostGetResponseDto> pagingList = postList.map(
