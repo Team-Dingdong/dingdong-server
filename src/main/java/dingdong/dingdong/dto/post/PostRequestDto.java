@@ -11,5 +11,6 @@ public class PostRequestDto {
     private int cost;
     private String bio;
     private String local;
+    private String postTag;
     private Long categoryId;
 }

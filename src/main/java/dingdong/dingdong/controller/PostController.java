@@ -34,7 +34,6 @@ public class PostController {
 
         Long local1 = user.getLocal1().getId();
         Long local2 = user.getLocal2().getId();
-        log.error("전체 나누기 불러오기 에러");
         Page<PostGetResponseDto> data = postService.findAllByCreateDate(local1, local2, pageable);
         return Result.toResult(ResultCode.POST_READ_SUCCESS, data);
 
@@ -46,7 +45,6 @@ public class PostController {
 
         Long local1 = user.getLocal1().getId();
         Long local2 = user.getLocal2().getId();
-        log.error("전체 나누기 불러오기 에러");
         Page<PostGetResponseDto> data = postService.findAllByEndDate(local1, local2, pageable);
         return Result.toResult(ResultCode.POST_READ_SUCCESS, data);
 
@@ -83,11 +81,11 @@ public class PostController {
 
     // 나누기 생성
     @PostMapping("")
-    public ResponseEntity<Result> createPost(@CurrentUser User user, @Valid @RequestBody PostRequestDto requestDto) {
+    public ResponseEntity<Result<Long>> createPost(@CurrentUser User user, @Valid @RequestBody PostRequestDto requestDto) {
 
-        postService.createPost(user, requestDto);
+        Long postId = postService.createPost(user, requestDto);
         log.error("나누기 생성 에러");
-        return Result.toResult(ResultCode.POST_CREATE_SUCCESS);
+        return Result.toResult(ResultCode.POST_CREATE_SUCCESS, postId );
 
     }
 

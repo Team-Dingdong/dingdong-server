@@ -28,6 +28,8 @@ public enum ResultCode {
     CHAT_ROOM_READ_SUCCESS(OK, "채팅방 조회 성공"),
     IMAGE_UPLOAD_SUCCESS(OK, "이미지 업로드 성공"),
 
+    TAG_UPDATE_SUCCESS(OK, "해시태그 업로드 성공"),
+
     SEARCH_SUCCESS(OK, "검색 성공"),
 
     /* 201 CREATED */
@@ -61,6 +63,8 @@ public enum ResultCode {
 
     POSTNUMBER_NOT_FOUND(BAD_REQUEST, "해당 나누기를 업로드 할 수 없습니다."),
 
+    TAG_UPDATE_FAIL(BAD_REQUEST, "태그 업로드 실패"),
+
     /* 401 UNAUTHORIZED : 인증되지 않은 사용자 */
     INVALID_AUTH_TOKEN(HttpStatus.UNAUTHORIZED, "권한 정보가 없는 토큰입니다"),
 
@@ -75,7 +79,10 @@ public enum ResultCode {
     PROFILE_NOT_FOUND(NOT_FOUND, "해당 프로필을 찾을 수 없습니다"),
     RATING_NOT_FOUND(NOT_FOUND, "해당 유저에 대한 평가를 찾을 수 없습니다"),
     CHAT_ROOM_NOT_FOUND(NOT_FOUND, "해당 채팅방을 찾을 수 없습니다"),
+
     LOCAL_NOT_FOUND(NOT_FOUND, "해당 동네를 찾을 수 없습니다"),
+    POSTTAG_NOT_FOUND(NOT_FOUND, "해당 PostTag를 찾을 수 없습니다"),
+    TAG_NOT_FOUND(NOT_FOUND, "해당 태그를 찾을 수 없습니다"),
 
     /* 409 CONFLICT : Resource 의 현재 상태와 충돌. 보통 중복된 데이터 존재 */
     DUPLICATE_RESOURCE(CONFLICT, "데이터가 이미 존재합니다"),
