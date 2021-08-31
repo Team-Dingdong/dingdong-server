@@ -154,6 +154,7 @@ public class PostService {
         post.setPost(category, request);
         post.setUser(user);
 
+        postRepository.save(post);
         postRepository.flush();
 
         String str = request.getPostTag();
