@@ -82,8 +82,7 @@ public class Post extends BaseTimeEntity {
         }
     }
 
-    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
-    @JsonBackReference
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PostTag> postTags = new ArrayList<>();
 
     // title, people, price, bio, local, done
