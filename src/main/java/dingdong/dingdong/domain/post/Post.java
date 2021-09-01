@@ -84,6 +84,7 @@ public class Post extends BaseTimeEntity {
         }
     }
 
+
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
     @JsonBackReference
     private List<PostTag> postTags = new ArrayList<>();
