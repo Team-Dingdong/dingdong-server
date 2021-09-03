@@ -1,19 +1,16 @@
 package dingdong.dingdong.domain.chat;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
+
 import dingdong.dingdong.domain.BaseTimeEntity;
 import dingdong.dingdong.domain.post.Post;
 import dingdong.dingdong.dto.chatpromise.ChatPromiseRequestDto;
 import lombok.*;
-import org.joda.time.DateTime;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
-import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.Date;
 
 @Entity
 @Getter
@@ -23,20 +20,23 @@ import java.util.Date;
 @AllArgsConstructor
 public class ChatPromise extends BaseTimeEntity {
 
-    @Id
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "chatPromise_id", nullable = false)
     private Long id;
 
-    @MapsId
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToOne
     @JoinColumn(name = "post_id")
     private Post post;
 
     // 약속 날짜
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private Date promiseDate;
+    private LocalDate promiseDate;
 
     @DateTimeFormat(pattern = "HH:mm:ss")
-    private Time promiseTime;
+    private LocalTime promiseTime;
+
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime promiseDateTime;
 
     // 약속 장소
     private String promiseLocal;

@@ -13,10 +13,6 @@ import dingdong.dingdong.util.exception.Result;
 import dingdong.dingdong.util.exception.ResultCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,13 +29,13 @@ public class ChatPromiseController {
     @PatchMapping("/{id}")
     public ResponseEntity<Result> updatePost(@Valid @RequestBody ChatPromiseRequestDto request, @PathVariable Long id){
         chatPromiseService.updatePromise(id, request);
-        return Result.toResult(ResultCode.POST_UPDATE_SUCCESS);
+        return Result.toResult(ResultCode.CHAT_PROMISE_UPDATE_SUCCESS);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Result<ChatPromiseResponseDto>> findChatPromiseByPostId(@PathVariable Long id){
         ChatPromiseResponseDto data = chatPromiseService.findByPostId(id);
-        return Result.toResult(ResultCode.POST_READ_SUCCESS, data);
+        return Result.toResult(ResultCode.CHAT_PROMISE_READ_SUCCESS, data);
     }
 
 }

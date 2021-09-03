@@ -17,10 +17,10 @@ public class ChatPromiseRequestDto {
 
     // 약속 날짜
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private Date promiseDate;
+    private LocalDate promiseDate;
 
-    @DateTimeFormat(pattern = "'HH:mm:ss")
-    private Time promiseTime;
+    @DateTimeFormat(pattern = "HH:mm:ss")
+    private LocalTime promiseTime;
 
     // 약속 장소
     private String promiseLocal;

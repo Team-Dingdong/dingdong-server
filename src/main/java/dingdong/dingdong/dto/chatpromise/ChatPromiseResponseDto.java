@@ -21,9 +21,11 @@ public class ChatPromiseResponseDto {
 
     private Long post_id;
 
-    private Date promiseDate;
+    private LocalDate promiseDate;
 
-    private Time promiseTime;
+    private LocalTime promiseTime;
+
+    private LocalDateTime promiseDateTime;
 
     // 약속 장소
     private String promiseLocal;
@@ -39,6 +41,7 @@ public class ChatPromiseResponseDto {
         this.ChatRoomEndTime = chatPromise.getChatRoomEndTime();
         this.promiseDate = chatPromise.getPromiseDate();
         this.promiseTime = chatPromise.getPromiseTime();
+        this.promiseDateTime = chatPromise.getPromiseDateTime();
         this.promiseEndTime = chatPromise.getPromiseEndTime();
         this.promiseLocal = chatPromise.getPromiseLocal();
     }
