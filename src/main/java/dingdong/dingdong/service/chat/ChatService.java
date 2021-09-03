@@ -5,6 +5,8 @@ import dingdong.dingdong.domain.post.Post;
 import dingdong.dingdong.domain.user.User;
 import dingdong.dingdong.dto.chat.*;
 import dingdong.dingdong.util.exception.DuplicateException;
+import dingdong.dingdong.dto.chat.ChatRoomResponseDto;
+import dingdong.dingdong.dto.chat.RedisChatRoom;
 import dingdong.dingdong.util.exception.ResourceNotFoundException;
 import dingdong.dingdong.util.exception.ResultCode;
 import lombok.RequiredArgsConstructor;

@@ -53,6 +53,10 @@ public enum ResultCode {
     CHAT_ROOM_CREATE_SUCCESS(CREATED, "채팅방 생성 성공"),
     CHAT_ROOM_ENTER_SUCCESS(CREATED, "채팅방 입장 성공"),
 
+    CHAT_PROMISE_CREATE_SUCCESS(CREATED, "채팅방 약속 생성 성공"),
+    CHAT_PROMISE_UPDATE_SUCCESS(CREATED, "채팅방 약속 수정 성공"),
+    CHAT_PROMISE_READ_SUCCESS(CREATED, "채팅방 약속 조회 성공"),
+
     /* 400 BAD_REQUEST : 잘못된 요청 */
     AUTH_NOT_FOUND(BAD_REQUEST, "해당 사용자의 인증 정보를 찾을 수 없습니다"),
     AUTH_FAIL(BAD_REQUEST, "인증 번호가 옳지 않습니다"),
@@ -87,6 +91,7 @@ public enum ResultCode {
 
     CHAT_ROOM_NOT_FOUND(NOT_FOUND, "해당 채팅방을 찾을 수 없습니다"),
     CHAT_JOIN_NOT_FOUND(NOT_FOUND, "해당 사용자가 채팅방에 속해 있지 않습니다"),
+    CHAT_PROMISE_NOT_FOUND(NOT_FOUND, "해당 채팅 약속을 찾을 수 없습니다"),
 
     LOCAL_NOT_FOUND(NOT_FOUND, "해당 동네를 찾을 수 없습니다"),
     POSTTAG_NOT_FOUND(NOT_FOUND, "해당 PostTag를 찾을 수 없습니다"),

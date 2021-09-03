@@ -2,6 +2,7 @@ package dingdong.dingdong.domain.post;
 
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import dingdong.dingdong.domain.BaseTimeEntity;
 import dingdong.dingdong.domain.user.User;
 import dingdong.dingdong.dto.post.PostRequestDto;
@@ -10,6 +11,8 @@ import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -43,10 +46,13 @@ public class Post extends BaseTimeEntity {
     @Column(nullable = false)
     private String bio;
 
+    @Column(columnDefinition = "varchar(255) default 'https://dingdongbucket.s3.ap-northeast-2.amazonaws.com/static/default_post.png'")
     private String imageUrl1;
 
+    @Column(columnDefinition = "varchar(255) default 'https://dingdongbucket.s3.ap-northeast-2.amazonaws.com/static/default_post.png'")
     private String imageUrl2;
 
+    @Column(columnDefinition = "varchar(255) default 'https://dingdongbucket.s3.ap-northeast-2.amazonaws.com/static/default_post.png'")
     private String imageUrl3;
 
     @Column(columnDefinition = "boolean default false")
@@ -77,6 +83,11 @@ public class Post extends BaseTimeEntity {
             user.getPosts().add(this);
         }
     }
+
+
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonBackReference
+    private List<PostTag> postTags = new ArrayList<>();
 
     // title, people, price, bio, local, done
     public void setPost(Category category, PostRequestDto request) {

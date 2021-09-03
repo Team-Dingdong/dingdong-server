@@ -58,9 +58,9 @@ public class PostDetailResponseDto {
 
     private String imageUrl3;
 
-    private String tag;
+    private List<String> tagList;
 
-    public PostDetailResponseDto(Post post, Profile profile, Tag tag){
+    public PostDetailResponseDto(Post post, Profile profile, List<String> tagList){
         this.title = post.getTitle();
         this.cost = post.getCost();
         this.bio = post.getBio();
@@ -76,6 +76,6 @@ public class PostDetailResponseDto {
         this.profile_bio = profile.getProfile_bio();
         this.good = profile.getGood();
         this.bad = profile.getBad();
-        this.tag = tag.getName();
+        this.tagList = tagList;
     }
 }
