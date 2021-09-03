@@ -18,19 +18,19 @@ public class ChatRoomResponseDto {
 
     private String title;
 
-    private int gatheredPeople;
-
     private String lastChatMessage;
 
     private LocalDateTime lastChatTime;
 
     private String imageUrl;
 
+    private int userCount;
+
     public static ChatRoomResponseDto from(ChatRoom chatRoom) {
         return ChatRoomResponseDto.builder()
                 .id(chatRoom.getId())
                 .title(chatRoom.getPost().getTitle())
-                .gatheredPeople(chatRoom.getPost().getGatheredPeople())
+                .userCount(chatRoom.getUserCount())
                 .lastChatMessage(chatRoom.getLastChatMessage())
                 .lastChatTime(chatRoom.getLastChatTime())
                 .imageUrl(chatRoom.getPost().getImageUrl1())

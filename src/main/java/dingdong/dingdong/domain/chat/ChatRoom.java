@@ -8,7 +8,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-
 @Entity
 @Getter
 @Builder
@@ -27,15 +26,29 @@ public class ChatRoom {
 
     private LocalDateTime endDate;
 
+    private String lastChatMessage;
+
     private LocalDateTime lastChatTime;
 
-    private String lastChatMessage;
+    private int userCount;
+
+    private int maximumUserConunt;
 
     @OneToMany(mappedBy = "chatRoom")
     private List<ChatMessage> messages = new ArrayList<>();
 
+    public void plusUserCount() {
+        this.userCount = this.userCount == this.maximumUserConunt ? this.userCount : this.userCount + 1;
+    }
+
+    public void minusUserCount() {
+        this.userCount = this.userCount == 0 ? 0 : this.userCount - 1;
+    }
+
     public ChatRoom(Post post) {
         this.id = post.getId();
         this.post = post;
+        this.userCount = 1;
+        this.maximumUserConunt = post.getGatheredPeople();
     }
 }

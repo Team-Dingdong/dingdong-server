@@ -4,5 +4,6 @@ public enum MessageType {
 
     ENTER,
     TALK,
+    PHOTO,
     QUIT
 }
