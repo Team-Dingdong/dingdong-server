@@ -184,7 +184,7 @@ public class PostService {
             postTagRepository.save(postTag);
         }
 
-        //chatService.createChatRoom(post);
+        chatService.createChatRoom(post);
         return post.getId();
 
     }
