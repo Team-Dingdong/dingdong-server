@@ -162,7 +162,6 @@ public class PostService {
         post.setUser(user);
 
         postRepository.save(post);
-
         postRepository.flush();
         chatPromiseService.createChatPromise(post);
 
