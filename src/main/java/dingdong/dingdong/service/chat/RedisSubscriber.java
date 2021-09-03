@@ -19,9 +19,12 @@ public class RedisSubscriber {
 
     private final ObjectMapper objectMapper;
     private final SimpMessageSendingOperations messagingTemplate;
+
+    private final ChatJoinRepository chatJoinRepository;
     private final ChatRoomRepository chatRoomRepository;
     private final ChatMessageRepository chatMessageRepository;
     private final UserRepository userRepository;
+    private final ChatService chatService;
 
     /**
      * Redis에서 메시지가 발행(publish)되면 대기하고 있던 Redis Subscriber가 해당 메시지를 받아 처리한다.
@@ -49,7 +52,8 @@ public class RedisSubscriber {
                 user = userRepository.getById(Long.parseLong("3"));
             } else if(MessageType.QUIT.equals(redisChatMessage.getType())) {
                 redisChatMessage.setSender("[띵-동]");
-                redisChatMessage.setMessage(nickname + "님이 퇴하였습니다");
+                redisChatMessage.setMessage(nickname + "님이 퇴장하였습니다");
+
                 user = userRepository.getById(Long.parseLong("3"));
             } else {
                 redisChatMessage.setSender(nickname);
