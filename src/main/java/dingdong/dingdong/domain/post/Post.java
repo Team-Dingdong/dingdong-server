@@ -2,6 +2,7 @@ package dingdong.dingdong.domain.post;
 
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import dingdong.dingdong.domain.BaseTimeEntity;
 import dingdong.dingdong.domain.user.User;
 import dingdong.dingdong.dto.post.PostRequestDto;
@@ -10,6 +11,7 @@ import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -82,7 +84,9 @@ public class Post extends BaseTimeEntity {
         }
     }
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonBackReference
     private List<PostTag> postTags = new ArrayList<>();
 
     // title, people, price, bio, local, done

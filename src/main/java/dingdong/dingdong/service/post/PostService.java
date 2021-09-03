@@ -1,5 +1,6 @@
 package dingdong.dingdong.service.post;
 
+import dingdong.dingdong.domain.chat.ChatPromiseRepository;
 import dingdong.dingdong.domain.chat.ChatRoomRepository;
 import dingdong.dingdong.domain.post.*;
 import dingdong.dingdong.domain.user.*;
@@ -9,6 +10,7 @@ import dingdong.dingdong.dto.post.PostDetailResponseDto;
 import dingdong.dingdong.dto.post.PostGetResponseDto;
 
 import dingdong.dingdong.service.chat.ChatService;
+import dingdong.dingdong.service.chatpromise.ChatPromiseService;
 import dingdong.dingdong.util.exception.ForbiddenException;
 import dingdong.dingdong.util.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +34,8 @@ public class PostService {
     private final TagRepository tagRepository;
     private final ChatRoomRepository chatRoomRepository;
     private final ChatService chatService;
+    private final ChatPromiseService chatPromiseService;
+    private final ChatPromiseRepository chatPromiseRepository;
 
     // 홈화면 피드 GET(최신순으로 정렬)
     public Page<PostGetResponseDto> findAllByCreateDateWithLocal(Long local1, Long local2, Pageable pageable){
@@ -151,11 +155,15 @@ public class PostService {
         // CategoryId
         Category category = categoryRepository.findById(request.getCategoryId()).orElseThrow(() -> new ResourceNotFoundException(CATEGORY_NOT_FOUND));
 
+        post.setImageUrl1("https://dingdongbucket.s3.ap-northeast-2.amazonaws.com/static/default_post.png");
+        post.setImageUrl2("https://dingdongbucket.s3.ap-northeast-2.amazonaws.com/static/default_post.png");
+        post.setImageUrl3("https://dingdongbucket.s3.ap-northeast-2.amazonaws.com/static/default_post.png");
         post.setPost(category, request);
         post.setUser(user);
 
         postRepository.save(post);
         postRepository.flush();
+        chatPromiseService.createChatPromise(post);
 
         String str = request.getPostTag();
         String[] array = (str.substring(1)).split("#");
@@ -185,8 +193,8 @@ public class PostService {
     public void  deletePost(Long id){
         Post post = postRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(POST_NOT_FOUND));
         postTagRepository.deleteByPost(post);
+        chatPromiseRepository.deleteByPost(post);
         chatRoomRepository.deleteByPost(post);
-        //postRepository.deleteById(post.getId());
     }
 
     // 나누기 피드(post) 수정

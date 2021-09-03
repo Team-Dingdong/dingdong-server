@@ -6,7 +6,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import javax.transaction.Transactional;
+
 @Repository
+@Transactional
 public interface PostRepository extends JpaRepository<Post, Long> {
 
     // 홈화면 최신순 정렬
