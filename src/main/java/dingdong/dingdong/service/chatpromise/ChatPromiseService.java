@@ -33,7 +33,6 @@ public class ChatPromiseService {
     private final ChatPromiseRepository chatPromiseRepository;
     private final ChatJoinRepository chatJoinRepository;
     private final PostRepository postRepository;
-    private final UserRepository userRepository;
 
     public ChatPromiseResponseDto findByPostId(Long id){
         ChatPromise chatPromise = chatPromiseRepository.findByPost_Id(id).orElseThrow(() -> new ResourceNotFoundException(CHAT_PROMISE_NOT_FOUND));
@@ -70,10 +69,10 @@ public class ChatPromiseService {
         LocalTime time = request.getPromiseTime();
         LocalDateTime dateTime = LocalDateTime.of(date, time);
         chatPromise.setPromiseDateTime(dateTime);
-
         chatPromise.setPromiseEndTime(dateTime.plusHours(3));
 
         chatPromiseRepository.save(chatPromise);
 
     }
+
 }

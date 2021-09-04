@@ -22,8 +22,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
-import static dingdong.dingdong.util.exception.ResultCode.POST_NOT_FOUND;
-
 @Slf4j
 @RequiredArgsConstructor
 @RestController
