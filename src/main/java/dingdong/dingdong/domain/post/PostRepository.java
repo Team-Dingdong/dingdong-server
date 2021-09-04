@@ -37,6 +37,11 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     Page<Post> findByUserId(Long UserId, Pageable pageable);
 
+    @Query(value = "select * from post, chat_join where chat_join.user_id = :user_id and chat_join.post_id = post.post_id",
+            countQuery = "select count(*) from post",
+            nativeQuery = true)
+    Page<Post> findPostByUserIdOnChatJoin(Long user_id, Pageable pageable);
+
     @Query(value = "select * from post, user, post_tag, tag where post.user_id = user.user_id AND post.post_id = post_tag.post_id AND post_tag.tag_id = tag.tag_id AND" +
             "(tag.name LIKE %:keyword% )",
             countQuery = "select count(*) from post",

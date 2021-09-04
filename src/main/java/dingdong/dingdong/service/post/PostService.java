@@ -73,7 +73,7 @@ public class PostService {
     // 카테고리별로 나누기 피드 GET
     public Page<PostGetResponseDto> findPostByCategoryIdWithLocal(Long local1, Long local2, Long categoryId, Pageable pageable){
         Category category = categoryRepository.findById(categoryId).orElseThrow(() -> new ResourceNotFoundException(CATEGORY_NOT_FOUND));
-        Page<Post> postList = postRepository.findByCategoryId(local1, local2, category.getId(),  pageable);
+        Page<Post> postList = postRepository.findByCategoryId(local1, local2, category.getId(), pageable);
 
         Page<PostGetResponseDto> pagingList = postList.map(
             post -> PostGetResponseDto.from(post)
@@ -89,6 +89,17 @@ public class PostService {
             post -> PostGetResponseDto.from(post)
         );
         return pagingList;
+    }
+
+    // 유저의 구매내역 리스트 (GET: 유저별로 출력되는 나누기 피드)
+    public Page<PostGetResponseDto> findPostByUserIdOnChatJoin(User user, Pageable pageable){
+       Page<Post> postList = postRepository.findPostByUserIdOnChatJoin(user.getId(), pageable);
+
+        Page<PostGetResponseDto> pagingList = postList.map(
+                post -> PostGetResponseDto.from(post)
+        );
+        return pagingList;
+
     }
 
     // 홈화면 피드 GET(최신순으로 정렬)(유저의 local 정보가 없는 경우)
@@ -163,7 +174,6 @@ public class PostService {
 
         postRepository.save(post);
         postRepository.flush();
-        chatPromiseService.createChatPromise(post);
 
         String str = request.getPostTag();
         String[] array = (str.substring(1)).split("#");

@@ -3,6 +3,7 @@ package dingdong.dingdong.domain.user;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import dingdong.dingdong.domain.BaseTimeEntity;
+import dingdong.dingdong.domain.chat.ChatPromise;
 import dingdong.dingdong.domain.post.Post;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -41,6 +42,14 @@ public class User extends BaseTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "local2")
     private Local local2;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JsonManagedReference
+    private List<Post> posts = new ArrayList<>();
+
+    @ManyToOne
+    @JoinColumn(name = "chatPromise_id")
+    private ChatPromise chatPromise;
 
     @OneToOne(mappedBy = "user")
     private Profile profile;
