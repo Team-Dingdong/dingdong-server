@@ -66,6 +66,11 @@ public class RedisSubscriber {
             ChatMessage chatMessage = new ChatMessage(chatRoom, user, redisChatMessage);
             chatMessageRepository.save(chatMessage);
 
+            chatRoom.setInfo(chatMessage);
+            log.info("chatMessage -> {}", chatRoom.getLastChatMessage());
+            log.info("chatTime -> {}", chatRoom.getLastChatTime());
+            chatRoomRepository.save(chatRoom);
+
         } catch (Exception e) {
             log.error("Exception {}", e);
         }

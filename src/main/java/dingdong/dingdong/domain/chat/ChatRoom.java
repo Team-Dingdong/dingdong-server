@@ -2,6 +2,7 @@ package dingdong.dingdong.domain.chat;
 
 import dingdong.dingdong.domain.post.Post;
 import lombok.*;
+import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -14,6 +15,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@DynamicUpdate
 public class ChatRoom {
 
     @Id
@@ -36,5 +38,10 @@ public class ChatRoom {
     public ChatRoom(Post post) {
         this.id = post.getId();
         this.post = post;
+    }
+
+    public void setInfo(ChatMessage chatMessage) {
+        this.lastChatMessage = chatMessage.getMessage();
+        this.lastChatTime = chatMessage.getSendTime();
     }
 }
