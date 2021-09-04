@@ -42,12 +42,12 @@ public class User extends BaseTimeEntity {
     @JoinColumn(name = "local2")
     private Local local2;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    @JsonManagedReference
-    private List<Post> posts = new ArrayList<>();
-
     @OneToOne(mappedBy = "user")
     private Profile profile;
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JsonManagedReference
+    private List<Post> posts = new ArrayList<>();
 
     public User(String phone) {
         this.phone = phone;

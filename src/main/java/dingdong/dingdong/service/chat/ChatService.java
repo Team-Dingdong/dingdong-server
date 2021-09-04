@@ -4,11 +4,7 @@ import dingdong.dingdong.domain.chat.*;
 import dingdong.dingdong.domain.post.Post;
 import dingdong.dingdong.domain.user.User;
 import dingdong.dingdong.dto.chat.*;
-import dingdong.dingdong.util.exception.DuplicateException;
-import dingdong.dingdong.dto.chat.ChatRoomResponseDto;
-import dingdong.dingdong.dto.chat.RedisChatRoom;
-import dingdong.dingdong.util.exception.ResourceNotFoundException;
-import dingdong.dingdong.util.exception.ResultCode;
+import dingdong.dingdong.util.exception.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -31,10 +27,11 @@ public class ChatService {
     public void createChatRoom(Post post) {
         ChatRoom chatRoom = new ChatRoom(post);
         RedisChatRoom redisChatRoom = new RedisChatRoom(chatRoom);
-//        ChatJoin chatJoin = new ChatJoin(chatRoom, post.getUser());
+        ChatJoin chatJoin = new ChatJoin(chatRoom, post.getUser());
         redisChatRoomRepository.save(redisChatRoom);
         chatRoomRepository.save(chatRoom);
-//        chatJoinRepository.save(chatJoin);
+        chatJoinRepository.save(chatJoin);
+        chatRoom.getPost().plusUserCount();
     }
 
     // 채팅방 목록 조회
@@ -62,8 +59,12 @@ public class ChatService {
         if(chatJoinRepository.existsByChatRoomAndUser(chatRoom, user)) {
             throw new DuplicateException(ResultCode.CHAT_ROOM_DUPLICATION);
         }
+        if(chatRoom.getPost().getGatheredPeople() >= chatRoom.getPost().getPeople()) {
+            throw new LimitException(ResultCode.CHAT_ROOM_ENTER_FAIL_LIMIT);
+        }
         ChatJoin chatJoin = new ChatJoin(chatRoom, user);
         chatJoinRepository.save(chatJoin);
+        chatRoom.getPost().plusUserCount();
     }
 
     // 채팅방 나가기
@@ -71,8 +72,12 @@ public class ChatService {
     public void quitChatRoom(String id, User user) {
         RedisChatRoom redisChatRoom = redisChatRoomRepository.findById(id);
         ChatRoom chatRoom = chatRoomRepository.findByPostId(Long.parseLong(redisChatRoom.getRoomId())).orElseThrow(() -> new ResourceNotFoundException(ResultCode.CHAT_ROOM_NOT_FOUND));
+        if(chatRoom.getPost().getUser() == user) {
+            throw new ForbiddenException(ResultCode.CHAT_ROOM_QUIT_FAIL_OWNER);
+        }
         ChatJoin chatJoin = chatJoinRepository.findByChatRoomAndUser(chatRoom, user).orElseThrow(() -> new ResourceNotFoundException(ResultCode.CHAT_JOIN_NOT_FOUND));
         chatJoinRepository.delete(chatJoin);
+        chatRoom.getPost().minusUserCount();
     }
 
     // 채팅방 사용자 목록 조회

@@ -2,7 +2,6 @@ package dingdong.dingdong.domain.post;
 
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import dingdong.dingdong.domain.BaseTimeEntity;
 import dingdong.dingdong.domain.user.User;
 import dingdong.dingdong.dto.post.PostRequestDto;
@@ -37,7 +36,7 @@ public class Post extends BaseTimeEntity {
     private int people;
 
     @Column(nullable = false)
-    @ColumnDefault("0")
+    @ColumnDefault("1")
     private int gatheredPeople;
 
     @Column(nullable = false)
@@ -98,5 +97,13 @@ public class Post extends BaseTimeEntity {
         this.bio = request.getBio();
         this.local = request.getLocal();
         this.done = false;
+    }
+
+    public void plusUserCount() {
+        this.gatheredPeople = this.gatheredPeople == this.people ? this.gatheredPeople : this.gatheredPeople + 1;
+    }
+
+    public void minusUserCount() {
+        this.gatheredPeople = this.gatheredPeople == 0 ? 0 : this.gatheredPeople - 1;
     }
 }

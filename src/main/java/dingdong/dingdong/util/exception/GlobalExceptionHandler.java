@@ -48,9 +48,15 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return Result.toResult(e.getResultCode());
     }
 
+    @ExceptionHandler(LimitException.class)
+    protected ResponseEntity<Result> handleLimitException(LimitException e) {
+        log.error("handleLimitException : {}", e.getResultCode());
+        return Result.toResult(e.getResultCode());
+    }
+
     @ExceptionHandler(AuthenticationException.class)
     protected ResponseEntity<Result> handleAuthenticationException(AuthenticationException e) {
-        log.error("handleForbiddenException : {}", e.getMessage());
+        log.error("handleAuthenticationException : {}", e.getMessage());
         if(e instanceof BadCredentialsException) {
             return Result.toResult(ResultCode.AUTH_FAIL);
         } else if(e instanceof InternalAuthenticationServiceException) {
