@@ -31,8 +31,10 @@ public class ChatService {
     public void createChatRoom(Post post) {
         ChatRoom chatRoom = new ChatRoom(post);
         RedisChatRoom redisChatRoom = new RedisChatRoom(chatRoom);
+//        ChatJoin chatJoin = new ChatJoin(chatRoom, post.getUser());
         redisChatRoomRepository.save(redisChatRoom);
         chatRoomRepository.save(chatRoom);
+//        chatJoinRepository.save(chatJoin);
     }
 
     // 채팅방 목록 조회
