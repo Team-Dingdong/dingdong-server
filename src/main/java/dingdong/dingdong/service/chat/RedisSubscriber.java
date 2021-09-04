@@ -49,12 +49,12 @@ public class RedisSubscriber {
                 redisChatMessage.setSender("[띵-동]");
                 redisChatMessage.setMessage(nickname + "님이 입장하였습니다");
 
-                user = userRepository.getById(Long.parseLong("3"));
+                user = userRepository.getById(Long.parseLong("1"));
             } else if(MessageType.QUIT.equals(redisChatMessage.getType())) {
                 redisChatMessage.setSender("[띵-동]");
                 redisChatMessage.setMessage(nickname + "님이 퇴장하였습니다");
 
-                user = userRepository.getById(Long.parseLong("3"));
+                user = userRepository.getById(Long.parseLong("1"));
             } else {
                 redisChatMessage.setSender(nickname);
             }

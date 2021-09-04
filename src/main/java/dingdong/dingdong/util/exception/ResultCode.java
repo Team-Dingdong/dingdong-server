@@ -75,10 +75,14 @@ public enum ResultCode {
 
     TAG_UPDATE_FAIL(BAD_REQUEST, "태그 업로드 실패"),
 
+    CHAT_ROOM_ENTER_FAIL_LIMIT(BAD_REQUEST, "해당 거래의 인원이 가득 찼습니다"),
+    CHAT_ROOM_ENTER_FAIL_PROMISE(BAD_REQUEST, "해당 거래 약속이 생성되어 입장할 수 없습니"),
+
     /* 401 UNAUTHORIZED : 인증되지 않은 사용자 */
     INVALID_AUTH_TOKEN(HttpStatus.UNAUTHORIZED, "권한 정보가 없는 토큰입니다"),
 
     /* 403 FORBIDDEN : 권한이 없는 사용자 */
+    CHAT_ROOM_QUIT_FAIL_OWNER(FORBIDDEN, "방장은 채팅방을 나갈 수 없습니다"),
     FORBIDDEN_MEMBER(FORBIDDEN, "해당 권한이 없습니다."),
 
     /* 404 NOT_FOUND : Resource 를 찾을 수 없음 */

@@ -30,7 +30,7 @@ public class ChatRoomResponseDto {
         return ChatRoomResponseDto.builder()
                 .id(chatRoom.getId())
                 .title(chatRoom.getPost().getTitle())
-                .userCount(chatRoom.getUserCount())
+                .userCount(chatRoom.getPost().getGatheredPeople())
                 .lastChatMessage(chatRoom.getLastChatMessage())
                 .lastChatTime(chatRoom.getLastChatTime())
                 .imageUrl(chatRoom.getPost().getImageUrl1())
