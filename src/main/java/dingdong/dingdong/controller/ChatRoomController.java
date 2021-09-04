@@ -7,6 +7,8 @@ import dingdong.dingdong.domain.user.User;
 import dingdong.dingdong.dto.chat.ChatMessageResponseDto;
 import dingdong.dingdong.dto.chat.ChatRoomResponseDto;
 import dingdong.dingdong.dto.chat.ChatRoomUserResponseDto;
+import dingdong.dingdong.dto.chatpromise.ChatPromiseRequestDto;
+import dingdong.dingdong.dto.chatpromise.ChatPromiseResponseDto;
 import dingdong.dingdong.service.chat.ChatService;
 import dingdong.dingdong.util.exception.ResourceNotFoundException;
 import dingdong.dingdong.util.exception.Result;
@@ -16,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @Slf4j
@@ -76,5 +79,26 @@ public class ChatRoomController {
     public ResponseEntity<Result<List<ChatMessageResponseDto>>> findChatMessagesByRoomId(@PathVariable String roomId) {
         List<ChatMessageResponseDto> data = chatService.findChatMessages(roomId);
         return Result.toResult(ResultCode.CHAT_MESSAGE_READ_SUCCESS, data);
+    }
+
+    // 채팅 약속 생성
+    @PostMapping("/promise/{roomId}")
+    public ResponseEntity<Result> createChatPromise(@CurrentUser User user, @PathVariable String roomId, @Valid @RequestBody ChatPromiseRequestDto request){
+        chatService.createChatPromise(user, roomId, request);
+        return Result.toResult(ResultCode.CHAT_PROMISE_CREATE_SUCCESS);
+    }
+
+    // 채팅 약속 수정
+    @PatchMapping("/promise/{roomId}")
+    public ResponseEntity<Result> updateChatPromise(@CurrentUser User user, @PathVariable String roomId, @Valid @RequestBody ChatPromiseRequestDto request){
+        chatService.updatePromise(user, roomId, request);
+        return Result.toResult(ResultCode.CHAT_PROMISE_UPDATE_SUCCESS);
+    }
+
+    // 채탕 약속 조회
+    @GetMapping("/promise/{roomId}")
+    public ResponseEntity<Result<ChatPromiseResponseDto>> findChatPromiseByPostId(@PathVariable String roomId){
+        ChatPromiseResponseDto data = chatService.findByPostId(roomId);
+        return Result.toResult(ResultCode.CHAT_PROMISE_READ_SUCCESS, data);
     }
 }

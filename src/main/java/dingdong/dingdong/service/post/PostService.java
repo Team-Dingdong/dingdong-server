@@ -3,14 +3,13 @@ package dingdong.dingdong.service.post;
 import dingdong.dingdong.domain.chat.ChatPromiseRepository;
 import dingdong.dingdong.domain.chat.ChatRoomRepository;
 import dingdong.dingdong.domain.post.*;
-import dingdong.dingdong.domain.user.*;
-
-import dingdong.dingdong.dto.post.PostRequestDto;
+import dingdong.dingdong.domain.user.Profile;
+import dingdong.dingdong.domain.user.ProfileRepository;
+import dingdong.dingdong.domain.user.User;
 import dingdong.dingdong.dto.post.PostDetailResponseDto;
 import dingdong.dingdong.dto.post.PostGetResponseDto;
-
+import dingdong.dingdong.dto.post.PostRequestDto;
 import dingdong.dingdong.service.chat.ChatService;
-import dingdong.dingdong.service.chatpromise.ChatPromiseService;
 import dingdong.dingdong.util.exception.ForbiddenException;
 import dingdong.dingdong.util.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +33,6 @@ public class PostService {
     private final TagRepository tagRepository;
     private final ChatRoomRepository chatRoomRepository;
     private final ChatService chatService;
-    private final ChatPromiseService chatPromiseService;
     private final ChatPromiseRepository chatPromiseRepository;
 
     // 홈화면 피드 GET(최신순으로 정렬)
@@ -203,7 +201,7 @@ public class PostService {
     public void  deletePost(Long id){
         Post post = postRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(POST_NOT_FOUND));
         postTagRepository.deleteByPost(post);
-        chatPromiseRepository.deleteByPost(post);
+        chatPromiseRepository.deleteById(post.getId());
         chatRoomRepository.deleteByPost(post);
     }
 

@@ -14,6 +14,7 @@ public class RedisChatMessage implements Serializable {
 
     private String roomId;
     private String sender;
+    private String profileImageUrl;
     private MessageType type;
     private String message;
 }

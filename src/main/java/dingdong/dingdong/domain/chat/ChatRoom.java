@@ -22,7 +22,7 @@ public class ChatRoom {
     private Long id;
 
     @MapsId
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "post_id")
     private Post post;
 
@@ -34,6 +34,9 @@ public class ChatRoom {
 
     @OneToMany(mappedBy = "chatRoom")
     private List<ChatMessage> messages = new ArrayList<>();
+
+    @OneToOne(mappedBy = "chatRoom")
+    private ChatPromise chatPromise;
 
     public ChatRoom(Post post) {
         this.id = post.getId();

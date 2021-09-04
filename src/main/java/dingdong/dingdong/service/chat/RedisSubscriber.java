@@ -43,6 +43,7 @@ public class RedisSubscriber {
             // 메시지로부터 회원 DB 찾기
             User user = userRepository.findById(Long.parseLong(redisChatMessage.getSender())).orElseThrow(() -> new ResourceNotFoundException(ResultCode.USER_NOT_FOUND));
             String nickname = user.getProfile().getNickname();
+            String profileImageUrl = user.getProfile().getProfileImageUrl();
 
             // MessageType에 따라 처리
             if(MessageType.ENTER.equals(redisChatMessage.getType())) {
@@ -57,6 +58,7 @@ public class RedisSubscriber {
                 user = userRepository.getById(Long.parseLong("1"));
             } else {
                 redisChatMessage.setSender(nickname);
+                redisChatMessage.setProfileImageUrl(profileImageUrl);
             }
 
             // 채팅방을 구독한 클라이언트에게 메시지 발송

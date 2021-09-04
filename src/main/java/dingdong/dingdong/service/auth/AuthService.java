@@ -52,7 +52,6 @@ public class AuthService implements UserDetailsService {
     private final UserRepository userRepository;
     private final AuthRepository authRepository;
     private final ProfileRepository profileRepository;
-    private final RatingRepository ratingRepository;
     private final LocalRepository localRepository;
     private final RefreshTokenRepository refreshTokenRepository;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
