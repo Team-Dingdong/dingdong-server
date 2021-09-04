@@ -118,7 +118,7 @@ public class PostController {
     public ResponseEntity<Result<Long>> createPost(@CurrentUser User user, @Valid @RequestBody PostRequestDto requestDto) {
 
         Long postId = postService.createPost(user, requestDto);
-        return Result.toResult(ResultCode.POST_CREATE_SUCCESS, postId );
+        return Result.toResult(ResultCode.POST_CREATE_SUCCESS, postId);
 
     }
 

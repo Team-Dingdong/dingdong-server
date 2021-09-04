@@ -12,7 +12,7 @@ import java.util.Map;
 @Repository
 public class RedisChatRoomRepository {
 
-    private static final String CHAT_ROOMS = "chatroom";
+    private static final String CHAT_ROOMS = "CHAT_ROOM";
     private final RedisTemplate<String, RedisChatRoom> redisTemplate;
     private HashOperations<String, String, RedisChatRoom> opsHashChatRoom;
 
