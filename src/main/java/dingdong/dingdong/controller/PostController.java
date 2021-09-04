@@ -105,18 +105,24 @@ public class PostController {
         return Result.toResult(ResultCode.POST_READ_SUCCESS, data);
     }
 
-    // 유저 별로 나누기 피드들 불러오기
-    @GetMapping("/user")
+    // 유저 별로 나누기 피드들 불러오기 // 판매내역 조회
+    @GetMapping("/user/sell")
     public ResponseEntity<Result<Page<PostGetResponseDto>>> findPostByUserId(@CurrentUser User user, @PageableDefault(size = 5, direction = Sort.Direction.DESC) Pageable pageable){
         Page<PostGetResponseDto> postPage = postService.findPostByUserId(user, pageable);
         return Result.toResult(ResultCode.POST_READ_SUCCESS, postPage);
 
     }
 
+    // 유저 별로 나누기 피드들 불러오기 // 구매내역 조회
+    @GetMapping("/user/buy")
+    public ResponseEntity<Result<Page<PostGetResponseDto>>> findPostByUserIdOnChat(@CurrentUser User user, @PageableDefault(size = 5, direction = Sort.Direction.DESC) Pageable pageable){
+        Page<PostGetResponseDto> postPage = postService.findPostByUserIdOnChatJoin(user, pageable);
+        return Result.toResult(ResultCode.POST_READ_SUCCESS, postPage);
+    }
+
     // 나누기 생성
     @PostMapping("")
     public ResponseEntity<Result<Long>> createPost(@CurrentUser User user, @Valid @RequestBody PostRequestDto requestDto) {
-
         Long postId = postService.createPost(user, requestDto);
         return Result.toResult(ResultCode.POST_CREATE_SUCCESS, postId );
 
@@ -125,7 +131,6 @@ public class PostController {
     // 나누기 삭제
     @DeleteMapping("/{id}")
     public ResponseEntity<Result> deletePost(@PathVariable Long id){
-
        postService.deletePost(id);
        return Result.toResult(ResultCode.POST_DELETE_SUCCESS);
 
