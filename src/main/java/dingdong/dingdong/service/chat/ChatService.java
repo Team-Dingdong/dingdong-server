@@ -4,22 +4,34 @@ import dingdong.dingdong.domain.chat.*;
 import dingdong.dingdong.domain.post.Post;
 import dingdong.dingdong.domain.user.User;
 import dingdong.dingdong.dto.chat.*;
+import dingdong.dingdong.dto.chatpromise.ChatPromiseRequestDto;
+import dingdong.dingdong.dto.chatpromise.ChatPromiseResponseDto;
 import dingdong.dingdong.util.exception.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static dingdong.dingdong.util.exception.ResultCode.CHAT_PROMISE_NOT_FOUND;
+
 @Slf4j
 @RequiredArgsConstructor
+
 @Service
 public class ChatService {
 
     private final ChatJoinRepository chatJoinRepository;
     private final ChatRoomRepository chatRoomRepository;
+    private final ChatPromiseRepository chatPromiseRepository;
+    private final ChatPromiseVoteRepository chatPromiseVoteRepository;
     private final RedisChatRoomRepository redisChatRoomRepository;
 
     // 채팅방 생성
@@ -28,8 +40,8 @@ public class ChatService {
         ChatRoom chatRoom = new ChatRoom(post);
         RedisChatRoom redisChatRoom = new RedisChatRoom(chatRoom);
         ChatJoin chatJoin = new ChatJoin(chatRoom, post.getUser());
-        redisChatRoomRepository.save(redisChatRoom);
         chatRoomRepository.save(chatRoom);
+        redisChatRoomRepository.save(redisChatRoom);
         chatJoinRepository.save(chatJoin);
         chatRoom.getPost().plusUserCount();
     }
@@ -72,7 +84,7 @@ public class ChatService {
     public void quitChatRoom(String id, User user) {
         RedisChatRoom redisChatRoom = redisChatRoomRepository.findById(id);
         ChatRoom chatRoom = chatRoomRepository.findByPostId(Long.parseLong(redisChatRoom.getRoomId())).orElseThrow(() -> new ResourceNotFoundException(ResultCode.CHAT_ROOM_NOT_FOUND));
-        if(chatRoom.getPost().getUser() == user) {
+        if(chatRoom.getPost().getUser().getId() == user.getId()) {
             throw new ForbiddenException(ResultCode.CHAT_ROOM_QUIT_FAIL_OWNER);
         }
         ChatJoin chatJoin = chatJoinRepository.findByChatRoomAndUser(chatRoom, user).orElseThrow(() -> new ResourceNotFoundException(ResultCode.CHAT_JOIN_NOT_FOUND));
@@ -100,4 +112,54 @@ public class ChatService {
         List<ChatMessageResponseDto> data = messages.stream().map(ChatMessageResponseDto::from).collect(Collectors.toList());
         return data;
     }
+
+    // 채팅 약속 조회
+    public ChatPromiseResponseDto findByPostId(String id){
+        RedisChatRoom redisChatRoom = redisChatRoomRepository.findById(id);
+        ChatRoom chatRoom = chatRoomRepository.findByPostId(Long.parseLong(redisChatRoom.getRoomId())).orElseThrow(() -> new ResourceNotFoundException(ResultCode.CHAT_ROOM_NOT_FOUND));
+        ChatPromise chatPromise = chatPromiseRepository.findByChatRoom(chatRoom).orElseThrow(() -> new ResourceNotFoundException(CHAT_PROMISE_NOT_FOUND));
+        ChatPromiseResponseDto promiseResponseDto = new ChatPromiseResponseDto(chatPromise);
+        return promiseResponseDto;
+    }
+
+    // 채팅 약속 수정
+    public void updatePromise(User user, String id, ChatPromiseRequestDto request){
+        RedisChatRoom redisChatRoom = redisChatRoomRepository.findById(id);
+        ChatRoom chatRoom = chatRoomRepository.findByPostId(Long.parseLong(redisChatRoom.getRoomId())).orElseThrow(() -> new ResourceNotFoundException(ResultCode.CHAT_ROOM_NOT_FOUND));
+        ChatPromise chatPromise = chatPromiseRepository.findByChatRoom(chatRoom).orElseThrow(() -> new ResourceNotFoundException(CHAT_PROMISE_NOT_FOUND));
+
+        // LocalDate과 LocalTime을 합쳐 LocalDateTime으로 변환
+        LocalDate date = request.getPromiseDate();
+        LocalTime time = request.getPromiseTime();
+        LocalDateTime dateTime = LocalDateTime.of(date, time);
+        chatPromise.setPromiseDateTime(dateTime);
+        chatPromise.setPromiseEndTime(dateTime.plusHours(3));
+        chatPromise.setType(Boolean.FALSE);
+
+        chatPromiseRepository.save(chatPromise);
+    }
+
+    // 채팅 약속 생성
+    public void createChatPromise(User user, String id, ChatPromiseRequestDto request){
+        RedisChatRoom redisChatRoom = redisChatRoomRepository.findById(id);
+        ChatRoom chatRoom = chatRoomRepository.findByPostId(Long.parseLong(redisChatRoom.getRoomId())).orElseThrow(() -> new ResourceNotFoundException(ResultCode.CHAT_ROOM_NOT_FOUND));
+
+        ChatPromise chatPromise = new ChatPromise(chatRoom);
+        ChatPromiseVote chatPromiseVote = new ChatPromiseVote(chatRoom, user);
+
+        LocalDate date = request.getPromiseDate();
+        LocalTime time = request.getPromiseTime();
+        LocalDateTime dateTime = LocalDateTime.of(date, time);
+        chatPromise.setPromiseDateTime(dateTime);
+        chatPromise.setPromiseEndTime(dateTime.plusHours(3));
+
+        chatPromiseRepository.save(chatPromise);
+        chatPromiseVoteRepository.save(chatPromiseVote);
+    }
+
+    @Scheduled(fixedDelay=1000 * 120)
+    public void checkEndTime() {
+        chatPromiseRepository.updateByLocalDateTime();
+    }
+
 }

@@ -43,12 +43,8 @@ public class User extends BaseTimeEntity {
     @JoinColumn(name = "local2")
     private Local local2;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JsonManagedReference
-    private List<Post> posts = new ArrayList<>();
-
     @ManyToOne
-    @JoinColumn(name = "chatPromise_id")
+    @JoinColumn(name = "promise_id")
     private ChatPromise chatPromise;
 
     @OneToOne(mappedBy = "user")
