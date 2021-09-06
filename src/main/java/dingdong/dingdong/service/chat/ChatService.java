@@ -134,7 +134,7 @@ public class ChatService {
         LocalDateTime dateTime = LocalDateTime.of(date, time);
         chatPromise.setPromiseDateTime(dateTime);
         chatPromise.setPromiseEndTime(dateTime.plusHours(3));
-        chatPromise.setType(Boolean.FALSE);
+        chatPromise.setType(PromiseType.PROGRESS);
 
         chatPromiseRepository.save(chatPromise);
     }
@@ -152,12 +152,14 @@ public class ChatService {
         LocalDateTime dateTime = LocalDateTime.of(date, time);
         chatPromise.setPromiseDateTime(dateTime);
         chatPromise.setPromiseEndTime(dateTime.plusHours(3));
+        chatPromise.setType(PromiseType.PROGRESS);
 
         chatPromiseRepository.save(chatPromise);
         chatPromiseVoteRepository.save(chatPromiseVote);
     }
 
-    @Scheduled(fixedDelay=1000 * 120)
+    // 일정시간마다 Scheduling 작동.
+    @Scheduled(fixedDelay=60000 * 60) // 1시간마다 작동
     public void checkEndTime() {
         chatPromiseRepository.updateByLocalDateTime();
     }

@@ -14,14 +14,11 @@ import java.util.Optional;
 @Transactional
 public interface ChatPromiseRepository extends JpaRepository<ChatPromise, Long> {
 
-//    @Query(value = "select * from chat_promise where post_id = :id", nativeQuery = true)
-//    Optional<ChatPromise> findByPost_Id(Long id);
-
     Optional<ChatPromise> findByChatRoom(ChatRoom chatRoom);
     void deleteById(Long id);
 
     @Modifying
-    @Query(value = "update chat_promise set type = true where promise_end_time <= now()", nativeQuery = true)
+    @Query(value = "update chat_promise set type = 'END' where promise_end_time <= now()", nativeQuery = true)
     void updateByLocalDateTime();
 
 }

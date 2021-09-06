@@ -2,6 +2,7 @@ package dingdong.dingdong.domain.chat;
 
 
 import dingdong.dingdong.domain.BaseTimeEntity;
+import dingdong.dingdong.service.chat.PromiseType;
 import lombok.*;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -32,7 +33,8 @@ public class ChatPromise extends BaseTimeEntity {
     private String promiseLocal;
 
     // 약속 상태
-    private Boolean type;
+    @Enumerated(EnumType.STRING)
+    private PromiseType type;
 
     // 전체 인원
     private int totalPeople;
