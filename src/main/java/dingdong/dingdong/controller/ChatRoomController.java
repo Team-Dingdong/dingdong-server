@@ -1,7 +1,5 @@
 package dingdong.dingdong.controller;
 
-import dingdong.dingdong.domain.post.Post;
-import dingdong.dingdong.domain.post.PostRepository;
 import dingdong.dingdong.domain.user.CurrentUser;
 import dingdong.dingdong.domain.user.User;
 import dingdong.dingdong.dto.chat.ChatMessageResponseDto;
@@ -10,7 +8,6 @@ import dingdong.dingdong.dto.chat.ChatRoomUserResponseDto;
 import dingdong.dingdong.dto.chatpromise.ChatPromiseRequestDto;
 import dingdong.dingdong.dto.chatpromise.ChatPromiseResponseDto;
 import dingdong.dingdong.service.chat.ChatService;
-import dingdong.dingdong.util.exception.ResourceNotFoundException;
 import dingdong.dingdong.util.exception.Result;
 import dingdong.dingdong.util.exception.ResultCode;
 import lombok.RequiredArgsConstructor;
@@ -27,17 +24,7 @@ import java.util.List;
 @RequestMapping("/api/v1/chat")
 public class ChatRoomController {
 
-    private final PostRepository postRepository;
     private final ChatService chatService;
-
-    // 채팅방 생성
-    @PostMapping("/room")
-    public ResponseEntity<Result> createChatRoom(@CurrentUser User user) {
-        int id = 1;
-        Post post = postRepository.findById(Long.valueOf(id)).orElseThrow(() -> new ResourceNotFoundException(ResultCode.POST_NOT_FOUND));
-        chatService.createChatRoom(post);
-        return Result.toResult(ResultCode.CHAT_ROOM_CREATE_SUCCESS);
-    }
 
     // 채팅방 목록 조회
     @GetMapping("/room")
@@ -55,29 +42,29 @@ public class ChatRoomController {
 
     // 채팅방 입장
     @PostMapping("/room/{roomId}")
-    public ResponseEntity<Result> enterChatRoom(@PathVariable String roomId, @CurrentUser User user) {
-        chatService.enterChatRoom(roomId, user);
+    public ResponseEntity<Result> enterChatRoom(@CurrentUser User user, @PathVariable String roomId) {
+        chatService.enterChatRoom(user, roomId);
         return Result.toResult(ResultCode.CHAT_ROOM_ENTER_SUCCESS);
     }
 
     // 채팅방 나가기
     @DeleteMapping("/room/{roomId}")
-    public ResponseEntity<Result> quitChatRoom(@PathVariable String roomId, @CurrentUser User user) {
-        chatService.quitChatRoom(roomId, user);
+    public ResponseEntity<Result> quitChatRoom(@CurrentUser User user, @PathVariable String roomId) {
+        chatService.quitChatRoom(user, roomId);
         return Result.toResult(ResultCode.CHAT_ROOM_QUIT_SUCCESS);
     }
 
     // 채팅방 사용자 목록 조회
     @GetMapping("/user/{roomId}")
-    public ResponseEntity<Result<List<ChatRoomUserResponseDto>>> findUsersByRoomId(@PathVariable String roomId) {
-        List<ChatRoomUserResponseDto> data = chatService.findUsers(roomId);
+    public ResponseEntity<Result<List<ChatRoomUserResponseDto>>> findUsersByRoomId(@CurrentUser User user, @PathVariable String roomId) {
+        List<ChatRoomUserResponseDto> data = chatService.findUsers(user, roomId);
         return Result.toResult(ResultCode.CHAT_ROOM_USER_READ_SUCCESS, data);
     }
 
     // 채팅 메세지 조회
     @GetMapping("/message/{roomId}")
-    public ResponseEntity<Result<List<ChatMessageResponseDto>>> findChatMessagesByRoomId(@PathVariable String roomId) {
-        List<ChatMessageResponseDto> data = chatService.findChatMessages(roomId);
+    public ResponseEntity<Result<List<ChatMessageResponseDto>>> findChatMessagesByRoomId(@CurrentUser User user, @PathVariable String roomId) {
+        List<ChatMessageResponseDto> data = chatService.findChatMessages(user, roomId);
         return Result.toResult(ResultCode.CHAT_MESSAGE_READ_SUCCESS, data);
     }
 
@@ -97,8 +84,8 @@ public class ChatRoomController {
 
     // 채팅 약속 조회
     @GetMapping("/promise/{roomId}")
-    public ResponseEntity<Result<ChatPromiseResponseDto>> findChatPromiseByPostId(@PathVariable String roomId){
-        ChatPromiseResponseDto data = chatService.findByPostId(roomId);
+    public ResponseEntity<Result<ChatPromiseResponseDto>> findChatPromiseByPostId(@CurrentUser User user, @PathVariable String roomId){
+        ChatPromiseResponseDto data = chatService.findByPostId(user, roomId);
         return Result.toResult(ResultCode.CHAT_PROMISE_READ_SUCCESS, data);
     }
 

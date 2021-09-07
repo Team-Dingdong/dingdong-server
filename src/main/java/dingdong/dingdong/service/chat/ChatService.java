@@ -2,7 +2,6 @@ package dingdong.dingdong.service.chat;
 
 import dingdong.dingdong.domain.chat.*;
 import dingdong.dingdong.domain.post.Post;
-import dingdong.dingdong.domain.user.CurrentUser;
 import dingdong.dingdong.domain.user.User;
 import dingdong.dingdong.dto.chat.*;
 import dingdong.dingdong.dto.chatpromise.ChatPromiseRequestDto;
@@ -11,7 +10,6 @@ import dingdong.dingdong.util.exception.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -61,12 +59,15 @@ public class ChatService {
     public ChatRoomResponseDto findRoomById(User user, String id) {
         RedisChatRoom redisChatRoom = redisChatRoomRepository.findById(id);
         ChatRoom chatRoom = chatRoomRepository.findByPostId(Long.parseLong(redisChatRoom.getRoomId())).orElseThrow(() -> new ResourceNotFoundException(ResultCode.CHAT_ROOM_NOT_FOUND));
+        if(!chatJoinRepository.existsByChatRoomAndUser(chatRoom, user)) {
+            throw new ForbiddenException(ResultCode.FORBIDDEN_MEMBER);
+        }
         return ChatRoomResponseDto.from(chatRoom, user);
     }
 
     // 채팅방 입장
     @Transactional
-    public void enterChatRoom(String id, User user) {
+    public void enterChatRoom(User user, String id) {
         RedisChatRoom redisChatRoom = redisChatRoomRepository.findById(id);
         ChatRoom chatRoom = chatRoomRepository.findByPostId(Long.parseLong(redisChatRoom.getRoomId())).orElseThrow(() -> new ResourceNotFoundException(ResultCode.CHAT_ROOM_NOT_FOUND));
         if(chatJoinRepository.existsByChatRoomAndUser(chatRoom, user)) {
@@ -82,9 +83,12 @@ public class ChatService {
 
     // 채팅방 나가기
     @Transactional
-    public void quitChatRoom(String id, User user) {
+    public void quitChatRoom(User user, String id) {
         RedisChatRoom redisChatRoom = redisChatRoomRepository.findById(id);
         ChatRoom chatRoom = chatRoomRepository.findByPostId(Long.parseLong(redisChatRoom.getRoomId())).orElseThrow(() -> new ResourceNotFoundException(ResultCode.CHAT_ROOM_NOT_FOUND));
+        if(!chatJoinRepository.existsByChatRoomAndUser(chatRoom, user)) {
+            throw new ForbiddenException(ResultCode.FORBIDDEN_MEMBER);
+        }
         if(chatRoom.getPost().getUser().getId() == user.getId()) {
             throw new ForbiddenException(ResultCode.CHAT_ROOM_QUIT_FAIL_OWNER);
         }
@@ -95,20 +99,26 @@ public class ChatService {
 
     // 채팅방 사용자 목록 조회
     @Transactional
-    public List<ChatRoomUserResponseDto> findUsers(String id) {
+    public List<ChatRoomUserResponseDto> findUsers(User user, String id) {
         RedisChatRoom redisChatRoom = redisChatRoomRepository.findById(id);
         ChatRoom chatRoom = chatRoomRepository.findByPostId(Long.parseLong(redisChatRoom.getRoomId())).orElseThrow(() -> new ResourceNotFoundException(ResultCode.CHAT_ROOM_NOT_FOUND));
+        if(!chatJoinRepository.existsByChatRoomAndUser(chatRoom, user)) {
+            throw new ForbiddenException(ResultCode.FORBIDDEN_MEMBER);
+        }
         List<ChatJoin> chatJoins = chatJoinRepository.findAllByChatRoom(chatRoom);
         List<User> users = chatJoins.stream().map(ChatJoin::getUser).collect(Collectors.toList());
-        List<ChatRoomUserResponseDto> data = users.stream().map(user -> ChatRoomUserResponseDto.from(chatRoom, user)).collect(Collectors.toList());
+        List<ChatRoomUserResponseDto> data = users.stream().map(u -> ChatRoomUserResponseDto.from(chatRoom, user)).collect(Collectors.toList());
         return data;
     }
 
     // 채팅 메세지 조회
     @Transactional
-    public List<ChatMessageResponseDto> findChatMessages(String id) {
+    public List<ChatMessageResponseDto> findChatMessages(User user, String id) {
         RedisChatRoom redisChatRoom = redisChatRoomRepository.findById(id);
         ChatRoom chatRoom = chatRoomRepository.findByPostId(Long.parseLong(redisChatRoom.getRoomId())).orElseThrow(() -> new ResourceNotFoundException(ResultCode.CHAT_ROOM_NOT_FOUND));
+        if(!chatJoinRepository.existsByChatRoomAndUser(chatRoom, user)) {
+            throw new ForbiddenException(ResultCode.FORBIDDEN_MEMBER);
+        }
         List<ChatMessage> messages = chatRoom.getMessages();
         List<ChatMessageResponseDto> data = messages.stream().map(ChatMessageResponseDto::from).collect(Collectors.toList());
         return data;
@@ -116,9 +126,12 @@ public class ChatService {
 
     // 채팅 약속 조회
     @Transactional
-    public ChatPromiseResponseDto findByPostId(String id){
+    public ChatPromiseResponseDto findByPostId(User user, String id){
         RedisChatRoom redisChatRoom = redisChatRoomRepository.findById(id);
         ChatRoom chatRoom = chatRoomRepository.findByPostId(Long.parseLong(redisChatRoom.getRoomId())).orElseThrow(() -> new ResourceNotFoundException(ResultCode.CHAT_ROOM_NOT_FOUND));
+        if(!chatJoinRepository.existsByChatRoomAndUser(chatRoom, user)) {
+            throw new ForbiddenException(ResultCode.FORBIDDEN_MEMBER);
+        }
         ChatPromise chatPromise = chatPromiseRepository.findByChatRoom(chatRoom).orElseThrow(() -> new ResourceNotFoundException(CHAT_PROMISE_NOT_FOUND));
         ChatPromiseResponseDto promiseResponseDto = new ChatPromiseResponseDto(chatPromise);
         return promiseResponseDto;
@@ -170,6 +183,7 @@ public class ChatService {
 
 
     // 투표 생성
+    @Transactional
     public void createVotePromise(User user, Long post_id){
         ChatRoom chatRoom = chatRoomRepository.findByPostId(post_id).orElseThrow(() -> new ResourceNotFoundException(ResultCode.CHAT_ROOM_NOT_FOUND));
 
