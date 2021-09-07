@@ -57,6 +57,8 @@ public enum ResultCode {
     CHAT_PROMISE_UPDATE_SUCCESS(CREATED, "채팅방 약속 수정 성공"),
     CHAT_PROMISE_READ_SUCCESS(CREATED, "채팅방 약속 조회 성공"),
 
+    CHAT_PROMISE_VOTE_CREATE_SUCCESS(CREATED, "채팅방 약속 투표 성공"),
+
     /* 400 BAD_REQUEST : 잘못된 요청 */
     AUTH_NOT_FOUND(BAD_REQUEST, "해당 사용자의 인증 정보를 찾을 수 없습니다"),
     AUTH_FAIL(BAD_REQUEST, "인증 번호가 옳지 않습니다"),
@@ -100,6 +102,8 @@ public enum ResultCode {
     LOCAL_NOT_FOUND(NOT_FOUND, "해당 동네를 찾을 수 없습니다"),
     POSTTAG_NOT_FOUND(NOT_FOUND, "해당 PostTag를 찾을 수 없습니다"),
     TAG_NOT_FOUND(NOT_FOUND, "해당 태그를 찾을 수 없습니다"),
+
+    CHAT_PROMISE_VOTE_NOT_FOUND(NOT_FOUND, "해당 채팅 약속 투표를 찾을 수 없습니다."),
 
     /* 409 CONFLICT : Resource 의 현재 상태와 충돌. 보통 중복된 데이터 존재 */
     DUPLICATE_RESOURCE(CONFLICT, "데이터가 이미 존재합니다"),
