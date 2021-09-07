@@ -1,13 +1,11 @@
 package dingdong.dingdong.dto.post;
 
 import dingdong.dingdong.domain.post.Post;
-import dingdong.dingdong.domain.post.Tag;
 import dingdong.dingdong.domain.user.Profile;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -16,40 +14,32 @@ import java.util.List;
 @Setter
 public class PostDetailResponseDto {
 
-    @NotNull
-    private String title;
+    private String category;
 
-    @NotNull
+    private Long userId;
+
     private String nickname;
 
-    @NotNull
-    private String profile_bio;
+    private String profileImageUrl;
 
-    @NotNull
+    private String title;
+
     private Number good;
 
-    @NotNull
     private Number bad;
 
-    @NotNull
     private int cost;
 
-    @NotNull
     private String bio;
 
-    @NotNull
     private String local;
 
-    @NotNull
     private LocalDateTime createdDate;
 
-    @NotNull
     private LocalDateTime modifiedDate;
 
-    @NotNull
     private int people;
 
-    @NotNull
     private int gatheredPeople;
 
     private String imageUrl1;
@@ -61,6 +51,8 @@ public class PostDetailResponseDto {
     private List<String> tagList;
 
     public PostDetailResponseDto(Post post, Profile profile, List<String> tagList){
+        
+        this.category = post.getCategory().getName();
         this.title = post.getTitle();
         this.cost = post.getCost();
         this.bio = post.getBio();
@@ -72,8 +64,9 @@ public class PostDetailResponseDto {
         this.people = post.getPeople();
         this.gatheredPeople = post.getGatheredPeople();
         this.local = post.getLocal();
+        this.userId = post.getUser().getId();
         this.nickname = profile.getNickname();
-        this.profile_bio = profile.getProfile_bio();
+        this.profileImageUrl = profile.getProfileImageUrl();
         this.good = profile.getGood();
         this.bad = profile.getBad();
         this.tagList = tagList;
