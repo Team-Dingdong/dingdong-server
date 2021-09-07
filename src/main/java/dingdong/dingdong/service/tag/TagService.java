@@ -5,6 +5,7 @@ import dingdong.dingdong.dto.tag.TagRequestDto;
 import dingdong.dingdong.util.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import static dingdong.dingdong.util.exception.ResultCode.POST_NOT_FOUND;
 
@@ -16,6 +17,7 @@ public class TagService {
     private final TagRepository tagRepository;
     private final PostTagRepository postTagRepository;
 
+    @Transactional
     public void addTags(Long id, TagRequestDto request){
         PostTag postTag = new PostTag();
         Post post = postRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(POST_NOT_FOUND));

@@ -44,9 +44,12 @@ public class ProfileService {
     // 프로필 수정
     @Transactional
     public void updateProfile(User user, ProfileUpdateRequestDto profileUpdateRequestDto) throws IOException {
+        log.info("profileUpdateRequestDto : {}", profileUpdateRequestDto);
         Profile profile = profileRepository.findById(user.getId()).orElseThrow(() -> new ResourceNotFoundException(PROFILE_NOT_FOUND));
 
         if(profileUpdateRequestDto.getProfileImage() != null) {
+            log.info("profileImage : {}", profileUpdateRequestDto.getProfileImage());
+
             String path = s3Uploader.upload(profileUpdateRequestDto.getProfileImage(), "static");
             profile.setProfileImageUrl(path);
         }

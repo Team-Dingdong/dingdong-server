@@ -89,6 +89,7 @@ public class PostController {
         return Result.toResult(ResultCode.POST_READ_SUCCESS, data);
     }
 
+    // 카테고리별로 마감임박순으로 나누기 피드들 불러오기
     @GetMapping("/category/sorted_by=desc(endDate)/{categoryId}")
     public ResponseEntity<Result<Page<PostGetResponseDto>>> findPostByCategoryIdSortByEndDate(@CurrentUser User user, @PathVariable Long categoryId, @PageableDefault(size = 5, direction = Sort.Direction.DESC) Pageable pageable){
 
@@ -110,7 +111,6 @@ public class PostController {
     public ResponseEntity<Result<Page<PostGetResponseDto>>> findPostByUserId(@CurrentUser User user, @PageableDefault(size = 5, direction = Sort.Direction.DESC) Pageable pageable){
         Page<PostGetResponseDto> postPage = postService.findPostByUserId(user, pageable);
         return Result.toResult(ResultCode.POST_READ_SUCCESS, postPage);
-
     }
 
     // 유저 별로 나누기 피드들 불러오기 // 구매내역 조회
@@ -125,7 +125,6 @@ public class PostController {
     public ResponseEntity<Result<Long>> createPost(@CurrentUser User user, @Valid @RequestBody PostRequestDto requestDto) {
         Long postId = postService.createPost(user, requestDto);
         return Result.toResult(ResultCode.POST_CREATE_SUCCESS, postId);
-
     }
 
     // 나누기 삭제
@@ -133,7 +132,6 @@ public class PostController {
     public ResponseEntity<Result> deletePost(@PathVariable Long id){
        postService.deletePost(id);
        return Result.toResult(ResultCode.POST_DELETE_SUCCESS);
-
     }
 
     // 나누기 수정
