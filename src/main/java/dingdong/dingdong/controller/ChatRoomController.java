@@ -89,9 +89,10 @@ public class ChatRoomController {
         return Result.toResult(ResultCode.CHAT_PROMISE_READ_SUCCESS, data);
     }
 
-    @PostMapping("/promise/vote/{post_id}")
-    public ResponseEntity<Result> createVotePromsie(@CurrentUser User user, @PathVariable Long post_id){
-        chatService.createVotePromise(user, post_id);
+    // 채팅 약속 투표 생성
+    @PostMapping("/promise/vote/{roomId}")
+    public ResponseEntity<Result> createVotePromsie(@CurrentUser User user, @PathVariable String roomId){
+        chatService.createVotePromise(user, roomId);
         return Result.toResult(ResultCode.CHAT_PROMISE_VOTE_CREATE_SUCCESS);
     }
 }

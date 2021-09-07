@@ -12,6 +12,7 @@ public enum ResultCode {
 
     /* 200 OK */
     LOGIN_SUCCESS(OK, "로그인 성공"),
+    REISSUE_SUCCESS(OK, "토큰 재발급 성공"),
     CHECK_EMAIL_SUCCESS(OK, "사용가능한 이메일입니다"),
     CHECK_NICKNAME_SUCCESS(OK, "사용가능한 닉네임입니다"),
 
@@ -109,6 +110,7 @@ public enum ResultCode {
     DUPLICATE_RESOURCE(CONFLICT, "데이터가 이미 존재합니다"),
     NICKNAME_DUPLICATION(CONFLICT, "이미 사용 중인 닉네임입니다"),
     CHAT_ROOM_DUPLICATION(CONFLICT, "이미 입장한 채팅방입니다"),
+    CHAT_PROMISE_VOTE_DUPLICATION(CONFLICT, "이미 투표하였습니다"),
 
     /* 500 CONFLICT */
     AUTH_ERROR(INTERNAL_SERVER_ERROR, "인증 오류 발생"),

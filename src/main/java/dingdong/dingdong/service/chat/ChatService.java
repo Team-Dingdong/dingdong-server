@@ -182,14 +182,19 @@ public class ChatService {
     }
 
 
-    // 투표 생성
+    // 채팅 약속 투표
     @Transactional
-    public void createVotePromise(User user, Long post_id){
-        ChatRoom chatRoom = chatRoomRepository.findByPostId(post_id).orElseThrow(() -> new ResourceNotFoundException(ResultCode.CHAT_ROOM_NOT_FOUND));
-
-        if (!chatPromiseVoteRepository.ExistsByRoomAndUser(chatRoom.getId(), user.getId())){
-             ChatPromiseVote chatPromiseVote = new ChatPromiseVote(chatRoom, user);
-             chatPromiseVoteRepository.save(chatPromiseVote);
+    public void createVotePromise(User user, String id){
+        RedisChatRoom redisChatRoom = redisChatRoomRepository.findById(id);
+        ChatRoom chatRoom = chatRoomRepository.findByPostId(Long.parseLong(redisChatRoom.getRoomId())).orElseThrow(() -> new ResourceNotFoundException(ResultCode.CHAT_ROOM_NOT_FOUND));
+        if(!chatJoinRepository.existsByChatRoomAndUser(chatRoom, user)) {
+            throw new ForbiddenException(ResultCode.FORBIDDEN_MEMBER);
+        }
+        if(!chatPromiseVoteRepository.existsByChatRoomAndUser(chatRoom, user)){
+            ChatPromiseVote chatPromiseVote = new ChatPromiseVote(chatRoom, user);
+            chatPromiseVoteRepository.save(chatPromiseVote);
+        } else {
+            throw new DuplicateException(ResultCode.CHAT_PROMISE_VOTE_DUPLICATION);
         }
     }
 
