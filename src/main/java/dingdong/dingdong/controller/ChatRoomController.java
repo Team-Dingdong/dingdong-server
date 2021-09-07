@@ -101,4 +101,10 @@ public class ChatRoomController {
         ChatPromiseResponseDto data = chatService.findByPostId(roomId);
         return Result.toResult(ResultCode.CHAT_PROMISE_READ_SUCCESS, data);
     }
+
+    @PostMapping("/promise/vote/{post_id}")
+    public ResponseEntity<Result> createVotePromsie(@CurrentUser User user, @PathVariable Long post_id){
+        chatService.createVotePromise(user, post_id);
+        return Result.toResult(ResultCode.CHAT_PROMISE_VOTE_CREATE_SUCCESS);
+    }
 }

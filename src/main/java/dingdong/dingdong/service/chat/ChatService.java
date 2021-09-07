@@ -2,6 +2,7 @@ package dingdong.dingdong.service.chat;
 
 import dingdong.dingdong.domain.chat.*;
 import dingdong.dingdong.domain.post.Post;
+import dingdong.dingdong.domain.user.CurrentUser;
 import dingdong.dingdong.domain.user.User;
 import dingdong.dingdong.dto.chat.*;
 import dingdong.dingdong.dto.chatpromise.ChatPromiseRequestDto;
@@ -9,6 +10,8 @@ import dingdong.dingdong.dto.chatpromise.ChatPromiseResponseDto;
 import dingdong.dingdong.util.exception.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +25,7 @@ import static dingdong.dingdong.util.exception.ResultCode.CHAT_PROMISE_NOT_FOUND
 
 @Slf4j
 @RequiredArgsConstructor
+
 @Service
 public class ChatService {
 
@@ -130,7 +134,8 @@ public class ChatService {
         LocalTime time = request.getPromiseTime();
         LocalDateTime dateTime = LocalDateTime.of(date, time);
         chatPromise.setPromiseDateTime(dateTime);
-        chatPromise.setPromiseEndTime(dateTime.plusHours(3));
+        chatPromise.setPromiseEndTime(LocalDateTime.now().plusHours(3));
+        chatPromise.setType(PromiseType.PROGRESS);
 
         chatPromiseRepository.save(chatPromise);
     }
@@ -147,9 +152,28 @@ public class ChatService {
         LocalTime time = request.getPromiseTime();
         LocalDateTime dateTime = LocalDateTime.of(date, time);
         chatPromise.setPromiseDateTime(dateTime);
-        chatPromise.setPromiseEndTime(dateTime.plusHours(3));
+        chatPromise.setPromiseEndTime(LocalDateTime.now().plusHours(3));
+        chatPromise.setType(PromiseType.PROGRESS);
 
         chatPromiseRepository.save(chatPromise);
         chatPromiseVoteRepository.save(chatPromiseVote);
     }
+
+    // 일정시간마다 Scheduling 작동.
+    @Scheduled(fixedDelay=60000 * 60) // 1시간마다 작동
+    public void checkEndTime() {
+        chatPromiseRepository.updateByLocalDateTime();
+    }
+
+
+    // 투표 생성
+    public void createVotePromise(User user, Long post_id){
+        ChatRoom chatRoom = chatRoomRepository.findByPostId(post_id).orElseThrow(() -> new ResourceNotFoundException(ResultCode.CHAT_ROOM_NOT_FOUND));
+
+        if (!chatPromiseVoteRepository.ExistsByRoomAndUser(chatRoom.getId(), user.getId())){
+             ChatPromiseVote chatPromiseVote = new ChatPromiseVote(chatRoom, user);
+             chatPromiseVoteRepository.save(chatPromiseVote);
+        }
+    }
+
 }
