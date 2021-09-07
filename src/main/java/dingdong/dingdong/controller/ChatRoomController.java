@@ -48,8 +48,8 @@ public class ChatRoomController {
 
     // 채팅방 정보 조회
     @GetMapping("/room/{roomId}")
-    public ResponseEntity<Result<ChatRoomResponseDto>> findChatRoomByRoomId(@PathVariable String roomId) {
-        ChatRoomResponseDto data = chatService.findRoomById(roomId);
+    public ResponseEntity<Result<ChatRoomResponseDto>> findChatRoomByRoomId(@CurrentUser User user, @PathVariable String roomId) {
+        ChatRoomResponseDto data = chatService.findRoomById(user, roomId);
         return Result.toResult(ResultCode.CHAT_ROOM_READ_SUCCESS, data);
     }
 
@@ -95,7 +95,7 @@ public class ChatRoomController {
         return Result.toResult(ResultCode.CHAT_PROMISE_UPDATE_SUCCESS);
     }
 
-    // 채탕 약속 조회
+    // 채팅 약속 조회
     @GetMapping("/promise/{roomId}")
     public ResponseEntity<Result<ChatPromiseResponseDto>> findChatPromiseByPostId(@PathVariable String roomId){
         ChatPromiseResponseDto data = chatService.findByPostId(roomId);

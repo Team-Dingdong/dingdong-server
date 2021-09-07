@@ -1,6 +1,7 @@
 package dingdong.dingdong.dto.chat;
 
 import dingdong.dingdong.domain.chat.ChatRoom;
+import dingdong.dingdong.domain.user.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -26,14 +27,17 @@ public class ChatRoomResponseDto {
 
     private int userCount;
 
-    public static ChatRoomResponseDto from(ChatRoom chatRoom) {
+    private boolean isOwner;
+
+    public static ChatRoomResponseDto from(ChatRoom chatRoom, User user) {
         return ChatRoomResponseDto.builder()
                 .id(chatRoom.getId())
                 .title(chatRoom.getPost().getTitle())
-                .userCount(chatRoom.getPost().getGatheredPeople())
                 .lastChatMessage(chatRoom.getLastChatMessage())
                 .lastChatTime(chatRoom.getLastChatTime())
                 .imageUrl(chatRoom.getPost().getImageUrl1())
+                .userCount(chatRoom.getPost().getGatheredPeople())
+                .isOwner(chatRoom.getPost().getUser().getId() == user.getId())
                 .build();
     }
 }
