@@ -1,5 +1,7 @@
 package dingdong.dingdong.service.post;
 
+import dingdong.dingdong.domain.chat.ChatJoinRepository;
+import dingdong.dingdong.domain.chat.ChatPromise;
 import dingdong.dingdong.domain.chat.ChatPromiseRepository;
 import dingdong.dingdong.domain.chat.ChatRoomRepository;
 import dingdong.dingdong.domain.post.*;
@@ -34,6 +36,7 @@ public class PostService {
     private final ChatRoomRepository chatRoomRepository;
     private final ChatService chatService;
     private final ChatPromiseRepository chatPromiseRepository;
+    private final ChatJoinRepository chatJoinRepository;
 
     // 홈화면 피드 GET(최신순으로 정렬)
     @Transactional
@@ -212,8 +215,14 @@ public class PostService {
     public void  deletePost(Long id){
         Post post = postRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(POST_NOT_FOUND));
         postTagRepository.deleteByPost(post);
-        chatPromiseRepository.deleteById(post.getId());
-        chatRoomRepository.deleteByPost(post);
+        if(chatPromiseRepository.existsById(id)){
+            chatPromiseRepository.deleteById(id);
+        }
+        if(chatRoomRepository.existsByPostId(id)){
+            chatJoinRepository.deleteByPost_id(id);
+            chatRoomRepository.deleteById(id);
+        }
+        postRepository.deleteByPost_id(id);
     }
 
     // 나누기 피드(post) 수정

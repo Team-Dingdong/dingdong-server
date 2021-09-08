@@ -4,6 +4,8 @@ import dingdong.dingdong.domain.post.Post;
 import dingdong.dingdong.domain.post.PostRepository;
 import dingdong.dingdong.domain.user.Profile;
 import dingdong.dingdong.domain.user.ProfileRepository;
+import dingdong.dingdong.dto.s3.S3RequestDto;
+import dingdong.dingdong.service.s3.S3Service;
 import dingdong.dingdong.service.s3.S3Uploader;
 import dingdong.dingdong.util.exception.ResourceNotFoundException;
 import dingdong.dingdong.util.exception.Result;
@@ -29,28 +31,13 @@ import static dingdong.dingdong.util.exception.ResultCode.PROFILE_NOT_FOUND;
 @RequestMapping("/api/v1/upload")
 public class S3Controller {
 
-    private final PostRepository postRepository;
     private final ProfileRepository profileRepository;
     private final S3Uploader s3Uploader;
+    private final S3Service s3Service;
 
     @PatchMapping("/post/{postId}")
-    @ResponseBody
-    public ResponseEntity<Result> PostUpload(@RequestParam("files") List<MultipartFile> files, @PathVariable Long postId) throws IOException {
-
-        List<String> paths = new ArrayList<>();
-        for (MultipartFile file : files){
-            paths.add(s3Uploader.upload(file, "static"));
-        }
-        Post post = postRepository.findById(postId).orElseThrow(() -> new ResourceNotFoundException(POST_NOT_FOUND));
-
-        while(paths.size() < 3){
-            paths.add("https://dingdongbucket.s3.ap-northeast-2.amazonaws.com/static/default_post.png");
-        }
-
-        post.setImageUrl1(paths.get(0));
-        post.setImageUrl2(paths.get(1));
-        post.setImageUrl3(paths.get(2));
-        postRepository.save(post);
+    public ResponseEntity<Result> PostUpload(@ModelAttribute S3RequestDto s3RequestDto, @PathVariable Long postId) throws IOException {
+        s3Service.updatePostImage(s3RequestDto, postId);
         return Result.toResult(ResultCode.IMAGE_UPLOAD_SUCCESS);
     }
 
@@ -60,7 +47,6 @@ public class S3Controller {
         String path = s3Uploader.upload(file, "static");
         Profile profile = profileRepository.findById(profileId).orElseThrow(() -> new ResourceNotFoundException(PROFILE_NOT_FOUND));
 
-        log.error("이미지 업데이트 에러");
         profile.setProfileImageUrl(path);
         profileRepository.save(profile);
         return Result.toResult(ResultCode.IMAGE_UPLOAD_SUCCESS);

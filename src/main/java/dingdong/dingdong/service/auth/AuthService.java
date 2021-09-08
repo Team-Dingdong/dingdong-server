@@ -295,4 +295,12 @@ public class AuthService implements UserDetailsService {
         }
         return numStr;
     }
+
+    // 회원 탈퇴
+    @Transactional
+    public void unsubscribeUser(Long id){
+        User user = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(ResultCode.USER_NOT_FOUND));
+        user.setAuthority("ROLE_UNSUB_USER");
+        userRepository.save(user);
+    }
 }
