@@ -5,10 +5,8 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum PromiseType implements BaseEnumCode<String> {
+public enum PromiseType {
 
-    END("E"),
-    PROGRESS("P");
-
-    private final String value;
+    PROGRESS,
+    END
 }

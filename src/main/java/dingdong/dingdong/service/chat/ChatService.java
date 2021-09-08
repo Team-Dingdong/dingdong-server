@@ -13,9 +13,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -144,14 +141,29 @@ public class ChatService {
         ChatRoom chatRoom = chatRoomRepository.findByPostId(Long.parseLong(redisChatRoom.getRoomId())).orElseThrow(() -> new ResourceNotFoundException(ResultCode.CHAT_ROOM_NOT_FOUND));
         ChatPromise chatPromise = chatPromiseRepository.findByChatRoom(chatRoom).orElseThrow(() -> new ResourceNotFoundException(CHAT_PROMISE_NOT_FOUND));
 
-        // LocalDate과 LocalTime을 합쳐 LocalDateTime으로 변환
-        LocalDate date = request.getPromiseDate();
-        LocalTime time = request.getPromiseTime();
-        LocalDateTime dateTime = LocalDateTime.of(date, time);
-        chatPromise.setPromiseDateTime(dateTime);
-        chatPromise.setPromiseEndTime(LocalDateTime.now().plusHours(3));
-        chatPromise.setType(PromiseType.PROGRESS);
+        if(chatRoom.getPost().getUser().getId() != user.getId()) {
+            throw new ForbiddenException(ResultCode.FORBIDDEN_MEMBER);
+        }
 
+        if(request.getPromiseDate() != null) {
+            chatPromise.setPromiseDate(request.getPromiseDate());
+        }
+
+        if(request.getPromiseTime() != null ) {
+            chatPromise.setPromiseTime(request.getPromiseTime());
+        }
+
+        if(request.getPromiseLocal() != null) {
+            chatPromise.setPromiseLocal(request.getPromiseLocal());
+        }
+
+        List<ChatPromiseVote> chatPromiseVotes = chatPromiseVoteRepository.findAllByChatRoom(chatRoom);
+        chatPromiseVoteRepository.deleteAll(chatPromiseVotes);
+
+        ChatPromiseVote chatPromiseVote = new ChatPromiseVote(chatRoom, user);
+        chatPromiseVoteRepository.save(chatPromiseVote);
+
+        chatPromise.updateAll();
         chatPromiseRepository.save(chatPromise);
     }
 
@@ -161,15 +173,16 @@ public class ChatService {
         RedisChatRoom redisChatRoom = redisChatRoomRepository.findById(id);
         ChatRoom chatRoom = chatRoomRepository.findByPostId(Long.parseLong(redisChatRoom.getRoomId())).orElseThrow(() -> new ResourceNotFoundException(ResultCode.CHAT_ROOM_NOT_FOUND));
 
-        ChatPromise chatPromise = new ChatPromise(chatRoom);
-        ChatPromiseVote chatPromiseVote = new ChatPromiseVote(chatRoom, user);
+        if(chatRoom.getPost().getUser().getId() != user.getId()) {
+            throw new ForbiddenException(ResultCode.FORBIDDEN_MEMBER);
+        }
+        
+        if(chatPromiseRepository.existsByChatRoom_Id(chatRoom.getId())) {
+            throw new DuplicateException(ResultCode.CHAT_PROMISE_DUPLICATION);
+        }
 
-        LocalDate date = request.getPromiseDate();
-        LocalTime time = request.getPromiseTime();
-        LocalDateTime dateTime = LocalDateTime.of(date, time);
-        chatPromise.setPromiseDateTime(dateTime);
-        chatPromise.setPromiseEndTime(LocalDateTime.now().plusHours(3));
-        chatPromise.setType(PromiseType.PROGRESS);
+        ChatPromise chatPromise = new ChatPromise(chatRoom, request);
+        ChatPromiseVote chatPromiseVote = new ChatPromiseVote(chatRoom, user);
 
         chatPromiseRepository.save(chatPromise);
         chatPromiseVoteRepository.save(chatPromiseVote);

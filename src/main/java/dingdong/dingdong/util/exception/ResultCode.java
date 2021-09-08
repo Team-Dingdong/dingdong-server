@@ -79,7 +79,9 @@ public enum ResultCode {
     TAG_UPDATE_FAIL(BAD_REQUEST, "태그 업로드 실패"),
 
     CHAT_ROOM_ENTER_FAIL_LIMIT(BAD_REQUEST, "해당 거래의 인원이 가득 찼습니다"),
-    CHAT_ROOM_ENTER_FAIL_PROMISE(BAD_REQUEST, "해당 거래 약속이 생성되어 입장할 수 없습니"),
+    CHAT_ROOM_ENTER_FAIL_PROMISE(BAD_REQUEST, "해당 거래 약속이 생성되어 입장할 수 없습니다"),
+
+    CHAT_PROMISE_IS_END(BAD_REQUEST, "약속 투표가 이미 종료되었습니다"),
 
     /* 401 UNAUTHORIZED : 인증되지 않은 사용자 */
     INVALID_AUTH_TOKEN(HttpStatus.UNAUTHORIZED, "권한 정보가 없는 토큰입니다"),
@@ -111,6 +113,7 @@ public enum ResultCode {
     DUPLICATE_RESOURCE(CONFLICT, "데이터가 이미 존재합니다"),
     NICKNAME_DUPLICATION(CONFLICT, "이미 사용 중인 닉네임입니다"),
     CHAT_ROOM_DUPLICATION(CONFLICT, "이미 입장한 채팅방입니다"),
+    CHAT_PROMISE_DUPLICATION(CONFLICT, "이미 약속 투표가 진행중입니다"),
     CHAT_PROMISE_VOTE_DUPLICATION(CONFLICT, "이미 투표하였습니다"),
 
     /* 500 CONFLICT */
