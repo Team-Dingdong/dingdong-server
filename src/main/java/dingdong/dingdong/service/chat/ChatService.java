@@ -67,8 +67,12 @@ public class ChatService {
     public void enterChatRoom(User user, String id) {
         RedisChatRoom redisChatRoom = redisChatRoomRepository.findById(id);
         ChatRoom chatRoom = chatRoomRepository.findByPostId(Long.parseLong(redisChatRoom.getRoomId())).orElseThrow(() -> new ResourceNotFoundException(ResultCode.CHAT_ROOM_NOT_FOUND));
+        ChatPromise chatPromise = chatPromiseRepository.findByChatRoom(chatRoom).orElse(null);
         if(chatJoinRepository.existsByChatRoomAndUser(chatRoom, user)) {
             throw new DuplicateException(ResultCode.CHAT_ROOM_DUPLICATION);
+        }
+        if(chatPromise != null && chatPromise.getType() == PromiseType.PROGRESS) {
+            throw new LimitException(ResultCode.CHAT_ROOM_ENTER_FAIL_PROMISE);
         }
         if(chatRoom.getPost().getGatheredPeople() >= chatRoom.getPost().getPeople()) {
             throw new LimitException(ResultCode.CHAT_ROOM_ENTER_FAIL_LIMIT);
