@@ -284,5 +284,4 @@ public class PostService {
 
         return pagingList;
     }
-
 }

@@ -14,6 +14,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -73,6 +74,10 @@ public class ChatService {
         ChatPromise chatPromise = chatPromiseRepository.findByChatRoomId(chatRoom.getId()).orElse(null);
         if(chatJoinRepository.existsByChatRoomAndUser(chatRoom, user)) {
             throw new DuplicateException(ResultCode.CHAT_ROOM_DUPLICATION);
+        }
+        log.info("boolean : {}", chatRoom.getPost().isDone());
+        if(chatRoom.getPost().isDone()) {
+            throw new LimitException(ResultCode.CHAT_ROOM_ENTER_FAIL_DONE);
         }
         if(chatPromise != null && chatPromise.getType() != PromiseType.END) {
             throw new LimitException(ResultCode.CHAT_ROOM_ENTER_FAIL_PROMISE);
@@ -310,6 +315,34 @@ public class ChatService {
         } else {
             throw new DuplicateException(ResultCode.CHAT_PROMISE_VOTE_DUPLICATION);
         }
+    }
+
+    @Transactional
+    public void confirmedPost(User user, String id) {
+        RedisChatRoom redisChatRoom = redisChatRoomRepository.findById(id);
+        ChatRoom chatRoom = chatRoomRepository.findByPostId(Long.parseLong(redisChatRoom.getRoomId())).orElseThrow(() -> new ResourceNotFoundException(ResultCode.CHAT_ROOM_NOT_FOUND));
+        ChatPromise chatPromise = chatPromiseRepository.findByChatRoomId(chatRoom.getId()).orElseThrow(() -> new ResourceNotFoundException(ResultCode.CHAT_PROMISE_NOT_FOUND));
+
+        if(!chatJoinRepository.existsByChatRoomAndUser(chatRoom, user)) {
+            throw new ForbiddenException(ResultCode.FORBIDDEN_MEMBER);
+        }
+        if(chatRoom.getPost().getUser().getId() != user.getId()) {
+            throw new ForbiddenException(ResultCode.FORBIDDEN_MEMBER);
+        }
+        if(chatRoom.getPost().isDone()) {
+            throw new DuplicateException(ResultCode.POST_CONFIRMED_DUPLICATION);
+        }
+        if(chatPromise.getType() != PromiseType.CONFIRMED) {
+            throw new LimitException(ResultCode.POST_CONFIRMED_FAIL_PROMISE);
+        }
+        log.info("promiseDateTime : {}", LocalDateTime.of(chatPromise.getPromiseDate(), chatPromise.getPromiseTime()));
+        log.info("now() : {}", LocalDateTime.now());
+        log.info("compareTo : {}", LocalDateTime.of(chatPromise.getPromiseDate(), chatPromise.getPromiseTime()).compareTo(LocalDateTime.now()));
+        if(LocalDateTime.of(chatPromise.getPromiseDate(), chatPromise.getPromiseTime()).compareTo(LocalDateTime.now()) > 0) {
+            throw new LimitException(ResultCode.POST_CONFIRMED_FAIL_TIME);
+        }
+
+        chatRoom.getPost().confirmed();
     }
 
 }

@@ -1,14 +1,10 @@
 package dingdong.dingdong.dto.post;
 
-import javax.validation.constraints.NotNull;
-
 import dingdong.dingdong.domain.post.Post;
-import dingdong.dingdong.domain.user.Profile;
-import dingdong.dingdong.dto.profile.ProfileResponseDto;
 import lombok.*;
 
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Data
 @Getter
@@ -35,6 +31,8 @@ public class PostGetResponseDto {
     @NotNull
     private String local;
 
+    private boolean done;
+
     private LocalDateTime createdDate;
 
     private String imageUrl1;
@@ -49,6 +47,7 @@ public class PostGetResponseDto {
                 .cost(post.getCost())
                 .bio(post.getBio())
                 .local(post.getLocal())
+                .done(post.isDone())
                 .imageUrl1(post.getImageUrl1())
                 .createdDate(post.getCreatedDate())
                 .build();

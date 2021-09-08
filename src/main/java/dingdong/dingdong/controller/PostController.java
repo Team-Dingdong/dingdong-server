@@ -6,6 +6,7 @@ import dingdong.dingdong.dto.post.PostRequestDto;
 import dingdong.dingdong.dto.post.PostDetailResponseDto;
 import dingdong.dingdong.dto.post.PostGetResponseDto;
 
+import dingdong.dingdong.service.chat.ChatService;
 import dingdong.dingdong.service.post.PostService;
 import dingdong.dingdong.util.exception.Result;
 import dingdong.dingdong.util.exception.ResultCode;
@@ -27,6 +28,7 @@ import javax.validation.Valid;
 public class PostController {
 
     private final PostService postService;
+    private final ChatService chatService;
 
     // 홈화면, 모든 나누기 불러오기(최신순으로)
     @GetMapping("/sorted_by=desc(createdDate)")
@@ -161,4 +163,10 @@ public class PostController {
         return Result.toResult(ResultCode.SEARCH_SUCCESS, data);
     }
 
+    // 거래 확정 하기
+    @PostMapping("/confirmed/{postId}")
+    public ResponseEntity<Result> confirmed(@CurrentUser User user, @PathVariable String postId) {
+        chatService.confirmedPost(user, postId);
+        return Result.toResult(ResultCode.POST_CONFIRMED_SUCCESS);
+    }
 }

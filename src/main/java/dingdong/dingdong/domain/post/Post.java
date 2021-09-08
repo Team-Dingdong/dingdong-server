@@ -57,6 +57,10 @@ public class Post extends BaseTimeEntity {
     @Column(columnDefinition = "boolean default false")
     private boolean done;
 
+    public void confirmed() {
+        this.done = true;
+    }
+
     @ManyToOne
     @JoinColumn(name = "category_id")
     @JsonBackReference
@@ -82,7 +86,6 @@ public class Post extends BaseTimeEntity {
             user.getPosts().add(this);
         }
     }
-
 
     @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonBackReference

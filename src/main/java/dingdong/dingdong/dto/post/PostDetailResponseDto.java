@@ -42,6 +42,8 @@ public class PostDetailResponseDto {
 
     private int gatheredPeople;
 
+    private boolean done;
+
     private String imageUrl1;
 
     private String imageUrl2;
@@ -63,6 +65,7 @@ public class PostDetailResponseDto {
         this.modifiedDate = post.getModifiedDate();
         this.people = post.getPeople();
         this.gatheredPeople = post.getGatheredPeople();
+        this.done = post.isDone();
         this.local = post.getLocal();
         this.userId = post.getUser().getId();
         this.nickname = profile.getNickname();

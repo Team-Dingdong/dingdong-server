@@ -44,12 +44,12 @@ public class Profile {
     public void prePersist() {
         this.good = this.good == null ? 0 : this.good;
         this.bad = this.bad == null ? 0 : this.bad;
+        this.profileImageUrl = "https://dingdongbucket.s3.ap-northeast-2.amazonaws.com/static/default_profile.jpg";
     }
 
     public Profile(User user) {
         this.id = user.getId();
         this.user = user;
-        this.profileImageUrl = "https://dingdongbucket.s3.ap-northeast-2.amazonaws.com/static/default_profile.jpg";
     }
 
     public void setNickname(String nickname) {
