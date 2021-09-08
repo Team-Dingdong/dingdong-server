@@ -3,6 +3,7 @@ package dingdong.dingdong.service.chat;
 import dingdong.dingdong.domain.chat.*;
 import dingdong.dingdong.domain.post.Post;
 import dingdong.dingdong.domain.user.User;
+import dingdong.dingdong.domain.user.UserRepository;
 import dingdong.dingdong.dto.chat.*;
 import dingdong.dingdong.dto.chatpromise.ChatPromiseRequestDto;
 import dingdong.dingdong.dto.chatpromise.ChatPromiseResponseDto;
@@ -18,7 +19,6 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
-
 @Service
 public class ChatService {
 
@@ -27,6 +27,11 @@ public class ChatService {
     private final ChatPromiseRepository chatPromiseRepository;
     private final ChatPromiseVoteRepository chatPromiseVoteRepository;
     private final RedisChatRoomRepository redisChatRoomRepository;
+    private final ChatSubscriber chatSubscriber;
+    private final ChatMessageRepository chatMessageRepository;
+    private final UserRepository userRepository;
+
+    private Long adminId = Long.parseLong("1");
 
     // 채팅방 생성
     @Transactional
@@ -78,6 +83,21 @@ public class ChatService {
         ChatJoin chatJoin = new ChatJoin(chatRoom, user);
         chatJoinRepository.save(chatJoin);
         chatRoom.getPost().plusUserCount();
+
+        User admin = userRepository.getById(adminId);
+
+        String message = user.getProfile().getNickname() + ChatMessageValue.ENTER_MESSAGE.getMessage();
+        RedisChatMessage redisChatMessage = new RedisChatMessage(chatRoom, admin, MessageType.ENTER, message);
+        chatSubscriber.sendMessage(redisChatMessage);
+
+        // 메시지 DB에 저장하기 위해 객체 생성
+        ChatMessage chatMessage = new ChatMessage(chatRoom, admin, redisChatMessage);
+        chatMessageRepository.save(chatMessage);
+
+        chatRoom.setInfo(chatMessage);
+        log.info("chatMessage -> {}", chatRoom.getLastChatMessage());
+        log.info("chatTime -> {}", chatRoom.getLastChatTime());
+        chatRoomRepository.save(chatRoom);
     }
 
     // 채팅방 나가기
@@ -91,9 +111,27 @@ public class ChatService {
         if(chatRoom.getPost().getUser().getId() == user.getId()) {
             throw new ForbiddenException(ResultCode.CHAT_ROOM_QUIT_FAIL_OWNER);
         }
+        if(chatRoom.getChatPromise() != null && chatRoom.getChatPromise().getType() != PromiseType.END) {
+            throw new LimitException(ResultCode.CHAT_ROOM_QUIT_FAIL);
+        }
         ChatJoin chatJoin = chatJoinRepository.findByChatRoomAndUser(chatRoom, user).orElseThrow(() -> new ResourceNotFoundException(ResultCode.CHAT_JOIN_NOT_FOUND));
         chatJoinRepository.delete(chatJoin);
         chatRoom.getPost().minusUserCount();
+
+        User admin = userRepository.getById(adminId);
+
+        String message = user.getProfile().getNickname() + ChatMessageValue.QUIT_MESSAGE.getMessage();
+        RedisChatMessage redisChatMessage = new RedisChatMessage(chatRoom, admin, MessageType.QUIT, message);
+        chatSubscriber.sendMessage(redisChatMessage);
+
+        // 메시지 DB에 저장하기 위해 객체 생성
+        ChatMessage chatMessage = new ChatMessage(chatRoom, admin, redisChatMessage);
+        chatMessageRepository.save(chatMessage);
+
+        chatRoom.setInfo(chatMessage);
+        log.info("chatMessage -> {}", chatRoom.getLastChatMessage());
+        log.info("chatTime -> {}", chatRoom.getLastChatTime());
+        chatRoomRepository.save(chatRoom);
     }
 
     // 채팅방 사용자 목록 조회
@@ -148,6 +186,10 @@ public class ChatService {
             throw new ForbiddenException(ResultCode.FORBIDDEN_MEMBER);
         }
 
+        if(chatPromise.getType() == PromiseType.CONFIRMED) {
+            throw new LimitException(ResultCode.CHAT_PROMISE_UPDATE_FAIL_CONFIRMED);
+        }
+
         if(request.getPromiseDate() != null) {
             chatPromise.setPromiseDate(request.getPromiseDate());
         }
@@ -168,6 +210,21 @@ public class ChatService {
 
         chatPromise.updateAll();
         chatPromiseRepository.save(chatPromise);
+
+        User admin = userRepository.getById(adminId);
+
+        String message = "[나눔 약속 수정] " + chatPromise.getPromiseDate().toString() + " " + chatPromise.getPromiseTime().toString() + " " + chatPromise.getPromiseLocal() + ChatMessageValue.PROMISE_UPDATE_MESSAGE.getMessage();
+        RedisChatMessage redisChatMessage = new RedisChatMessage(chatRoom, admin, MessageType.PROMISE_AGAIN, message);
+        chatSubscriber.sendMessage(redisChatMessage);
+
+        // 메시지 DB에 저장하기 위해 객체 생성
+        ChatMessage chatMessage = new ChatMessage(chatRoom, admin, redisChatMessage);
+        chatMessageRepository.save(chatMessage);
+
+        chatRoom.setInfo(chatMessage);
+        log.info("chatMessage -> {}", chatRoom.getLastChatMessage());
+        log.info("chatTime -> {}", chatRoom.getLastChatTime());
+        chatRoomRepository.save(chatRoom);
     }
 
     // 채팅 약속 생성
@@ -193,6 +250,21 @@ public class ChatService {
 
         chatPromiseRepository.save(chatPromise);
         chatPromiseVoteRepository.save(chatPromiseVote);
+
+        User admin = userRepository.getById(adminId);
+
+        String message = "[나눔 약속] " + request.getPromiseDate().toString() + " " + request.getPromiseTime().toString() + " " + request.getPromiseLocal() + ChatMessageValue.PROMISE_CREATE_MESSAGE.getMessage();
+        RedisChatMessage redisChatMessage = new RedisChatMessage(chatRoom, admin, MessageType.PROMISE, message);
+        chatSubscriber.sendMessage(redisChatMessage);
+
+        // 메시지 DB에 저장하기 위해 객체 생성
+        ChatMessage chatMessage = new ChatMessage(chatRoom, admin, redisChatMessage);
+        chatMessageRepository.save(chatMessage);
+
+        chatRoom.setInfo(chatMessage);
+        log.info("chatMessage -> {}", chatRoom.getLastChatMessage());
+        log.info("chatTime -> {}", chatRoom.getLastChatTime());
+        chatRoomRepository.save(chatRoom);
     }
 
     // 일정시간마다 Scheduling 작동.
@@ -200,7 +272,6 @@ public class ChatService {
     public void checkEndTime() {
         chatPromiseRepository.updateByLocalDateTime();
     }
-
 
     // 채팅 약속 투표
     @Transactional
@@ -219,6 +290,23 @@ public class ChatService {
             chatPromiseVoteRepository.save(chatPromiseVote);
             chatPromise.plusVotingPeople();
             chatPromiseRepository.save(chatPromise);
+
+            if(chatPromise.getType() == PromiseType.CONFIRMED) {
+                User admin = userRepository.getById(adminId);
+
+                String message = "[나눔 약속 확정] " + chatPromise.getPromiseDate().toString() + " " + chatPromise.getPromiseTime().toString() + " " + chatPromise.getPromiseLocal() + ChatMessageValue.PROMISE_CONFIRMED_MESSAGE.getMessage();
+                RedisChatMessage redisChatMessage = new RedisChatMessage(chatRoom, admin, MessageType.PROMISE_CONFIRMED, message);
+                chatSubscriber.sendMessage(redisChatMessage);
+
+                // 메시지 DB에 저장하기 위해 객체 생성
+                ChatMessage chatMessage = new ChatMessage(chatRoom, admin, redisChatMessage);
+                chatMessageRepository.save(chatMessage);
+
+                chatRoom.setInfo(chatMessage);
+                log.info("chatMessage -> {}", chatRoom.getLastChatMessage());
+                log.info("chatTime -> {}", chatRoom.getLastChatTime());
+                chatRoomRepository.save(chatRoom);
+            }
         } else {
             throw new DuplicateException(ResultCode.CHAT_PROMISE_VOTE_DUPLICATION);
         }

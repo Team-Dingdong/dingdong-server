@@ -1,4 +1,4 @@
-package dingdong.dingdong.service.chat;
+package dingdong.dingdong.domain.chat;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

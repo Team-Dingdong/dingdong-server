@@ -80,8 +80,10 @@ public enum ResultCode {
 
     CHAT_ROOM_ENTER_FAIL_LIMIT(BAD_REQUEST, "해당 거래의 인원이 가득 찼습니다"),
     CHAT_ROOM_ENTER_FAIL_PROMISE(BAD_REQUEST, "해당 거래 약속이 생성되어 입장할 수 없습니다"),
+    CHAT_ROOM_QUIT_FAIL(BAD_REQUEST, "해당 거래 약속 때문에 퇴장할 수 없습니다"),
 
     CHAT_PROMISE_CREATE_FAIL_ONLY(BAD_REQUEST, "방장 혼자 거래 약속을 생성할 수 없습니다"),
+    CHAT_PROMISE_UPDATE_FAIL_CONFIRMED(BAD_REQUEST, "약속이 확정되어 수정할 수 없습니다"),
     CHAT_PROMISE_NOT_IN_PRGRESS(BAD_REQUEST, "약속 투표가 진행중이지 않습니다"),
 
     /* 401 UNAUTHORIZED : 인증되지 않은 사용자 */
