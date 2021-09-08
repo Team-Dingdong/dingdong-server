@@ -49,6 +49,7 @@ public class Profile {
     public Profile(User user) {
         this.id = user.getId();
         this.user = user;
+        this.profileImageUrl = "https://dingdongbucket.s3.ap-northeast-2.amazonaws.com/static/default_profile.jpg";
     }
 
     public void setNickname(String nickname) {
