@@ -1,7 +1,7 @@
 package dingdong.dingdong.dto.chatpromise;
 
 import dingdong.dingdong.domain.chat.ChatPromise;
-import dingdong.dingdong.service.chat.PromiseType;
+import dingdong.dingdong.domain.chat.PromiseType;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 
