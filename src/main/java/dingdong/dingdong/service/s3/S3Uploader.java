@@ -66,7 +66,8 @@ public class S3Uploader {
 
     public void deleteObject(String filePath) {
         boolean isExistObject = amazonS3Client.doesObjectExist(bucket, filePath);
-        if (isExistObject == true){
+
+        if (isExistObject == true) {
             amazonS3Client.deleteObject(bucket, filePath);
         }
     }

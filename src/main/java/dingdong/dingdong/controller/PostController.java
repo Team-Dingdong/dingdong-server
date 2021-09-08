@@ -30,17 +30,17 @@ public class PostController {
     private final PostService postService;
     private final ChatService chatService;
 
-    // 홈화면, 모든 나누기 불러오기(최신순으로)
+    // 홈화면, 모든 나누기 불러오기(정렬방식: 최신순)
     @GetMapping("/sorted_by=desc(createdDate)")
     public ResponseEntity<Result<Page<PostGetResponseDto>>> findPostsSortByCreatedDate(@CurrentUser User user, @PageableDefault(size = 5, direction = Sort.Direction.DESC) Pageable pageable) {
 
         Page<PostGetResponseDto> data;
 
         if(user.getLocal1() == null && user.getLocal2() == null){
-            // user가 local 정보를 설정 안 한 경우
+            // 유저의 local 정보가 없는 경우
             data = postService.findAllByCreateDate(pageable);
         } else {
-            // user가 local 정보를 설정한 경우(local 정보에 기반하여 나누기 get)
+            // 유저의 local 정보가 없는 경우(유저의 local 정보에 기반하여 나누기 GET)
             Long local1 = user.getLocal1().getId();
             Long local2 = user.getLocal2().getId();
             data = postService.findAllByCreateDateWithLocal(local1, local2, pageable);
@@ -48,16 +48,16 @@ public class PostController {
         return Result.toResult(ResultCode.POST_READ_SUCCESS, data);
     }
 
-    // 홈화면, 모든 나누기 불러오기(마감임박순으로)
+    // 홈화면, 모든 나누기 불러오기(정렬방식: 마감임박순)
     @GetMapping("/sorted_by=desc(endDate)")
     public ResponseEntity<Result<Page<PostGetResponseDto>>> findPostsSortByEndDate(@CurrentUser User user, @PageableDefault(size = 5, direction = Sort.Direction.DESC) Pageable pageable) {
 
         Page<PostGetResponseDto> data;
         if(user.getLocal1() == null && user.getLocal2() == null){
-            // user가 local 정보를 설정 안 한 경우
+            // 유저의 local 정보가 없는 경우
             data = postService.findAllByEndDate(pageable);
         } else {
-            // user가 local 정보를 설정한 경우(local 정보에 기반하여 나누기 get)
+            // 유저의 local 정보가 없는 경우(유저의 local 정보에 기반하여 나누기 GET)
             Long local1 = user.getLocal1().getId();
             Long local2 = user.getLocal2().getId();
             data = postService.findAllByEndDateWithLocal(local1, local2, pageable);
@@ -74,7 +74,7 @@ public class PostController {
         return Result.toResult(message, data);
     }
 
-    // 카테고리별로 최신순으로 나누기 피드들 불러오기
+    // 카테고리별 나누기 피드들 불러오기(카테고리 화면)(정렬 방식: 최신순)
     @GetMapping("/category/sorted_by=desc(createdDate)/{categoryId}")
     public ResponseEntity<Result<Page<PostGetResponseDto>>> findPostByCategoryIdSortByCreatedDate(@CurrentUser User user, @PathVariable Long categoryId, @PageableDefault(size = 5, direction = Sort.Direction.DESC) Pageable pageable){
 
@@ -91,7 +91,7 @@ public class PostController {
         return Result.toResult(ResultCode.POST_READ_SUCCESS, data);
     }
 
-    // 카테고리별로 마감임박순으로 나누기 피드들 불러오기
+    // 카테고리별 나누기 피드들 불러오기(카테고리 화면)(정렬 방식: 마감임박순)
     @GetMapping("/category/sorted_by=desc(endDate)/{categoryId}")
     public ResponseEntity<Result<Page<PostGetResponseDto>>> findPostByCategoryIdSortByEndDate(@CurrentUser User user, @PathVariable Long categoryId, @PageableDefault(size = 5, direction = Sort.Direction.DESC) Pageable pageable){
 

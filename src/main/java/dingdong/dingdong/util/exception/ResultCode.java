@@ -15,6 +15,7 @@ public enum ResultCode {
     REISSUE_SUCCESS(OK, "토큰 재발급 성공"),
     CHECK_EMAIL_SUCCESS(OK, "사용가능한 이메일입니다"),
     CHECK_NICKNAME_SUCCESS(OK, "사용가능한 닉네임입니다"),
+    UNSUBSCRIBE_SUCCESS(OK, "탈퇴 처리 성공"),
 
     PROFILE_READ_SUCCESS(OK, "프로필 조회 성공"),
     PROFILE_UPDATE_SUCCESS(OK, "프로필 수정 성공"),

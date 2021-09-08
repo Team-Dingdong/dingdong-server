@@ -17,7 +17,7 @@ public interface ChatPromiseRepository extends JpaRepository<ChatPromise, Long> 
     void deleteById(Long id);
 
     @Modifying
-    @Query(value = "update chat_promise set type = 1 where promise_end_time <= now()", nativeQuery = true)
+    @Query(value = "update chat_promise set type = 1 where promise_end_time <= now() AND type = 0 ", nativeQuery = true)
     void updateByLocalDateTime();
 
 }
