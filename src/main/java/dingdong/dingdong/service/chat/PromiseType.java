@@ -8,5 +8,6 @@ import lombok.Getter;
 public enum PromiseType {
 
     PROGRESS,
+    CONFIRMED,
     END
 }

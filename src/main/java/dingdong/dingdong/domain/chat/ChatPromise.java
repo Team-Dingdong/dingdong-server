@@ -62,6 +62,9 @@ public class ChatPromise extends BaseTimeEntity {
 
     public void plusVotingPeople() {
         this.votingPeople = this.votingPeople == this.totalPeople ? this.votingPeople : this.votingPeople + 1;
+        if(this.votingPeople == this.totalPeople) {
+            this.type = PromiseType.CONFIRMED;
+        }
     }
 
     public void setPromiseDate(LocalDate date) {
@@ -81,20 +84,5 @@ public class ChatPromise extends BaseTimeEntity {
         this.promiseEndTime = LocalDateTime.now().plusHours(3);
         this.totalPeople = chatRoom.getPost().getGatheredPeople();
         this.votingPeople = 1;
-    }
-
-    @Override
-    public String toString() {
-        return "ChatPromise{" +
-                "id=" + id +
-                ", chatRoom=" + chatRoom +
-                ", promiseDate=" + promiseDate +
-                ", promiseTime=" + promiseTime +
-                ", promiseLocal='" + promiseLocal + '\'' +
-                ", type=" + type +
-                ", totalPeople=" + totalPeople +
-                ", votingPeople=" + votingPeople +
-                ", promiseEndTime=" + promiseEndTime +
-                '}';
     }
 }

@@ -10,6 +10,7 @@ public interface ChatPromiseVoteRepository extends JpaRepository<ChatPromiseVote
 
     List<ChatPromiseVote> findAllByChatRoom(ChatRoom chatRoom);
     boolean existsByChatRoomAndUser(ChatRoom chatRoom, User user);
+    Long countByChatRoom(ChatRoom chatRoom);
 
     @Query(value = "select IF(COUNT(*) > 0, 'TRUE', 'FALSE') from chat_promise_vote where chat_promise_vote.room_id = :post_id and chat_promise_vote.user_id = :user_id",
     nativeQuery = true)

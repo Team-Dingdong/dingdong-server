@@ -16,8 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static dingdong.dingdong.util.exception.ResultCode.CHAT_PROMISE_NOT_FOUND;
-
 @Slf4j
 @RequiredArgsConstructor
 
@@ -67,11 +65,11 @@ public class ChatService {
     public void enterChatRoom(User user, String id) {
         RedisChatRoom redisChatRoom = redisChatRoomRepository.findById(id);
         ChatRoom chatRoom = chatRoomRepository.findByPostId(Long.parseLong(redisChatRoom.getRoomId())).orElseThrow(() -> new ResourceNotFoundException(ResultCode.CHAT_ROOM_NOT_FOUND));
-        ChatPromise chatPromise = chatPromiseRepository.findByChatRoom(chatRoom).orElse(null);
+        ChatPromise chatPromise = chatPromiseRepository.findByChatRoomId(chatRoom.getId()).orElse(null);
         if(chatJoinRepository.existsByChatRoomAndUser(chatRoom, user)) {
             throw new DuplicateException(ResultCode.CHAT_ROOM_DUPLICATION);
         }
-        if(chatPromise != null && chatPromise.getType() == PromiseType.PROGRESS) {
+        if(chatPromise != null && chatPromise.getType() != PromiseType.END) {
             throw new LimitException(ResultCode.CHAT_ROOM_ENTER_FAIL_PROMISE);
         }
         if(chatRoom.getPost().getGatheredPeople() >= chatRoom.getPost().getPeople()) {
@@ -108,7 +106,8 @@ public class ChatService {
         }
         List<ChatJoin> chatJoins = chatJoinRepository.findAllByChatRoom(chatRoom);
         List<User> users = chatJoins.stream().map(ChatJoin::getUser).collect(Collectors.toList());
-        List<ChatRoomUserResponseDto> data = users.stream().map(u -> ChatRoomUserResponseDto.from(chatRoom, user)).collect(Collectors.toList());
+        users.stream().forEach(u -> log.info("user : {}", u.getId()));
+        List<ChatRoomUserResponseDto> data = users.stream().map(u -> ChatRoomUserResponseDto.from(chatRoom, u)).collect(Collectors.toList());
         return data;
     }
 
@@ -133,7 +132,7 @@ public class ChatService {
         if(!chatJoinRepository.existsByChatRoomAndUser(chatRoom, user)) {
             throw new ForbiddenException(ResultCode.FORBIDDEN_MEMBER);
         }
-        ChatPromise chatPromise = chatPromiseRepository.findByChatRoom(chatRoom).orElseThrow(() -> new ResourceNotFoundException(CHAT_PROMISE_NOT_FOUND));
+        ChatPromise chatPromise = chatPromiseRepository.findByChatRoomId(chatRoom.getId()).orElseThrow(() -> new ResourceNotFoundException(ResultCode.CHAT_PROMISE_NOT_FOUND));
         ChatPromiseResponseDto promiseResponseDto = new ChatPromiseResponseDto(chatPromise);
         return promiseResponseDto;
     }
@@ -143,7 +142,7 @@ public class ChatService {
     public void updatePromise(User user, String id, ChatPromiseRequestDto request){
         RedisChatRoom redisChatRoom = redisChatRoomRepository.findById(id);
         ChatRoom chatRoom = chatRoomRepository.findByPostId(Long.parseLong(redisChatRoom.getRoomId())).orElseThrow(() -> new ResourceNotFoundException(ResultCode.CHAT_ROOM_NOT_FOUND));
-        ChatPromise chatPromise = chatPromiseRepository.findByChatRoom(chatRoom).orElseThrow(() -> new ResourceNotFoundException(CHAT_PROMISE_NOT_FOUND));
+        ChatPromise chatPromise = chatPromiseRepository.findByChatRoomId(chatRoom.getId()).orElseThrow(() -> new ResourceNotFoundException(ResultCode.CHAT_PROMISE_NOT_FOUND));
 
         if(chatRoom.getPost().getUser().getId() != user.getId()) {
             throw new ForbiddenException(ResultCode.FORBIDDEN_MEMBER);
@@ -181,8 +180,12 @@ public class ChatService {
             throw new ForbiddenException(ResultCode.FORBIDDEN_MEMBER);
         }
         
-        if(chatPromiseRepository.existsByChatRoom_Id(chatRoom.getId())) {
+        if(chatPromiseRepository.existsByChatRoomId(chatRoom.getId())) {
             throw new DuplicateException(ResultCode.CHAT_PROMISE_DUPLICATION);
+        }
+
+        if(chatRoom.getPost().getGatheredPeople() == 1) {
+            throw new LimitException(ResultCode.CHAT_PROMISE_CREATE_FAIL_ONLY);
         }
 
         ChatPromise chatPromise = new ChatPromise(chatRoom, request);
@@ -204,12 +207,18 @@ public class ChatService {
     public void createVotePromise(User user, String id){
         RedisChatRoom redisChatRoom = redisChatRoomRepository.findById(id);
         ChatRoom chatRoom = chatRoomRepository.findByPostId(Long.parseLong(redisChatRoom.getRoomId())).orElseThrow(() -> new ResourceNotFoundException(ResultCode.CHAT_ROOM_NOT_FOUND));
+        ChatPromise chatPromise = chatPromiseRepository.findByChatRoomId(chatRoom.getId()).orElseThrow(() -> new ResourceNotFoundException(ResultCode.CHAT_PROMISE_NOT_FOUND));
         if(!chatJoinRepository.existsByChatRoomAndUser(chatRoom, user)) {
             throw new ForbiddenException(ResultCode.FORBIDDEN_MEMBER);
+        }
+        if(chatPromise.getType() != PromiseType.PROGRESS) {
+            throw new LimitException(ResultCode.CHAT_PROMISE_NOT_IN_PRGRESS);
         }
         if(!chatPromiseVoteRepository.existsByChatRoomAndUser(chatRoom, user)){
             ChatPromiseVote chatPromiseVote = new ChatPromiseVote(chatRoom, user);
             chatPromiseVoteRepository.save(chatPromiseVote);
+            chatPromise.plusVotingPeople();
+            chatPromiseRepository.save(chatPromise);
         } else {
             throw new DuplicateException(ResultCode.CHAT_PROMISE_VOTE_DUPLICATION);
         }

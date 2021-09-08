@@ -12,8 +12,8 @@ import java.util.Optional;
 @Transactional
 public interface ChatPromiseRepository extends JpaRepository<ChatPromise, Long> {
 
-    Optional<ChatPromise> findByChatRoom(ChatRoom chatRoom);
-    boolean existsByChatRoom_Id(Long id);
+    Optional<ChatPromise> findByChatRoomId(Long id);
+    boolean existsByChatRoomId(Long id);
     void deleteById(Long id);
 
     @Modifying
