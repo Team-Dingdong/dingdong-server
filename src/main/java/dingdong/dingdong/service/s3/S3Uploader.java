@@ -21,8 +21,8 @@ import java.util.Optional;
 @Component
 public class S3Uploader {
 
-    //private final static String TEMP_FILE_PATH = "src/main/resources/static/"; // local에서의 path
-    private final static String TEMP_FILE_PATH = "/home/ec2-user/app/static"; // ec2 서버 path
+    private final static String TEMP_FILE_PATH = "src/main/resources/static/"; // local에서의 path
+    //private final static String TEMP_FILE_PATH = "/home/ec2-user/app/static"; // ec2 서버 path
     private final AmazonS3Client amazonS3Client;
 
     @Value("${cloud.aws.s3.bucket}")
@@ -66,7 +66,8 @@ public class S3Uploader {
 
     public void deleteObject(String filePath) {
         boolean isExistObject = amazonS3Client.doesObjectExist(bucket, filePath);
-        if (isExistObject == true){
+
+        if (isExistObject == true) {
             amazonS3Client.deleteObject(bucket, filePath);
         }
     }
