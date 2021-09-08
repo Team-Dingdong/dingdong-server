@@ -7,6 +7,7 @@ import dingdong.dingdong.domain.user.*;
 import dingdong.dingdong.dto.auth.*;
 import dingdong.dingdong.util.SecurityUtil;
 import dingdong.dingdong.util.exception.DuplicateException;
+import dingdong.dingdong.util.exception.JwtAuthException;
 import dingdong.dingdong.util.exception.ResourceNotFoundException;
 import dingdong.dingdong.util.exception.ResultCode;
 import lombok.RequiredArgsConstructor;
@@ -88,10 +89,7 @@ public class AuthService implements UserDetailsService {
         TokenDto tokenDto = tokenProvider.generateTokenDto(authentication);
 
         // 4. RefreshToken 저장
-        RefreshToken refreshToken = RefreshToken.builder()
-                .phone(authentication.getName())
-                .tokenValue(tokenDto.getRefreshToken())
-                .build();
+        RefreshToken refreshToken = new RefreshToken(authentication.getName(), tokenDto.getRefreshToken());
 
         refreshTokenRepository.save(refreshToken);
 
@@ -110,6 +108,36 @@ public class AuthService implements UserDetailsService {
         profileRepository.save(profile);
 
         return login(authRequestDto);
+    }
+
+    @Transactional
+    public TokenDto reissue(TokenRequestDto tokenRequestDto) {
+        // 1. Refresh Token 검증
+        if (!tokenProvider.validateToken(tokenRequestDto.getRefreshToken())) {
+            throw new JwtAuthException(ResultCode.INVALID_REFRESH_TOKEN);
+        }
+
+        // 2. Access Token 에서 Member ID 가져오기
+        Authentication authentication = tokenProvider.getAuthentication(tokenRequestDto.getAccessToken());
+
+        // 3. 저장소에서 Member ID 를 기반으로 Refresh Token 값 가져옴
+        RefreshToken refreshToken = refreshTokenRepository.findByPhone(authentication.getName())
+                .orElseThrow(() -> new JwtAuthException(ResultCode.REFRESH_TOKEN_NOT_FOUND));
+
+        // 4. Refresh Token 일치하는지 검사
+        if (!refreshToken.getValue().equals(tokenRequestDto.getRefreshToken())) {
+            throw new JwtAuthException(ResultCode.MISMATCH_REFRESH_TOKEN);
+        }
+
+        // 5. 새로운 토큰 생성
+        TokenDto tokenDto = tokenProvider.generateTokenDto(authentication);
+
+        // 6. 저장소 정보 업데이트
+        RefreshToken newRefreshToken = refreshToken.updateValue(tokenDto.getRefreshToken());
+        refreshTokenRepository.save(newRefreshToken);
+
+        // 토큰 발급
+        return tokenDto;
     }
 
     // 닉네임 중복 확인

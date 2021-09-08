@@ -12,16 +12,16 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ProfileResponseDto {
 
-    private String nickname;
+    private Long userId;
 
-    private String profile_bio;
+    private String nickname;
 
     private String profileImageUrl;
 
     public static ProfileResponseDto from(Profile profile) {
         return ProfileResponseDto.builder()
+                .userId(profile.getId())
                 .nickname(profile.getNickname())
-                .profile_bio(profile.getProfile_bio())
                 .profileImageUrl(profile.getProfileImageUrl())
                 .build();
     }

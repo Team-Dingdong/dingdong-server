@@ -50,6 +50,13 @@ public class AuthController {
         }
     }
 
+    // 토큰 재발급
+    @PostMapping("/reissue")
+    public ResponseEntity<Result<TokenDto>> reissue(@RequestBody TokenRequestDto tokenRequestDto) {
+        TokenDto data = authService.reissue(tokenRequestDto);
+        return Result.toResult(ResultCode.REISSUE_SUCCESS, data);
+    }
+
     // 닉네임 설정
     @PostMapping("/nickname")
     public ResponseEntity<Result> nickname(@CurrentUser User user, @RequestBody NicknameRequestDto nicknameRequestDto) {

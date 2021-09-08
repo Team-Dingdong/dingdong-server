@@ -12,6 +12,7 @@ public enum ResultCode {
 
     /* 200 OK */
     LOGIN_SUCCESS(OK, "로그인 성공"),
+    REISSUE_SUCCESS(OK, "토큰 재발급 성공"),
     CHECK_EMAIL_SUCCESS(OK, "사용가능한 이메일입니다"),
     CHECK_NICKNAME_SUCCESS(OK, "사용가능한 닉네임입니다"),
 
@@ -78,13 +79,17 @@ public enum ResultCode {
     TAG_UPDATE_FAIL(BAD_REQUEST, "태그 업로드 실패"),
 
     CHAT_ROOM_ENTER_FAIL_LIMIT(BAD_REQUEST, "해당 거래의 인원이 가득 찼습니다"),
-    CHAT_ROOM_ENTER_FAIL_PROMISE(BAD_REQUEST, "해당 거래 약속이 생성되어 입장할 수 없습니"),
+    CHAT_ROOM_ENTER_FAIL_PROMISE(BAD_REQUEST, "해당 거래 약속이 생성되어 입장할 수 없습니다"),
+
+    CHAT_PROMISE_CREATE_FAIL_ONLY(BAD_REQUEST, "방장 혼자 거래 약속을 생성할 수 없습니다"),
+    CHAT_PROMISE_NOT_IN_PRGRESS(BAD_REQUEST, "약속 투표가 진행중이지 않습니다"),
 
     /* 401 UNAUTHORIZED : 인증되지 않은 사용자 */
-    INVALID_AUTH_TOKEN(HttpStatus.UNAUTHORIZED, "권한 정보가 없는 토큰입니다"),
+    INVALID_AUTH_TOKEN(UNAUTHORIZED, "권한 정보가 없는 토큰입니다"),
 
     /* 403 FORBIDDEN : 권한이 없는 사용자 */
     CHAT_ROOM_QUIT_FAIL_OWNER(FORBIDDEN, "방장은 채팅방을 나갈 수 없습니다"),
+    RATING_CREATE_FAIL_SELF(FORBIDDEN, "본인은 평가할 수 없습니다"),
     FORBIDDEN_MEMBER(FORBIDDEN, "해당 권한이 없습니다."),
 
     /* 404 NOT_FOUND : Resource 를 찾을 수 없음 */
@@ -109,6 +114,8 @@ public enum ResultCode {
     DUPLICATE_RESOURCE(CONFLICT, "데이터가 이미 존재합니다"),
     NICKNAME_DUPLICATION(CONFLICT, "이미 사용 중인 닉네임입니다"),
     CHAT_ROOM_DUPLICATION(CONFLICT, "이미 입장한 채팅방입니다"),
+    CHAT_PROMISE_DUPLICATION(CONFLICT, "이미 약속 투표가 진행중입니다"),
+    CHAT_PROMISE_VOTE_DUPLICATION(CONFLICT, "이미 투표하였습니다"),
 
     /* 500 CONFLICT */
     AUTH_ERROR(INTERNAL_SERVER_ERROR, "인증 오류 발생"),

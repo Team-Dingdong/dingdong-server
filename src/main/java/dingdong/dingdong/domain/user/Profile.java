@@ -3,7 +3,6 @@ package dingdong.dingdong.domain.user;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicUpdate;
-import org.springframework.boot.context.properties.bind.DefaultValue;
 
 import javax.persistence.*;
 
@@ -25,8 +24,6 @@ public class Profile {
     private User user;
 
     private String nickname;
-
-    private String profile_bio;
 
     @Column(columnDefinition = "varchar(255) default 'https://dingdongbucket.s3.ap-northeast-2.amazonaws.com/static/default_profile.jpg'")
     private String profileImageUrl;

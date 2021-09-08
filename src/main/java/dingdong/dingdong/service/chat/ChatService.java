@@ -2,7 +2,6 @@ package dingdong.dingdong.service.chat;
 
 import dingdong.dingdong.domain.chat.*;
 import dingdong.dingdong.domain.post.Post;
-import dingdong.dingdong.domain.user.CurrentUser;
 import dingdong.dingdong.domain.user.User;
 import dingdong.dingdong.dto.chat.*;
 import dingdong.dingdong.dto.chatpromise.ChatPromiseRequestDto;
@@ -11,17 +10,11 @@ import dingdong.dingdong.util.exception.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import static dingdong.dingdong.util.exception.ResultCode.CHAT_PROMISE_NOT_FOUND;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -52,25 +45,32 @@ public class ChatService {
     public List<ChatRoomResponseDto> findAllRoom(User user) {
         List<ChatJoin> chatJoins = chatJoinRepository.findAllByUser(user);
         List<ChatRoom> chatRooms = chatJoins.stream().map(ChatJoin::getChatRoom).collect(Collectors.toList());
-        List<ChatRoomResponseDto> data = chatRooms.stream().map(ChatRoomResponseDto::from).collect(Collectors.toList());
+        List<ChatRoomResponseDto> data = chatRooms.stream().map(chatRoom -> ChatRoomResponseDto.from(chatRoom, user)).collect(Collectors.toList());
         return data;
     }
 
     // 채팅방 정보 조회
     @Transactional
-    public ChatRoomResponseDto findRoomById(String id) {
+    public ChatRoomResponseDto findRoomById(User user, String id) {
         RedisChatRoom redisChatRoom = redisChatRoomRepository.findById(id);
         ChatRoom chatRoom = chatRoomRepository.findByPostId(Long.parseLong(redisChatRoom.getRoomId())).orElseThrow(() -> new ResourceNotFoundException(ResultCode.CHAT_ROOM_NOT_FOUND));
-        return ChatRoomResponseDto.from(chatRoom);
+        if(!chatJoinRepository.existsByChatRoomAndUser(chatRoom, user)) {
+            throw new ForbiddenException(ResultCode.FORBIDDEN_MEMBER);
+        }
+        return ChatRoomResponseDto.from(chatRoom, user);
     }
 
     // 채팅방 입장
     @Transactional
-    public void enterChatRoom(String id, User user) {
+    public void enterChatRoom(User user, String id) {
         RedisChatRoom redisChatRoom = redisChatRoomRepository.findById(id);
         ChatRoom chatRoom = chatRoomRepository.findByPostId(Long.parseLong(redisChatRoom.getRoomId())).orElseThrow(() -> new ResourceNotFoundException(ResultCode.CHAT_ROOM_NOT_FOUND));
+        ChatPromise chatPromise = chatPromiseRepository.findByChatRoomId(chatRoom.getId()).orElse(null);
         if(chatJoinRepository.existsByChatRoomAndUser(chatRoom, user)) {
             throw new DuplicateException(ResultCode.CHAT_ROOM_DUPLICATION);
+        }
+        if(chatPromise != null && chatPromise.getType() != PromiseType.END) {
+            throw new LimitException(ResultCode.CHAT_ROOM_ENTER_FAIL_PROMISE);
         }
         if(chatRoom.getPost().getGatheredPeople() >= chatRoom.getPost().getPeople()) {
             throw new LimitException(ResultCode.CHAT_ROOM_ENTER_FAIL_LIMIT);
@@ -82,9 +82,12 @@ public class ChatService {
 
     // 채팅방 나가기
     @Transactional
-    public void quitChatRoom(String id, User user) {
+    public void quitChatRoom(User user, String id) {
         RedisChatRoom redisChatRoom = redisChatRoomRepository.findById(id);
         ChatRoom chatRoom = chatRoomRepository.findByPostId(Long.parseLong(redisChatRoom.getRoomId())).orElseThrow(() -> new ResourceNotFoundException(ResultCode.CHAT_ROOM_NOT_FOUND));
+        if(!chatJoinRepository.existsByChatRoomAndUser(chatRoom, user)) {
+            throw new ForbiddenException(ResultCode.FORBIDDEN_MEMBER);
+        }
         if(chatRoom.getPost().getUser().getId() == user.getId()) {
             throw new ForbiddenException(ResultCode.CHAT_ROOM_QUIT_FAIL_OWNER);
         }
@@ -95,65 +98,98 @@ public class ChatService {
 
     // 채팅방 사용자 목록 조회
     @Transactional
-    public List<ChatRoomUserResponseDto> findUsers(String id) {
+    public List<ChatRoomUserResponseDto> findUsers(User user, String id) {
         RedisChatRoom redisChatRoom = redisChatRoomRepository.findById(id);
         ChatRoom chatRoom = chatRoomRepository.findByPostId(Long.parseLong(redisChatRoom.getRoomId())).orElseThrow(() -> new ResourceNotFoundException(ResultCode.CHAT_ROOM_NOT_FOUND));
+        if(!chatJoinRepository.existsByChatRoomAndUser(chatRoom, user)) {
+            throw new ForbiddenException(ResultCode.FORBIDDEN_MEMBER);
+        }
         List<ChatJoin> chatJoins = chatJoinRepository.findAllByChatRoom(chatRoom);
         List<User> users = chatJoins.stream().map(ChatJoin::getUser).collect(Collectors.toList());
-        List<ChatRoomUserResponseDto> data = users.stream().map(user -> ChatRoomUserResponseDto.from(chatRoom, user)).collect(Collectors.toList());
+        users.stream().forEach(u -> log.info("user : {}", u.getId()));
+        List<ChatRoomUserResponseDto> data = users.stream().map(u -> ChatRoomUserResponseDto.from(chatRoom, u)).collect(Collectors.toList());
         return data;
     }
 
     // 채팅 메세지 조회
     @Transactional
-    public List<ChatMessageResponseDto> findChatMessages(String id) {
+    public List<ChatMessageResponseDto> findChatMessages(User user, String id) {
         RedisChatRoom redisChatRoom = redisChatRoomRepository.findById(id);
         ChatRoom chatRoom = chatRoomRepository.findByPostId(Long.parseLong(redisChatRoom.getRoomId())).orElseThrow(() -> new ResourceNotFoundException(ResultCode.CHAT_ROOM_NOT_FOUND));
+        if(!chatJoinRepository.existsByChatRoomAndUser(chatRoom, user)) {
+            throw new ForbiddenException(ResultCode.FORBIDDEN_MEMBER);
+        }
         List<ChatMessage> messages = chatRoom.getMessages();
         List<ChatMessageResponseDto> data = messages.stream().map(ChatMessageResponseDto::from).collect(Collectors.toList());
         return data;
     }
 
     // 채팅 약속 조회
-    public ChatPromiseResponseDto findByPostId(String id){
+    @Transactional
+    public ChatPromiseResponseDto findByPostId(User user, String id){
         RedisChatRoom redisChatRoom = redisChatRoomRepository.findById(id);
         ChatRoom chatRoom = chatRoomRepository.findByPostId(Long.parseLong(redisChatRoom.getRoomId())).orElseThrow(() -> new ResourceNotFoundException(ResultCode.CHAT_ROOM_NOT_FOUND));
-        ChatPromise chatPromise = chatPromiseRepository.findByChatRoom(chatRoom).orElseThrow(() -> new ResourceNotFoundException(CHAT_PROMISE_NOT_FOUND));
+        if(!chatJoinRepository.existsByChatRoomAndUser(chatRoom, user)) {
+            throw new ForbiddenException(ResultCode.FORBIDDEN_MEMBER);
+        }
+        ChatPromise chatPromise = chatPromiseRepository.findByChatRoomId(chatRoom.getId()).orElseThrow(() -> new ResourceNotFoundException(ResultCode.CHAT_PROMISE_NOT_FOUND));
         ChatPromiseResponseDto promiseResponseDto = new ChatPromiseResponseDto(chatPromise);
         return promiseResponseDto;
     }
 
     // 채팅 약속 수정
+    @Transactional
     public void updatePromise(User user, String id, ChatPromiseRequestDto request){
         RedisChatRoom redisChatRoom = redisChatRoomRepository.findById(id);
         ChatRoom chatRoom = chatRoomRepository.findByPostId(Long.parseLong(redisChatRoom.getRoomId())).orElseThrow(() -> new ResourceNotFoundException(ResultCode.CHAT_ROOM_NOT_FOUND));
-        ChatPromise chatPromise = chatPromiseRepository.findByChatRoom(chatRoom).orElseThrow(() -> new ResourceNotFoundException(CHAT_PROMISE_NOT_FOUND));
+        ChatPromise chatPromise = chatPromiseRepository.findByChatRoomId(chatRoom.getId()).orElseThrow(() -> new ResourceNotFoundException(ResultCode.CHAT_PROMISE_NOT_FOUND));
 
-        // LocalDate과 LocalTime을 합쳐 LocalDateTime으로 변환
-        LocalDate date = request.getPromiseDate();
-        LocalTime time = request.getPromiseTime();
-        LocalDateTime dateTime = LocalDateTime.of(date, time);
-        chatPromise.setPromiseDateTime(dateTime);
-        chatPromise.setPromiseEndTime(LocalDateTime.now().plusHours(3));
-        chatPromise.setType(PromiseType.PROGRESS);
+        if(chatRoom.getPost().getUser().getId() != user.getId()) {
+            throw new ForbiddenException(ResultCode.FORBIDDEN_MEMBER);
+        }
 
+        if(request.getPromiseDate() != null) {
+            chatPromise.setPromiseDate(request.getPromiseDate());
+        }
+
+        if(request.getPromiseTime() != null ) {
+            chatPromise.setPromiseTime(request.getPromiseTime());
+        }
+
+        if(request.getPromiseLocal() != null) {
+            chatPromise.setPromiseLocal(request.getPromiseLocal());
+        }
+
+        List<ChatPromiseVote> chatPromiseVotes = chatPromiseVoteRepository.findAllByChatRoom(chatRoom);
+        chatPromiseVoteRepository.deleteAll(chatPromiseVotes);
+
+        ChatPromiseVote chatPromiseVote = new ChatPromiseVote(chatRoom, user);
+        chatPromiseVoteRepository.save(chatPromiseVote);
+
+        chatPromise.updateAll();
         chatPromiseRepository.save(chatPromise);
     }
 
     // 채팅 약속 생성
+    @Transactional
     public void createChatPromise(User user, String id, ChatPromiseRequestDto request){
         RedisChatRoom redisChatRoom = redisChatRoomRepository.findById(id);
         ChatRoom chatRoom = chatRoomRepository.findByPostId(Long.parseLong(redisChatRoom.getRoomId())).orElseThrow(() -> new ResourceNotFoundException(ResultCode.CHAT_ROOM_NOT_FOUND));
 
-        ChatPromise chatPromise = new ChatPromise(chatRoom);
-        ChatPromiseVote chatPromiseVote = new ChatPromiseVote(chatRoom, user);
+        if(chatRoom.getPost().getUser().getId() != user.getId()) {
+            throw new ForbiddenException(ResultCode.FORBIDDEN_MEMBER);
+        }
+        
+        if(chatPromiseRepository.existsByChatRoomId(chatRoom.getId())) {
+            throw new DuplicateException(ResultCode.CHAT_PROMISE_DUPLICATION);
+        }
 
-        LocalDate date = request.getPromiseDate();
-        LocalTime time = request.getPromiseTime();
-        LocalDateTime dateTime = LocalDateTime.of(date, time);
-        chatPromise.setPromiseDateTime(dateTime);
-        chatPromise.setPromiseEndTime(LocalDateTime.now().plusHours(3));
-        chatPromise.setType(PromiseType.PROGRESS);
+        if(chatRoom.getPost().getGatheredPeople() == 1) {
+            throw new LimitException(ResultCode.CHAT_PROMISE_CREATE_FAIL_ONLY);
+        }
+
+        ChatPromise chatPromise = new ChatPromise(chatRoom, request);
+        ChatPromiseVote chatPromiseVote = new ChatPromiseVote(chatRoom, user);
 
         chatPromiseRepository.save(chatPromise);
         chatPromiseVoteRepository.save(chatPromiseVote);
@@ -166,13 +202,25 @@ public class ChatService {
     }
 
 
-    // 투표 생성
-    public void createVotePromise(User user, Long post_id){
-        ChatRoom chatRoom = chatRoomRepository.findByPostId(post_id).orElseThrow(() -> new ResourceNotFoundException(ResultCode.CHAT_ROOM_NOT_FOUND));
-
-        if (!chatPromiseVoteRepository.ExistsByRoomAndUser(chatRoom.getId(), user.getId())){
-             ChatPromiseVote chatPromiseVote = new ChatPromiseVote(chatRoom, user);
-             chatPromiseVoteRepository.save(chatPromiseVote);
+    // 채팅 약속 투표
+    @Transactional
+    public void createVotePromise(User user, String id){
+        RedisChatRoom redisChatRoom = redisChatRoomRepository.findById(id);
+        ChatRoom chatRoom = chatRoomRepository.findByPostId(Long.parseLong(redisChatRoom.getRoomId())).orElseThrow(() -> new ResourceNotFoundException(ResultCode.CHAT_ROOM_NOT_FOUND));
+        ChatPromise chatPromise = chatPromiseRepository.findByChatRoomId(chatRoom.getId()).orElseThrow(() -> new ResourceNotFoundException(ResultCode.CHAT_PROMISE_NOT_FOUND));
+        if(!chatJoinRepository.existsByChatRoomAndUser(chatRoom, user)) {
+            throw new ForbiddenException(ResultCode.FORBIDDEN_MEMBER);
+        }
+        if(chatPromise.getType() != PromiseType.PROGRESS) {
+            throw new LimitException(ResultCode.CHAT_PROMISE_NOT_IN_PRGRESS);
+        }
+        if(!chatPromiseVoteRepository.existsByChatRoomAndUser(chatRoom, user)){
+            ChatPromiseVote chatPromiseVote = new ChatPromiseVote(chatRoom, user);
+            chatPromiseVoteRepository.save(chatPromiseVote);
+            chatPromise.plusVotingPeople();
+            chatPromiseRepository.save(chatPromise);
+        } else {
+            throw new DuplicateException(ResultCode.CHAT_PROMISE_VOTE_DUPLICATION);
         }
     }
 
