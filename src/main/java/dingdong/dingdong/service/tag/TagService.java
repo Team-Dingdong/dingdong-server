@@ -18,17 +18,17 @@ public class TagService {
     private final PostTagRepository postTagRepository;
 
     @Transactional
-    public void addTags(Long id, TagRequestDto request){
+    public void addTags(Long id, TagRequestDto tagRequestDto){
         PostTag postTag = new PostTag();
         Post post = postRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(POST_NOT_FOUND));
 
-        if(!tagRepository.existsByName(request.getName())){
+        if(!tagRepository.existsByName(tagRequestDto.getName())){
             Tag tag = new Tag();
-            tag.setName(request.getName());
+            tag.setName(tagRequestDto.getName());
             tagRepository.save(tag);
         }
 
-        Tag tag = tagRepository.findByName(request.getName());
+        Tag tag = tagRepository.findByName(tagRequestDto.getName());
 
         postTag.setTag(tag);
         postTag.setPost(post);
