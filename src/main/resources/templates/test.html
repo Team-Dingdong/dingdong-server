@@ -30,8 +30,6 @@
                 stompClient.subscribe('/topic/chat/room/'+roomId, function(messageOutput) {
                     showMessageOutput(JSON.parse(messageOutput.body));
                 });
-                stompClient.send("/pub/chat/message", header,
-                    JSON.stringify({'roomId':roomId, 'type':'ENTER'}));
             });
         }
 
