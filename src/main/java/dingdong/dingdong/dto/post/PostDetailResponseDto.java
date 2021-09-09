@@ -2,16 +2,15 @@ package dingdong.dingdong.dto.post;
 
 import dingdong.dingdong.domain.post.Post;
 import dingdong.dingdong.domain.user.Profile;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
-@Getter
-@Setter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class PostDetailResponseDto {
 
     private String category;

@@ -2,7 +2,10 @@ package dingdong.dingdong.dto.chatpromise;
 
 import dingdong.dingdong.domain.chat.ChatPromise;
 import dingdong.dingdong.domain.chat.PromiseType;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
@@ -10,6 +13,9 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 @Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class ChatPromiseResponseDto {
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
