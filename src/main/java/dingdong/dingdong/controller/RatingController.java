@@ -42,5 +42,4 @@ public class RatingController {
         return Result.toResult(ResultCode.RATING_CREATE_SUCCESS);
     }
 
-    // 신고 하기
 }

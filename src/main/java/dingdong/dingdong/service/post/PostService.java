@@ -1,7 +1,6 @@
 package dingdong.dingdong.service.post;
 
 import dingdong.dingdong.domain.chat.ChatJoinRepository;
-import dingdong.dingdong.domain.chat.ChatPromise;
 import dingdong.dingdong.domain.chat.ChatPromiseRepository;
 import dingdong.dingdong.domain.chat.ChatRoomRepository;
 import dingdong.dingdong.domain.post.*;
@@ -38,7 +37,7 @@ public class PostService {
     private final ChatPromiseRepository chatPromiseRepository;
     private final ChatJoinRepository chatJoinRepository;
 
-    // 홈화면 피드 GET(최신순으로 정렬)
+    // 유저의 LOCAL 정보에 기반하여 나누기 불러오기 (정렬 기준: 최신순)(홈화면)
     @Transactional
     public Page<PostGetResponseDto> findAllByCreateDateWithLocal(Long local1, Long local2, Pageable pageable){
         Page<Post> postList = postRepository.findAllByCreateDate(local1, local2, pageable);
@@ -50,7 +49,7 @@ public class PostService {
         return pagingList;
     }
 
-    // 홈화면 피드 GET(마감일자 순으로 정렬)
+    // 유저의 LOCAL 정보에 기반하여 나누기 불러오기 (정렬 기준: 마감임박순)(홈화면)
     @Transactional
     public Page<PostGetResponseDto> findAllByEndDateWithLocal(Long local1, Long local2, Pageable pageable){
         Page<Post> postList = postRepository.findAllByEndDate(local1, local2, pageable);
@@ -62,7 +61,7 @@ public class PostService {
         return pagingList;
     }
 
-    // 나누기 피드 상세보기
+    // 원하는 나누기 피드 상세보기
     @Transactional
     public PostDetailResponseDto findPostById(Long id){
         Post post = postRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(POST_NOT_FOUND));
@@ -74,7 +73,7 @@ public class PostService {
 
     }
 
-    // 카테고리별로 나누기 피드 GET
+    // 유저의 LOCAL 정보에 기반하여 카테고리별로 나누기 불러오기 (정렬 기준: 마감임박순)(카테고리 화면)
     @Transactional
     public Page<PostGetResponseDto> findPostByCategoryIdWithLocal(Long local1, Long local2, Long categoryId, Pageable pageable){
         Category category = categoryRepository.findById(categoryId).orElseThrow(() -> new ResourceNotFoundException(CATEGORY_NOT_FOUND));
@@ -109,7 +108,7 @@ public class PostService {
 
     }
 
-    // 홈화면 피드 GET(최신순으로 정렬)(유저의 local 정보가 없는 경우)
+    // 유저의 LOCAL 정보에 기반하지 않고 전체 나누기 불러오기 (정렬 기준: 최신순)(홈화면)(유저의 local 정보가 기입되지 않은 경우)
     @Transactional
     public Page<PostGetResponseDto> findAllByCreateDate(Pageable pageable){
         Page<Post> postList = postRepository.findAllByCreateDateNotLocal(pageable);
@@ -120,7 +119,7 @@ public class PostService {
         return pagingList;
     }
 
-    // 홈화면 피드 GET(마감임박순으로 정렬)(유저의 local 정보가 없는 경우)
+    // 유저의 LOCAL 정보에 기반하지 않고 전체 나누기 불러오기 (정렬 기준: 마감임박순)(홈화면)(유저의 local 정보가 기입되지 않은 경우)
     @Transactional
     public Page<PostGetResponseDto> findAllByEndDate(Pageable pageable){
         Page<Post> postList = postRepository.findAllByEndDateNotLocal(pageable);
@@ -131,7 +130,7 @@ public class PostService {
         return pagingList;
     }
 
-    // 카테고리화면 피드 GET(최신순으로 정렬)(유저의 local 정보가 없는 경우)
+    // 유저의 LOCAL 정보에 기반하여 카테고리별 나누기 불러오기 (정렬 기준: 최신순)(카테고리 화면)(유저의 local 정보가 기입된 경우)
     @Transactional
     public Page<PostGetResponseDto> findPostByCategoryId(Long categoryId, Pageable pageable){
         Category category = categoryRepository.findById(categoryId).orElseThrow(() -> new ResourceNotFoundException(CATEGORY_NOT_FOUND));
@@ -143,7 +142,7 @@ public class PostService {
         return pagingList;
     }
 
-    // 카테고리화면 피드 GET(마감임박순으로 정렬)(유저의 local 정보에 기반하여 GET)
+    // 유저의 LOCAL 정보에 기반하여 카테고리별 나누기 불러오기 (정렬 기준: 마감임박순)(카테고리 화면)(유저의 local 정보가 기입된 경우)
     @Transactional
     public Page<PostGetResponseDto> findPostByCategoryIdSortByEndDateWithLocal(Long local1, Long local2,Long categoryId, Pageable pageable){
         Category category = categoryRepository.findById(categoryId).orElseThrow(() -> new ResourceNotFoundException(CATEGORY_NOT_FOUND));
@@ -155,7 +154,7 @@ public class PostService {
         return pagingList;
     }
 
-    // 카테고리화면 피드 GET(마감임박순으로 정렬)(유저의 local 정보가 없는 경우)
+    // 유저의 LOCAL 정보에 기반하지 않고 카테고리별 나누기 불러오기 (정렬 기준: 마감임박순)(카테고리 화면)(유저의 local 정보가 기입되지 않은 경우)
     @Transactional
     public Page<PostGetResponseDto> findPostByCategoryIdSortByEndDate(Long categoryId, Pageable pageable){
         Category category = categoryRepository.findById(categoryId).orElseThrow(() -> new ResourceNotFoundException(CATEGORY_NOT_FOUND));
@@ -260,6 +259,7 @@ public class PostService {
         }
     }
 
+    // local 정보에 기반하지 않고 제목, 카테고리 검색 기능(검색 기능)(유저의 LOCAL 정보가 기입되지 않은 경우)
     @Transactional
     public Page<PostGetResponseDto> searchPosts(String keyword,Pageable pageable){
         Page<Post> postList;
@@ -276,7 +276,7 @@ public class PostService {
         return pagingList;
     }
 
-    // 제목, 카테고리 검색 기능(local 정보에 기반하여 검색)
+    // local 정보에 기반하여 제목, 카테고리 검색 기능(검색 기능)(유저의 LOCAL 정보가 기입된 경우)
     @Transactional
     public Page<PostGetResponseDto> searchPostsWithLocal(String keyword, Long local1, Long local2, Pageable pageable){
 

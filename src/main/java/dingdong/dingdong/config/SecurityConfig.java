@@ -35,8 +35,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
                 .mvcMatchers( "/console", "/", "/webjars/**/**", "/ws-stomp/**", "/api/v1/auth", "/api/v1/auth/send-sms", "/api/docs").permitAll()
-                .antMatchers("/api/v1/post/**", "/api/v1/upload/**", "/api/v1/chat/**", "/api/v1/profile/**", "/api/v1/rating/**").hasRole("USER, ADMIN")
-                .anyRequest().permitAll();
+                .anyRequest().hasAnyAuthority("ROLE_USER", "ROLE_ADMIN");
         http.cors()
                 .disable();
         http.csrf()

@@ -25,6 +25,7 @@ public class S3Service {
     private final PostRepository postRepository;
     private final S3Uploader s3Uploader;
 
+    // 나누기에 Image 업로드
     @Transactional
     public void updatePostImage(S3RequestDto s3RequestDto, Long postId) throws IOException{
 

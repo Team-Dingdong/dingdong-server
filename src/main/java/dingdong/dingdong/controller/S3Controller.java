@@ -35,12 +35,14 @@ public class S3Controller {
     private final S3Uploader s3Uploader;
     private final S3Service s3Service;
 
+    // post 생성, 수정시 이미지 파일 서버 전송 후, URL을 DB에 저장
     @PatchMapping("/post/{postId}")
     public ResponseEntity<Result> PostUpload(@ModelAttribute S3RequestDto s3RequestDto, @PathVariable Long postId) throws IOException {
         s3Service.updatePostImage(s3RequestDto, postId);
         return Result.toResult(ResultCode.IMAGE_UPLOAD_SUCCESS);
     }
 
+    // profile 생성, 수정시 이미지 파일 서버 전송 후, URL을 DB에 저장
     @PatchMapping("/profile/{profileId}")
     @ResponseBody
     public ResponseEntity<Result> ProfileUpload(@RequestParam("data") MultipartFile file, @PathVariable Long profileId) throws IOException {

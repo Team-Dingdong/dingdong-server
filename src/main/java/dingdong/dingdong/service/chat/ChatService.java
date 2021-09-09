@@ -227,6 +227,7 @@ public class ChatService {
         chatRoomRepository.save(chatRoom);
     }
 
+
     // 채팅 약속 생성
     @Transactional
     public void createChatPromise(User user, String id, ChatPromiseRequestDto request){
