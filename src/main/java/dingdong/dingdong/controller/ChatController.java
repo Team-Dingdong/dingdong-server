@@ -50,20 +50,6 @@ public class ChatController {
         log.info("pub/chat/message-type : {}", message.getType());
         log.info("message type equals : {}", MessageType.ENTER.equals(message.getType()));
 
-        // 로그인 회원 정보로 대화명 설정
-//         String nickname = user.getProfile().getNickname();
-
-        // 채팅방 입장시에는 대화명과 메시지를 자동으로 세팅한다.
-//        if (MessageType.ENTER.equals(message.getType())) {
-//            message.setSender("[띵-동]");
-//            message.setMessage(nickname + "님이 입장하셨습니다");
-//        } else if(MessageType.QUIT.equals(message.getType())) {
-//            message.setSender("[띵-동]");
-//            message.setMessage(nickname + "님이 퇴장하셨습니다");
-//        } else {
-//            message.setSender(nickname);
-//        }
-
         message.setSender(user.getId().toString());
 
         log.info("channelTopic : {}", channelTopic.getTopic());

@@ -41,6 +41,4 @@ public class RatingController {
         ratingService.createRating(user, userId, ratingRequestDto);
         return Result.toResult(ResultCode.RATING_CREATE_SUCCESS);
     }
-
-    // 신고 하기
 }

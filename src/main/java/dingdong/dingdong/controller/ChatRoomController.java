@@ -40,6 +40,13 @@ public class ChatRoomController {
         return Result.toResult(ResultCode.CHAT_ROOM_READ_SUCCESS, data);
     }
 
+    // 채팅방 사용자 목록 조회
+    @GetMapping("/user/{roomId}")
+    public ResponseEntity<Result<List<ChatRoomUserResponseDto>>> findUsersByRoomId(@CurrentUser User user, @PathVariable String roomId) {
+        List<ChatRoomUserResponseDto> data = chatService.findUsers(user, roomId);
+        return Result.toResult(ResultCode.CHAT_ROOM_USER_READ_SUCCESS, data);
+    }
+
     // 채팅방 입장
     @PostMapping("/room/{roomId}")
     public ResponseEntity<Result> enterChatRoom(@CurrentUser User user, @PathVariable String roomId) {
@@ -52,13 +59,6 @@ public class ChatRoomController {
     public ResponseEntity<Result> quitChatRoom(@CurrentUser User user, @PathVariable String roomId) {
         chatService.quitChatRoom(user, roomId);
         return Result.toResult(ResultCode.CHAT_ROOM_QUIT_SUCCESS);
-    }
-
-    // 채팅방 사용자 목록 조회
-    @GetMapping("/user/{roomId}")
-    public ResponseEntity<Result<List<ChatRoomUserResponseDto>>> findUsersByRoomId(@CurrentUser User user, @PathVariable String roomId) {
-        List<ChatRoomUserResponseDto> data = chatService.findUsers(user, roomId);
-        return Result.toResult(ResultCode.CHAT_ROOM_USER_READ_SUCCESS, data);
     }
 
     // 채팅 메세지 조회
