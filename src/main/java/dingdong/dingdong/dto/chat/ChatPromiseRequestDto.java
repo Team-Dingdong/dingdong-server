@@ -1,4 +1,4 @@
-package dingdong.dingdong.dto.chatpromise;
+package dingdong.dingdong.dto.chat;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -1,4 +1,4 @@
-package dingdong.dingdong.dto.chatpromise;
+package dingdong.dingdong.dto.chat;
 
 import dingdong.dingdong.domain.chat.ChatPromise;
 import dingdong.dingdong.domain.chat.PromiseType;
