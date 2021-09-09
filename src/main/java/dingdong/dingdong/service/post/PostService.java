@@ -203,7 +203,7 @@ public class PostService {
             chatPromiseRepository.deleteById(id);
         }
         if(chatRoomRepository.existsByPostId(id)){
-            chatJoinRepository.deleteByPost_id(id);
+            chatJoinRepository.deleteByPostId(id);
             chatRoomRepository.deleteById(id);
         }
 
