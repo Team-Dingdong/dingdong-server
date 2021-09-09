@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Slf4j
 @RequiredArgsConstructor
 @Controller
-@RequestMapping("")
+@RequestMapping("/")
 public class HomeController {
 
     @GetMapping("")
