@@ -1,11 +1,15 @@
 package dingdong.dingdong.dto.post;
 
 import dingdong.dingdong.domain.post.Post;
-import dingdong.dingdong.domain.user.Profile;
-import lombok.*;
+import dingdong.dingdong.domain.post.Tag;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Data
 @Builder
@@ -49,28 +53,29 @@ public class PostDetailResponseDto {
 
     private String imageUrl3;
 
-    private List<String> tagList;
+    private List<String> tags;
 
-    public PostDetailResponseDto(Post post, Profile profile, List<String> tagList){
-        
-        this.category = post.getCategory().getName();
-        this.title = post.getTitle();
-        this.cost = post.getCost();
-        this.bio = post.getBio();
-        this.imageUrl1 = post.getImageUrl1();
-        this.imageUrl2 = post.getImageUrl2();
-        this.imageUrl3 = post.getImageUrl3();
-        this.createdDate = post.getCreatedDate();
-        this.modifiedDate = post.getModifiedDate();
-        this.people = post.getPeople();
-        this.gatheredPeople = post.getGatheredPeople();
-        this.done = post.isDone();
-        this.local = post.getLocal();
-        this.userId = post.getUser().getId();
-        this.nickname = profile.getNickname();
-        this.profileImageUrl = profile.getProfileImageUrl();
-        this.good = profile.getGood();
-        this.bad = profile.getBad();
-        this.tagList = tagList;
+    public static PostDetailResponseDto from(Post post, List<Tag> tags) {
+        return PostDetailResponseDto.builder()
+                .category(post.getCategory().getName())
+                .title(post.getTitle())
+                .cost(post.getCost())
+                .bio(post.getBio())
+                .imageUrl1(post.getImageUrl1())
+                .imageUrl2(post.getImageUrl2())
+                .imageUrl3(post.getImageUrl3())
+                .createdDate(post.getCreatedDate())
+                .modifiedDate(post.getModifiedDate())
+                .people(post.getPeople())
+                .gatheredPeople(post.getGatheredPeople())
+                .done(post.isDone())
+                .local(post.getLocal())
+                .userId(post.getUser().getId())
+                .nickname(post.getUser().getProfile().getNickname())
+                .profileImageUrl(post.getUser().getProfile().getProfileImageUrl())
+                .good(post.getUser().getProfile().getGood())
+                .bad(post.getUser().getProfile().getBad())
+                .tags(tags.stream().map(t -> "#" + t.getName()).collect(Collectors.toList()))
+                .build();
     }
 }

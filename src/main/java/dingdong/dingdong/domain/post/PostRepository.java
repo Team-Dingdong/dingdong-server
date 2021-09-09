@@ -87,5 +87,5 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     @Modifying
     @Query(value = "delete from post where post.post_id = :id", nativeQuery = true)
-    void deleteByPost_id(Long id);
+    void deleteByPostId(Long id);
 }

@@ -36,15 +36,18 @@ public class ChatPromiseResponseDto {
     // 약속 마감 시간
     private LocalDateTime promiseEndTime;
 
+    // 약속 상태
     private PromiseType type;
 
-    public ChatPromiseResponseDto(ChatPromise chatPromise){
-        this.promiseDate = chatPromise.getPromiseDate();
-        this.promiseTime = chatPromise.getPromiseTime();
-        this.promiseLocal = chatPromise.getPromiseLocal();
-        this.totalPeople = chatPromise.getTotalPeople();
-        this.votingPeople = chatPromise.getVotingPeople();
-        this.promiseEndTime = chatPromise.getPromiseEndTime();
-        this.type = chatPromise.getType();
+    public static ChatPromiseResponseDto from(ChatPromise chatPromise) {
+        return ChatPromiseResponseDto.builder()
+                .promiseDate(chatPromise.getPromiseDate())
+                .promiseTime(chatPromise.getPromiseTime())
+                .promiseLocal(chatPromise.getPromiseLocal())
+                .totalPeople(chatPromise.getTotalPeople())
+                .votingPeople(chatPromise.getVotingPeople())
+                .promiseEndTime(chatPromise.getPromiseEndTime())
+                .type(chatPromise.getType())
+                .build();
     }
 }

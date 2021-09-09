@@ -5,8 +5,6 @@ import dingdong.dingdong.domain.post.Post;
 import dingdong.dingdong.domain.user.User;
 import dingdong.dingdong.domain.user.UserRepository;
 import dingdong.dingdong.dto.chat.*;
-import dingdong.dingdong.dto.chat.ChatPromiseRequestDto;
-import dingdong.dingdong.dto.chat.ChatPromiseResponseDto;
 import dingdong.dingdong.util.exception.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,26 +21,28 @@ import java.util.stream.Collectors;
 @Service
 public class ChatService {
 
-    private final ChatJoinRepository chatJoinRepository;
     private final ChatRoomRepository chatRoomRepository;
+    private final ChatJoinRepository chatJoinRepository;
     private final ChatPromiseRepository chatPromiseRepository;
     private final ChatPromiseVoteRepository chatPromiseVoteRepository;
+    private final ChatMessageRepository chatMessageRepository;
     private final RedisChatRoomRepository redisChatRoomRepository;
     private final ChatSubscriber chatSubscriber;
-    private final ChatMessageRepository chatMessageRepository;
-    private final UserRepository userRepository;
 
+    private final UserRepository userRepository;
     private Long adminId = Long.parseLong("1");
 
     // 채팅방 생성
     @Transactional
     public void createChatRoom(Post post) {
         ChatRoom chatRoom = new ChatRoom(post);
-        RedisChatRoom redisChatRoom = new RedisChatRoom(chatRoom);
         ChatJoin chatJoin = new ChatJoin(chatRoom, post.getUser());
+        RedisChatRoom redisChatRoom = new RedisChatRoom(chatRoom);
+
         chatRoomRepository.save(chatRoom);
-        redisChatRoomRepository.save(redisChatRoom);
         chatJoinRepository.save(chatJoin);
+        redisChatRoomRepository.save(redisChatRoom);
+
         chatRoom.getPost().plusUserCount();
     }
 
@@ -51,7 +51,9 @@ public class ChatService {
     public List<ChatRoomResponseDto> findAllRoom(User user) {
         List<ChatJoin> chatJoins = chatJoinRepository.findAllByUser(user);
         List<ChatRoom> chatRooms = chatJoins.stream().map(ChatJoin::getChatRoom).collect(Collectors.toList());
+
         List<ChatRoomResponseDto> data = chatRooms.stream().map(chatRoom -> ChatRoomResponseDto.from(chatRoom, user)).collect(Collectors.toList());
+
         return data;
     }
 
@@ -60,9 +62,11 @@ public class ChatService {
     public ChatRoomResponseDto findRoomById(User user, String id) {
         RedisChatRoom redisChatRoom = redisChatRoomRepository.findById(id);
         ChatRoom chatRoom = chatRoomRepository.findByPostId(Long.parseLong(redisChatRoom.getRoomId())).orElseThrow(() -> new ResourceNotFoundException(ResultCode.CHAT_ROOM_NOT_FOUND));
+
         if(!chatJoinRepository.existsByChatRoomAndUser(chatRoom, user)) {
             throw new ForbiddenException(ResultCode.FORBIDDEN_MEMBER);
         }
+
         return ChatRoomResponseDto.from(chatRoom, user);
     }
 
@@ -72,10 +76,10 @@ public class ChatService {
         RedisChatRoom redisChatRoom = redisChatRoomRepository.findById(id);
         ChatRoom chatRoom = chatRoomRepository.findByPostId(Long.parseLong(redisChatRoom.getRoomId())).orElseThrow(() -> new ResourceNotFoundException(ResultCode.CHAT_ROOM_NOT_FOUND));
         ChatPromise chatPromise = chatPromiseRepository.findByChatRoomId(chatRoom.getId()).orElse(null);
+
         if(chatJoinRepository.existsByChatRoomAndUser(chatRoom, user)) {
             throw new DuplicateException(ResultCode.CHAT_ROOM_DUPLICATION);
         }
-        log.info("boolean : {}", chatRoom.getPost().isDone());
         if(chatRoom.getPost().isDone()) {
             throw new LimitException(ResultCode.CHAT_ROOM_ENTER_FAIL_DONE);
         }
@@ -85,8 +89,10 @@ public class ChatService {
         if(chatRoom.getPost().getGatheredPeople() >= chatRoom.getPost().getPeople()) {
             throw new LimitException(ResultCode.CHAT_ROOM_ENTER_FAIL_LIMIT);
         }
+
         ChatJoin chatJoin = new ChatJoin(chatRoom, user);
         chatJoinRepository.save(chatJoin);
+
         chatRoom.getPost().plusUserCount();
 
         User admin = userRepository.getById(adminId);
@@ -100,8 +106,6 @@ public class ChatService {
         chatMessageRepository.save(chatMessage);
 
         chatRoom.setInfo(chatMessage);
-        log.info("chatMessage -> {}", chatRoom.getLastChatMessage());
-        log.info("chatTime -> {}", chatRoom.getLastChatTime());
         chatRoomRepository.save(chatRoom);
     }
 
@@ -110,6 +114,7 @@ public class ChatService {
     public void quitChatRoom(User user, String id) {
         RedisChatRoom redisChatRoom = redisChatRoomRepository.findById(id);
         ChatRoom chatRoom = chatRoomRepository.findByPostId(Long.parseLong(redisChatRoom.getRoomId())).orElseThrow(() -> new ResourceNotFoundException(ResultCode.CHAT_ROOM_NOT_FOUND));
+
         if(!chatJoinRepository.existsByChatRoomAndUser(chatRoom, user)) {
             throw new ForbiddenException(ResultCode.FORBIDDEN_MEMBER);
         }
@@ -119,8 +124,10 @@ public class ChatService {
         if(chatRoom.getChatPromise() != null && chatRoom.getChatPromise().getType() != PromiseType.END) {
             throw new LimitException(ResultCode.CHAT_ROOM_QUIT_FAIL);
         }
+
         ChatJoin chatJoin = chatJoinRepository.findByChatRoomAndUser(chatRoom, user).orElseThrow(() -> new ResourceNotFoundException(ResultCode.CHAT_JOIN_NOT_FOUND));
         chatJoinRepository.delete(chatJoin);
+
         chatRoom.getPost().minusUserCount();
 
         User admin = userRepository.getById(adminId);
@@ -134,8 +141,6 @@ public class ChatService {
         chatMessageRepository.save(chatMessage);
 
         chatRoom.setInfo(chatMessage);
-        log.info("chatMessage -> {}", chatRoom.getLastChatMessage());
-        log.info("chatTime -> {}", chatRoom.getLastChatTime());
         chatRoomRepository.save(chatRoom);
     }
 
@@ -144,13 +149,15 @@ public class ChatService {
     public List<ChatRoomUserResponseDto> findUsers(User user, String id) {
         RedisChatRoom redisChatRoom = redisChatRoomRepository.findById(id);
         ChatRoom chatRoom = chatRoomRepository.findByPostId(Long.parseLong(redisChatRoom.getRoomId())).orElseThrow(() -> new ResourceNotFoundException(ResultCode.CHAT_ROOM_NOT_FOUND));
+
         if(!chatJoinRepository.existsByChatRoomAndUser(chatRoom, user)) {
             throw new ForbiddenException(ResultCode.FORBIDDEN_MEMBER);
         }
+
         List<ChatJoin> chatJoins = chatJoinRepository.findAllByChatRoom(chatRoom);
         List<User> users = chatJoins.stream().map(ChatJoin::getUser).collect(Collectors.toList());
-        users.stream().forEach(u -> log.info("user : {}", u.getId()));
         List<ChatRoomUserResponseDto> data = users.stream().map(u -> ChatRoomUserResponseDto.from(chatRoom, u)).collect(Collectors.toList());
+
         return data;
     }
 
@@ -159,11 +166,14 @@ public class ChatService {
     public List<ChatMessageResponseDto> findChatMessages(User user, String id) {
         RedisChatRoom redisChatRoom = redisChatRoomRepository.findById(id);
         ChatRoom chatRoom = chatRoomRepository.findByPostId(Long.parseLong(redisChatRoom.getRoomId())).orElseThrow(() -> new ResourceNotFoundException(ResultCode.CHAT_ROOM_NOT_FOUND));
+
         if(!chatJoinRepository.existsByChatRoomAndUser(chatRoom, user)) {
             throw new ForbiddenException(ResultCode.FORBIDDEN_MEMBER);
         }
+
         List<ChatMessage> messages = chatRoom.getMessages();
         List<ChatMessageResponseDto> data = messages.stream().map(ChatMessageResponseDto::from).collect(Collectors.toList());
+
         return data;
     }
 
@@ -172,12 +182,14 @@ public class ChatService {
     public ChatPromiseResponseDto findByPostId(User user, String id){
         RedisChatRoom redisChatRoom = redisChatRoomRepository.findById(id);
         ChatRoom chatRoom = chatRoomRepository.findByPostId(Long.parseLong(redisChatRoom.getRoomId())).orElseThrow(() -> new ResourceNotFoundException(ResultCode.CHAT_ROOM_NOT_FOUND));
+
         if(!chatJoinRepository.existsByChatRoomAndUser(chatRoom, user)) {
             throw new ForbiddenException(ResultCode.FORBIDDEN_MEMBER);
         }
+
         ChatPromise chatPromise = chatPromiseRepository.findByChatRoomId(chatRoom.getId()).orElseThrow(() -> new ResourceNotFoundException(ResultCode.CHAT_PROMISE_NOT_FOUND));
-        ChatPromiseResponseDto promiseResponseDto = new ChatPromiseResponseDto(chatPromise);
-        return promiseResponseDto;
+
+        return ChatPromiseResponseDto.from(chatPromise);
     }
 
     // 채팅 약속 수정
@@ -190,19 +202,15 @@ public class ChatService {
         if(chatRoom.getPost().getUser().getId() != user.getId()) {
             throw new ForbiddenException(ResultCode.FORBIDDEN_MEMBER);
         }
-
         if(chatPromise.getType() == PromiseType.CONFIRMED) {
             throw new LimitException(ResultCode.CHAT_PROMISE_UPDATE_FAIL_CONFIRMED);
         }
-
         if(request.getPromiseDate() != null) {
             chatPromise.setPromiseDate(request.getPromiseDate());
         }
-
         if(request.getPromiseTime() != null ) {
             chatPromise.setPromiseTime(request.getPromiseTime());
         }
-
         if(request.getPromiseLocal() != null) {
             chatPromise.setPromiseLocal(request.getPromiseLocal());
         }
@@ -227,8 +235,6 @@ public class ChatService {
         chatMessageRepository.save(chatMessage);
 
         chatRoom.setInfo(chatMessage);
-        log.info("chatMessage -> {}", chatRoom.getLastChatMessage());
-        log.info("chatTime -> {}", chatRoom.getLastChatTime());
         chatRoomRepository.save(chatRoom);
     }
 
@@ -241,11 +247,9 @@ public class ChatService {
         if(chatRoom.getPost().getUser().getId() != user.getId()) {
             throw new ForbiddenException(ResultCode.FORBIDDEN_MEMBER);
         }
-        
         if(chatPromiseRepository.existsByChatRoomId(chatRoom.getId())) {
             throw new DuplicateException(ResultCode.CHAT_PROMISE_DUPLICATION);
         }
-
         if(chatRoom.getPost().getGatheredPeople() == 1) {
             throw new LimitException(ResultCode.CHAT_PROMISE_CREATE_FAIL_ONLY);
         }
@@ -267,15 +271,7 @@ public class ChatService {
         chatMessageRepository.save(chatMessage);
 
         chatRoom.setInfo(chatMessage);
-        log.info("chatMessage -> {}", chatRoom.getLastChatMessage());
-        log.info("chatTime -> {}", chatRoom.getLastChatTime());
         chatRoomRepository.save(chatRoom);
-    }
-
-    // 일정시간마다 Scheduling 작동.
-    @Scheduled(fixedDelay=60000 * 60) // 1시간마다 작동
-    public void checkEndTime() {
-        chatPromiseRepository.updateByLocalDateTime();
     }
 
     // 채팅 약속 투표
@@ -284,12 +280,14 @@ public class ChatService {
         RedisChatRoom redisChatRoom = redisChatRoomRepository.findById(id);
         ChatRoom chatRoom = chatRoomRepository.findByPostId(Long.parseLong(redisChatRoom.getRoomId())).orElseThrow(() -> new ResourceNotFoundException(ResultCode.CHAT_ROOM_NOT_FOUND));
         ChatPromise chatPromise = chatPromiseRepository.findByChatRoomId(chatRoom.getId()).orElseThrow(() -> new ResourceNotFoundException(ResultCode.CHAT_PROMISE_NOT_FOUND));
+
         if(!chatJoinRepository.existsByChatRoomAndUser(chatRoom, user)) {
             throw new ForbiddenException(ResultCode.FORBIDDEN_MEMBER);
         }
         if(chatPromise.getType() != PromiseType.PROGRESS) {
             throw new LimitException(ResultCode.CHAT_PROMISE_NOT_IN_PRGRESS);
         }
+
         if(!chatPromiseVoteRepository.existsByChatRoomAndUser(chatRoom, user)){
             ChatPromiseVote chatPromiseVote = new ChatPromiseVote(chatRoom, user);
             chatPromiseVoteRepository.save(chatPromiseVote);
@@ -308,8 +306,6 @@ public class ChatService {
                 chatMessageRepository.save(chatMessage);
 
                 chatRoom.setInfo(chatMessage);
-                log.info("chatMessage -> {}", chatRoom.getLastChatMessage());
-                log.info("chatTime -> {}", chatRoom.getLastChatTime());
                 chatRoomRepository.save(chatRoom);
             }
         } else {
@@ -317,6 +313,7 @@ public class ChatService {
         }
     }
 
+    // 나누기 거래 확정
     @Transactional
     public void confirmedPost(User user, String id) {
         RedisChatRoom redisChatRoom = redisChatRoomRepository.findById(id);
@@ -335,9 +332,6 @@ public class ChatService {
         if(chatPromise.getType() != PromiseType.CONFIRMED) {
             throw new LimitException(ResultCode.POST_CONFIRMED_FAIL_PROMISE);
         }
-        log.info("promiseDateTime : {}", LocalDateTime.of(chatPromise.getPromiseDate(), chatPromise.getPromiseTime()));
-        log.info("now() : {}", LocalDateTime.now());
-        log.info("compareTo : {}", LocalDateTime.of(chatPromise.getPromiseDate(), chatPromise.getPromiseTime()).compareTo(LocalDateTime.now()));
         if(LocalDateTime.of(chatPromise.getPromiseDate(), chatPromise.getPromiseTime()).compareTo(LocalDateTime.now()) > 0) {
             throw new LimitException(ResultCode.POST_CONFIRMED_FAIL_TIME);
         }
@@ -345,4 +339,9 @@ public class ChatService {
         chatRoom.getPost().confirmed();
     }
 
+    // 일정시간마다 Scheduling 작동.
+    @Scheduled(fixedDelay=60000 * 60) // 1시간마다 작동
+    public void checkEndTime() {
+        chatPromiseRepository.updateByLocalDateTime();
+    }
 }
