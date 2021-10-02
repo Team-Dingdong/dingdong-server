@@ -1,0 +1,151 @@
+= CrystalMine REST API
+:toc: left
+:toclevels: 2
+:source-highlighter: highlightjs
+
+== 1. 개요
+=== Domain
+|===
+| 환경 | Domain
+
+| 테스트서버
+| 3.38.61.13:8080
+
+| 운영서버
+| 3.38.61.13:8080
+|===
+=== Response Data
+|===
+| Field | Description
+
+| `timestamp`
+| 요청 시간
+
+| `status`
+| 응답 httpStatus
+
+| `result`
+| 응답 code
+
+| `code`
+| 응답 code
+
+| `message`
+| 응답 상세
+
+| `data`
+| 응답 데이터
+|===
+
+== 2. 인증
+=== 2-1. 휴대폰 인증 번호 전송
+==== Request
+CURL
+include::{snippets}/auth-controller-test/send-sms/curl-request.adoc[]
+Request Body
+|===
+| Field | Type | Description
+
+| `to` | `String` | 인증 번호를 받을 휴대폰 번호
+|===
+Request Http Example
+include::{snippets}/auth-controller-test/send-sms/http-request.adoc[]
+==== Response
+Response Body
+|===
+| Name | Type | Description
+
+| `data.requestId` | `String` | 휴대폰 인증 번호 전송 요청 아이디 값
+| `data.requestTime` | `String` | 휴대폰 인증 번호 전송 요청 시간
+|===
+Response Example
+include::{snippets}/auth-controller-test/send-sms/response-body.adoc[]
+
+=== 2-2. 휴대폰 인증 번호 확인, 로그인 OR 회원가입
+==== Request
+CURL
+include::{snippets}/auth-controller-test/auth/curl-request.adoc[]
+Request Body
+|===
+| Field | Type | Description
+
+| `phone` | `String` | 인증 번호를 받은 휴대폰 번호
+| `auth` | `String` | 휴대폰으로 전송 받은 인증 번호
+|===
+Request Http Example
+include::{snippets}/auth-controller-test/auth/http-request.adoc[]
+==== Response
+Response Body
+|===
+| Name | Type | Description
+
+| `data.grantType` | `String` | JWT Token 타입
+| `data.accessToken` | `String` | JWT Access Token 값
+| `data.accessTokenExpiresIn` | `Number` | JWT Access Token 유효기간
+| `data.refreshToken` | `String` | JWT Refresh Token
+|===
+Response Example
+include::{snippets}/auth-controller-test/auth/response-body.adoc[]
+
+=== 2-3. 토큰 재발급
+==== Request
+CURL
+include::{snippets}/auth-controller-test/reissue/curl-request.adoc[]
+Request Body
+|===
+| Field | Type | Description
+
+| `accessToken` | `String` | 사용자의 현재 AccessToken 값
+| `refreshToken` | `String` | 사용자의 현재 RefreshToken
+|===
+Request Http Example
+include::{snippets}/auth-controller-test/reissue/http-request.adoc[]
+==== Response
+Response Body
+|===
+| Name | Type | Description
+
+| `data.grantType` | `String` | JWT Token 타입
+| `data.accessToken` | `String` | JWT Access Token 값
+| `data.accessTokenExpiresIn` | `Number` | JWT Access Token 유효기간
+| `data.refreshToken` | `String` | JWT Refresh Token 값
+|===
+Response Example
+include::{snippets}/auth-controller-test/reissue/response-body.adoc[]
+
+=== 2-4. 닉네임 설정
+==== Request
+CURL
+include::{snippets}/auth-controller-test/nickname/curl-request.adoc[]
+Request Header
+include::{snippets}/auth-controller-test/nickname/request-headers.adoc[]
+Request Body
+|===
+| Field | Type | Description
+
+| `nickname` | `String` | 설정할 닉네임 값
+|===
+Request Http Example
+include::{snippets}/auth-controller-test/nickname/http-request.adoc[]
+==== Response
+Response Example
+include::{snippets}/auth-controller-test/nickname/response-body.adoc[]
+
+=== 2-5. 동네 인증
+==== Request
+CURL
+include::{snippets}/auth-controller-test/local/curl-request.adoc[]
+Request Header
+include::{snippets}/auth-controller-test/local/request-headers.adoc[]
+Request Body
+|===
+| Field | Type | Description
+
+| `local1` | `String` | 인증할 동네 이름
+| `local2` | `String` | 인증할 동네 이름
+|===
+Request Http Example
+include::{snippets}/auth-controller-test/local/http-request.adoc[]
+==== Response
+Response Example
+include::{snippets}/auth-controller-test/local/response-body.adoc[]
