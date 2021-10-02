@@ -53,7 +53,7 @@ include::{snippets}/auth-controller-test/send-sms/http-request.adoc[]
 ==== Response
 Response Body
 |===
-| Name | Type | Description
+| Field | Type | Description
 
 | `data.requestId` | `String` | 휴대폰 인증 번호 전송 요청 아이디 값
 | `data.requestTime` | `String` | 휴대폰 인증 번호 전송 요청 시간
@@ -77,7 +77,7 @@ include::{snippets}/auth-controller-test/auth/http-request.adoc[]
 ==== Response
 Response Body
 |===
-| Name | Type | Description
+| Field | Type | Description
 
 | `data.grantType` | `String` | JWT Token 타입
 | `data.accessToken` | `String` | JWT Access Token 값
@@ -103,7 +103,7 @@ include::{snippets}/auth-controller-test/reissue/http-request.adoc[]
 ==== Response
 Response Body
 |===
-| Name | Type | Description
+| Field | Type | Description
 
 | `data.grantType` | `String` | JWT Token 타입
 | `data.accessToken` | `String` | JWT Access Token 값
@@ -161,3 +161,32 @@ include::{snippets}/auth-controller-test/unsubscribe-user/http-request.adoc[]
 ==== Response
 Response Example
 include::{snippets}/auth-controller-test/unsubscribe-user/response-body.adoc[]
+
+== 3. 프로필
+=== 3-1. 본인 프로필 조회
+==== Request
+CURL
+include::{snippets}/profile-controller-test/get-my-profile/curl-request.adoc[]
+Request Header
+include::{snippets}/profile-controller-test/get-my-profile/request-headers.adoc[]
+Request Http Example
+include::{snippets}/profile-controller-test/get-my-profile/http-request.adoc[]
+==== Response
+Response Field
+include::{snippets}/profile-controller-test/get-my-profile/response-fields.adoc[]
+Response Example
+include::{snippets}/profile-controller-test/get-my-profile/response-body.adoc[]
+
+=== 3-2. 프로필 조회
+==== Request
+CURL
+include::{snippets}/profile-controller-test/get-profile/curl-request.adoc[]
+Request Header
+include::{snippets}/profile-controller-test/get-profile/request-headers.adoc[]
+Request Http Example
+include::{snippets}/profile-controller-test/get-profile/http-request.adoc[]
+==== Response
+Response Field
+include::{snippets}/profile-controller-test/get-profile/response-fields.adoc[]
+Response Example
+include::{snippets}/profile-controller-test/get-profile/response-body.adoc[]

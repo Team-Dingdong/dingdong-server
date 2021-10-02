@@ -42,7 +42,7 @@ import org.springframework.transaction.annotation.Transactional;
 @AutoConfigureMockMvc
 @AutoConfigureRestDocs
 @Transactional
-public class AuthControllerTest {
+class AuthControllerTest {
 
     @Autowired
     MockMvc mockMvc;
@@ -66,7 +66,6 @@ public class AuthControllerTest {
     @Value("${test.server.http.port}")
     int port;
 
-
     @BeforeEach
     void setUp() {
         String phone = "01012345678";
@@ -75,6 +74,17 @@ public class AuthControllerTest {
         LocalDateTime requestTime = LocalDateTime.now();
         Auth auth = new Auth(phone, authNumber, requestId, requestTime);
         authRepository.save(auth);
+    }
+
+    TokenDto getTokenDto() {
+        Auth auth = authRepository.findByPhone("01012345678");
+        AuthRequestDto authRequestDto = AuthRequestDto.builder()
+            .phone(auth.getPhone())
+            .authNumber(auth.getAuthNumber())
+            .build();
+        Map<AuthType, TokenDto> data = authService.auth(authRequestDto);
+
+        return data.get(AuthType.SIGNUP);
     }
 
 //    @Test
