@@ -7,8 +7,10 @@ import static org.springframework.restdocs.operation.preprocess.Preprocessors.mo
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.relaxedResponseFields;
+import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -17,6 +19,10 @@ import dingdong.dingdong.domain.user.Auth;
 import dingdong.dingdong.domain.user.AuthRepository;
 import dingdong.dingdong.domain.user.Local;
 import dingdong.dingdong.domain.user.LocalRepository;
+import dingdong.dingdong.domain.user.Profile;
+import dingdong.dingdong.domain.user.ProfileRepository;
+import dingdong.dingdong.domain.user.User;
+import dingdong.dingdong.domain.user.UserRepository;
 import dingdong.dingdong.dto.auth.AuthRequestDto;
 import dingdong.dingdong.dto.auth.LocalRequestDto;
 import dingdong.dingdong.dto.auth.NicknameRequestDto;
@@ -34,7 +40,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
+import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -57,6 +66,12 @@ class AuthControllerTest {
     AuthRepository authRepository;
 
     @Autowired
+    ProfileRepository profileRepository;
+
+    @Autowired
+    UserRepository userRepository;
+
+    @Autowired
     LocalRepository localRepository;
 
     @Value("${test.server.http.scheme}")
@@ -68,23 +83,46 @@ class AuthControllerTest {
 
     @BeforeEach
     void setUp() {
+        Long id = 1L;
         String phone = "01012345678";
         String authNumber = "123456";
         String requestId = "testRequestId";
         LocalDateTime requestTime = LocalDateTime.now();
-        Auth auth = new Auth(phone, authNumber, requestId, requestTime);
+        Auth auth = Auth.builder()
+            .id(id)
+            .phone(phone)
+            .authNumber(authNumber)
+            .requestId(requestId)
+            .requestTime(requestTime)
+            .build();
+
         authRepository.save(auth);
+
+        Profile profile = Profile.builder()
+            .id(id)
+            .build();
+
+        String authority = "ROLE_USER";
+        User user = User.builder()
+            .id(id)
+            .phone(phone)
+            .profile(profile)
+            .authority(authority)
+            .build();
+
+        profileRepository.save(profile);
+        userRepository.save(user);
     }
 
     TokenDto getTokenDto() {
-        Auth auth = authRepository.findByPhone("01012345678");
+        Auth auth = authRepository.findById(1L).get();
         AuthRequestDto authRequestDto = AuthRequestDto.builder()
             .phone(auth.getPhone())
             .authNumber(auth.getAuthNumber())
             .build();
         Map<AuthType, TokenDto> data = authService.auth(authRequestDto);
 
-        return data.get(AuthType.SIGNUP);
+        return data.get(AuthType.LOGIN);
     }
 
 //    @Test
@@ -94,77 +132,105 @@ class AuthControllerTest {
 //            .to("01084071066")
 //            .build();
 //
-//        mockMvc.perform(post("/api/v1/auth/send-sms")
+//        mockMvc.perform(RestDocumentationRequestBuilders.post("/api/v1/auth/send-sms")
 //            .content(objectMapper.writeValueAsString(messageRequestDto))
 //            .contentType(MediaType.APPLICATION_JSON)
 //            .accept(MediaType.APPLICATION_JSON))
 //            .andDo(print()).andExpect(status().is2xxSuccessful())
 //            .andDo(print()).andDo(document("{class-name}/{method-name}",
 //            preprocessRequest(modifyUris().scheme(scheme).host(host).port(port), prettyPrint()),
-//            preprocessResponse(prettyPrint())));
+//            preprocessResponse(prettyPrint()),
+//            requestFields(
+//                fieldWithPath("to").type(JsonFieldType.STRING).description("인증 번호를 전송할 휴대폰 번호")
+//            ),
+//            relaxedResponseFields(
+//                fieldWithPath("data.requestId").type(JsonFieldType.STRING).description("휴대폰 인증 번호 전송 요청 아이디 값"),
+//                fieldWithPath("data.requestTime").type(JsonFieldType.STRING).description("휴대폰 인증 번호 전송 요청 시간")
+//            )
+//        ));
 //    }
 
     @Test
     @DisplayName("휴대폰 인증 번호 확인 테스트")
     void auth() throws Exception {
-        Auth auth = authRepository.findByPhone("01012345678");
+        Auth auth = authRepository.findById(1L).get();
         AuthRequestDto authRequestDto = AuthRequestDto.builder()
             .phone(auth.getPhone())
             .authNumber(auth.getAuthNumber())
             .build();
 
-        mockMvc.perform(post("/api/v1/auth")
+        mockMvc.perform(RestDocumentationRequestBuilders.post("/api/v1/auth")
             .content(objectMapper.writeValueAsString(authRequestDto))
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON))
             .andDo(print()).andExpect(status().is2xxSuccessful())
             .andDo(print()).andDo(document("{class-name}/{method-name}",
             preprocessRequest(modifyUris().scheme(scheme).host(host).port(port), prettyPrint()),
-            preprocessResponse(prettyPrint())));
+            preprocessResponse(prettyPrint()),
+            requestFields(
+                fieldWithPath("phone").type(JsonFieldType.STRING).description("인증 번호를 받은 휴대폰 번호"),
+                fieldWithPath("authNumber").type(JsonFieldType.STRING)
+                    .description("휴대폰으로 전송 받은 인증 번호")
+            ),
+            relaxedResponseFields(
+                fieldWithPath("data.grantType").type(JsonFieldType.STRING)
+                    .description("JWT Token 타입"),
+                fieldWithPath("data.accessToken").type(JsonFieldType.STRING)
+                    .description("JWT Access Token 값"),
+                fieldWithPath("data.accessTokenExpiresIn").type(JsonFieldType.NUMBER)
+                    .description("JWT Access Token 유효기간"),
+                fieldWithPath("data.refreshToken").type(JsonFieldType.STRING)
+                    .description("JWT Refresh Token 값")
+            )
+        ));
     }
 
     @Test
     @DisplayName("토큰 재발급 테스트")
     void reissue() throws Exception {
-        Auth auth = authRepository.findByPhone("01012345678");
-        AuthRequestDto authRequestDto = AuthRequestDto.builder()
-            .phone(auth.getPhone())
-            .authNumber(auth.getAuthNumber())
-            .build();
-        Map<AuthType, TokenDto> data = authService.auth(authRequestDto);
-
+        TokenDto tokenDto = getTokenDto();
         TokenRequestDto tokenRequestDto = TokenRequestDto.builder()
-            .accessToken(data.get(AuthType.SIGNUP).getAccessToken())
-            .refreshToken(data.get(AuthType.SIGNUP).getRefreshToken())
+            .accessToken(tokenDto.getAccessToken())
+            .refreshToken(tokenDto.getRefreshToken())
             .build();
 
-        mockMvc.perform(post("/api/v1/auth/reissue")
+        mockMvc.perform(RestDocumentationRequestBuilders.post("/api/v1/auth/reissue")
             .content(objectMapper.writeValueAsString(tokenRequestDto))
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON))
             .andDo(print()).andExpect(status().isOk())
             .andDo(print()).andDo(document("{class-name}/{method-name}",
             preprocessRequest(modifyUris().scheme(scheme).host(host).port(port), prettyPrint()),
-            preprocessResponse(prettyPrint())));
+            preprocessResponse(prettyPrint()),
+            requestFields(
+                fieldWithPath("accessToken").type(JsonFieldType.STRING)
+                    .description("사용자의 현재 AccessToken 값"),
+                fieldWithPath("refreshToken").type(JsonFieldType.STRING)
+                    .description("사용자의 현재 RefreshToken 값")
+            ),
+            relaxedResponseFields(
+                fieldWithPath("data.grantType").type(JsonFieldType.STRING)
+                    .description("JWT Token 타입"),
+                fieldWithPath("data.accessToken").type(JsonFieldType.STRING)
+                    .description("JWT Access Token 값"),
+                fieldWithPath("data.accessTokenExpiresIn").type(JsonFieldType.NUMBER)
+                    .description("JWT Access Token 유효기간"),
+                fieldWithPath("data.refreshToken").type(JsonFieldType.STRING)
+                    .description("JWT Refresh Token 값")
+            )
+        ));
     }
 
     @Test
     @DisplayName("닉네임 설정 테스트")
     void nickname() throws Exception {
-        Auth auth = authRepository.findByPhone("01012345678");
-        AuthRequestDto authRequestDto = AuthRequestDto.builder()
-            .phone(auth.getPhone())
-            .authNumber(auth.getAuthNumber())
-            .build();
-        Map<AuthType, TokenDto> data = authService.auth(authRequestDto);
-
-        String header = data.get(AuthType.SIGNUP).getAccessToken();
+        TokenDto tokenDto = getTokenDto();
         NicknameRequestDto nicknameRequestDto = NicknameRequestDto.builder()
-            .nickname("testNickname")
+            .nickname("testNickname2")
             .build();
 
-        mockMvc.perform(post("/api/v1/auth/nickname")
-            .header("Authorization", header)
+        mockMvc.perform(RestDocumentationRequestBuilders.post("/api/v1/auth/nickname")
+            .header(HttpHeaders.AUTHORIZATION, tokenDto.getAccessToken())
             .content(objectMapper.writeValueAsString(nicknameRequestDto))
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON))
@@ -173,7 +239,11 @@ class AuthControllerTest {
                 preprocessRequest(modifyUris().scheme(scheme).host(host).port(port), prettyPrint()),
                 preprocessResponse(prettyPrint()),
                 requestHeaders(
-                    headerWithName("Authorization").description("Bearer Type의 AccessToken 값")
+                    headerWithName(HttpHeaders.AUTHORIZATION)
+                        .description("Bearer Type의 AccessToken 값")
+                ),
+                requestFields(
+                    fieldWithPath("nickname").type(JsonFieldType.STRING).description("설정할 닉네임 값")
                 )
             ));
     }
@@ -181,24 +251,16 @@ class AuthControllerTest {
     @Test
     @DisplayName("동네 인증 테스트")
     void local() throws Exception {
-        Auth auth = authRepository.findByPhone("01012345678");
-        AuthRequestDto authRequestDto = AuthRequestDto.builder()
-            .phone(auth.getPhone())
-            .authNumber(auth.getAuthNumber())
-            .build();
-        Map<AuthType, TokenDto> data = authService.auth(authRequestDto);
-
+        TokenDto tokenDto = getTokenDto();
         Local local1 = localRepository.findById(1L).get();
         Local local2 = localRepository.findById(2L).get();
-
-        String header = data.get(AuthType.SIGNUP).getAccessToken();
         LocalRequestDto localRequestDto = LocalRequestDto.builder()
             .local1(local1.getName())
             .local2(local2.getName())
             .build();
 
-        mockMvc.perform(post("/api/v1/auth/local")
-            .header("Authorization", header)
+        mockMvc.perform(RestDocumentationRequestBuilders.post("/api/v1/auth/local")
+            .header(HttpHeaders.AUTHORIZATION, tokenDto.getAccessToken())
             .content(objectMapper.writeValueAsString(localRequestDto))
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON))
@@ -207,7 +269,12 @@ class AuthControllerTest {
                 preprocessRequest(modifyUris().scheme(scheme).host(host).port(port), prettyPrint()),
                 preprocessResponse(prettyPrint()),
                 requestHeaders(
-                    headerWithName("Authorization").description("Bearer Type의 AccessToken 값")
+                    headerWithName(HttpHeaders.AUTHORIZATION)
+                        .description("Bearer Type의 AccessToken 값")
+                ),
+                requestFields(
+                    fieldWithPath("local1").type(JsonFieldType.STRING).description("인증할 동네 이름1"),
+                    fieldWithPath("local2").type(JsonFieldType.STRING).description("인증할 동네 이름2")
                 )
             ));
     }
@@ -215,17 +282,10 @@ class AuthControllerTest {
     @Test
     @DisplayName("회원 탈퇴 테스트")
     void unsubscribeUser() throws Exception {
-        Auth auth = authRepository.findByPhone("01012345678");
-        AuthRequestDto authRequestDto = AuthRequestDto.builder()
-            .phone(auth.getPhone())
-            .authNumber(auth.getAuthNumber())
-            .build();
-        Map<AuthType, TokenDto> data = authService.auth(authRequestDto);
-
-        String header = data.get(AuthType.SIGNUP).getAccessToken();
+        TokenDto tokenDto = getTokenDto();
 
         mockMvc.perform(patch("/api/v1/auth/unsubscribe")
-            .header("Authorization", header)
+            .header(HttpHeaders.AUTHORIZATION, tokenDto.getAccessToken())
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON))
             .andDo(print()).andExpect(status().isOk()).andDo(print())
@@ -233,7 +293,8 @@ class AuthControllerTest {
                 preprocessRequest(modifyUris().scheme(scheme).host(host).port(port), prettyPrint()),
                 preprocessResponse(prettyPrint()),
                 requestHeaders(
-                    headerWithName("Authorization").description("Bearer Type의 AccessToken 값")
+                    headerWithName(HttpHeaders.AUTHORIZATION)
+                        .description("Bearer Type의 AccessToken 값")
                 )
             ));
     }

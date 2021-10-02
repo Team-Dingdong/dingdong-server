@@ -42,22 +42,13 @@
 ==== Request
 CURL
 include::{snippets}/auth-controller-test/send-sms/curl-request.adoc[]
-Request Body
-|===
-| Field | Type | Description
-
-| `to` | `String` | 인증 번호를 받을 휴대폰 번호
-|===
+Request Fields
+include::{snippets}/auth-controller-test/send-sms/request-fields.adoc[]
 Request Http Example
 include::{snippets}/auth-controller-test/send-sms/http-request.adoc[]
 ==== Response
-Response Body
-|===
-| Field | Type | Description
-
-| `data.requestId` | `String` | 휴대폰 인증 번호 전송 요청 아이디 값
-| `data.requestTime` | `String` | 휴대폰 인증 번호 전송 요청 시간
-|===
+Response Fields
+include::{snippets}/auth-controller-test/send-sms/response-fields.adoc[]
 Response Example
 include::{snippets}/auth-controller-test/send-sms/response-body.adoc[]
 
@@ -65,25 +56,13 @@ include::{snippets}/auth-controller-test/send-sms/response-body.adoc[]
 ==== Request
 CURL
 include::{snippets}/auth-controller-test/auth/curl-request.adoc[]
-Request Body
-|===
-| Field | Type | Description
-
-| `phone` | `String` | 인증 번호를 받은 휴대폰 번호
-| `auth` | `String` | 휴대폰으로 전송 받은 인증 번호
-|===
+Request Fields
+include::{snippets}/auth-controller-test/auth/request-fields.adoc[]
 Request Http Example
 include::{snippets}/auth-controller-test/auth/http-request.adoc[]
 ==== Response
-Response Body
-|===
-| Field | Type | Description
-
-| `data.grantType` | `String` | JWT Token 타입
-| `data.accessToken` | `String` | JWT Access Token 값
-| `data.accessTokenExpiresIn` | `Number` | JWT Access Token 유효기간
-| `data.refreshToken` | `String` | JWT Refresh Token
-|===
+Response Fields
+include::{snippets}/auth-controller-test/auth/response-fields.adoc[]
 Response Example
 include::{snippets}/auth-controller-test/auth/response-body.adoc[]
 
@@ -91,25 +70,13 @@ include::{snippets}/auth-controller-test/auth/response-body.adoc[]
 ==== Request
 CURL
 include::{snippets}/auth-controller-test/reissue/curl-request.adoc[]
-Request Body
-|===
-| Field | Type | Description
-
-| `accessToken` | `String` | 사용자의 현재 AccessToken 값
-| `refreshToken` | `String` | 사용자의 현재 RefreshToken
-|===
+Request Fields
+include::{snippets}/auth-controller-test/reissue/request-fields.adoc[]
 Request Http Example
 include::{snippets}/auth-controller-test/reissue/http-request.adoc[]
 ==== Response
-Response Body
-|===
-| Field | Type | Description
-
-| `data.grantType` | `String` | JWT Token 타입
-| `data.accessToken` | `String` | JWT Access Token 값
-| `data.accessTokenExpiresIn` | `Number` | JWT Access Token 유효기간
-| `data.refreshToken` | `String` | JWT Refresh Token 값
-|===
+Response Fields
+include::{snippets}/auth-controller-test/reissue/response-fields.adoc[]
 Response Example
 include::{snippets}/auth-controller-test/reissue/response-body.adoc[]
 
@@ -119,12 +86,8 @@ CURL
 include::{snippets}/auth-controller-test/nickname/curl-request.adoc[]
 Request Header
 include::{snippets}/auth-controller-test/nickname/request-headers.adoc[]
-Request Body
-|===
-| Field | Type | Description
-
-| `nickname` | `String` | 설정할 닉네임 값
-|===
+Request Fields
+include::{snippets}/auth-controller-test/nickname/request-fields.adoc[]
 Request Http Example
 include::{snippets}/auth-controller-test/nickname/http-request.adoc[]
 ==== Response
@@ -137,13 +100,8 @@ CURL
 include::{snippets}/auth-controller-test/local/curl-request.adoc[]
 Request Header
 include::{snippets}/auth-controller-test/local/request-headers.adoc[]
-Request Body
-|===
-| Field | Type | Description
-
-| `local1` | `String` | 인증할 동네 이름
-| `local2` | `String` | 인증할 동네 이름
-|===
+Request Fields
+include::{snippets}/auth-controller-test/local/request-fields.adoc[]
 Request Http Example
 include::{snippets}/auth-controller-test/local/http-request.adoc[]
 ==== Response
@@ -172,7 +130,7 @@ include::{snippets}/profile-controller-test/get-my-profile/request-headers.adoc[
 Request Http Example
 include::{snippets}/profile-controller-test/get-my-profile/http-request.adoc[]
 ==== Response
-Response Field
+Response Fields
 include::{snippets}/profile-controller-test/get-my-profile/response-fields.adoc[]
 Response Example
 include::{snippets}/profile-controller-test/get-my-profile/response-body.adoc[]
@@ -181,12 +139,14 @@ include::{snippets}/profile-controller-test/get-my-profile/response-body.adoc[]
 ==== Request
 CURL
 include::{snippets}/profile-controller-test/get-profile/curl-request.adoc[]
+Request Path Parameters ->
+include::{snippets}/profile-controller-test/get-profile/path-parameters.adoc[]
 Request Header
 include::{snippets}/profile-controller-test/get-profile/request-headers.adoc[]
 Request Http Example
 include::{snippets}/profile-controller-test/get-profile/http-request.adoc[]
 ==== Response
-Response Field
+Response Fields
 include::{snippets}/profile-controller-test/get-profile/response-fields.adoc[]
 Response Example
 include::{snippets}/profile-controller-test/get-profile/response-body.adoc[]
