@@ -454,10 +454,11 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_2_인증">2. 인증</a>
 <ul class="sectlevel2">
 <li><a href="#_2_1_휴대폰_인증_번호_전송">2-1. 휴대폰 인증 번호 전송</a></li>
-<li><a href="#_2_2_휴대폰_인증_번호_확인_로그인_or_회원가입">2-2. 휴대폰 인증 번호 확인, 로그인 OR 회원가입</a></li>
+<li><a href="#_2_2_휴대폰_인증_번호_확인로그인_회원가입">2-2. 휴대폰 인증 번호 확인(로그인, 회원가입)</a></li>
 <li><a href="#_2_3_토큰_재발급">2-3. 토큰 재발급</a></li>
 <li><a href="#_2_4_닉네임_설정">2-4. 닉네임 설정</a></li>
 <li><a href="#_2_5_동네_인증">2-5. 동네 인증</a></li>
+<li><a href="#_2_6_회원_탈퇴">2-6. 회원 탈퇴</a></li>
 </ul>
 </li>
 </ul>
@@ -648,7 +649,7 @@ Host: 3.38.61.13:8080
 </div>
 </div>
 <div class="sect2">
-<h3 id="_2_2_휴대폰_인증_번호_확인_로그인_or_회원가입">2-2. 휴대폰 인증 번호 확인, 로그인 OR 회원가입</h3>
+<h3 id="_2_2_휴대폰_인증_번호_확인로그인_회원가입">2-2. 휴대폰 인증 번호 확인(로그인, 회원가입)</h3>
 <div class="sect3">
 <h4 id="_request_2">Request</h4>
 <div class="paragraph">
@@ -759,16 +760,16 @@ Host: 3.38.61.13:8080
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-none hljs">{
-  "timestamp" : "2021-10-02T18:57:34.447381",
+  "timestamp" : "2021-10-02T20:02:07.78963",
   "status" : 201,
   "result" : "CREATED",
   "code" : "SIGNUP_SUCCESS",
   "message" : "회원 가입 성공",
   "data" : {
     "grantType" : "bearer",
-    "accessToken" : "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIwMTAxMjM0NTY3OCIsImF1dGgiOiJST0xFX1VTRVIiLCJleHAiOjE2MzM3NzM0NTR9.Y80uM9kMI3JQnu3RPprXnTwgNz2QhrMcPDxkblSYpvtV2twsgTr4wHuOQc8JcbCvaXXEDq7mLqTysSJ82ZAaiA",
-    "accessTokenExpiresIn" : 1633773454396,
-    "refreshToken" : "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE2MzM3NzM0NTR9.4nzcsfaPCnEj2KkSsf5SHhireItfnhg0AV5s97RX9R3cOn3hEK7Q1_glsLToIrlowrSVKtTFGR930jpPpN6Cpg"
+    "accessToken" : "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIwMTAxMjM0NTY3OCIsImF1dGgiOiJST0xFX1VTRVIiLCJleHAiOjE2MzM3NzczMjd9.YlFfJMA-P5vdMv1tcVMb5-z6atBcL1BcB-d523ihz8rTxHgRIFLlEUDbTdjh5sNFHn2YqcNlB53idfCeg-Kr2Q",
+    "accessTokenExpiresIn" : 1633777327731,
+    "refreshToken" : "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE2MzM3NzczMjd9.wFlQCP70Q_TjJnptP7B-NUKIEvxkBEXaH9SgdEqADwOWfphugBlorbTMWyfsvmXeeJUx9emp-Y_GDTziXSpLyg"
   }
 }</code></pre>
 </div>
@@ -788,8 +789,8 @@ Host: 3.38.61.13:8080
     -H 'Content-Type: application/json;charset=UTF-8' \
     -H 'Accept: application/json' \
     -d '{
-  "accessToken" : "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIwMTAxMjM0NTY3OCIsImF1dGgiOiJST0xFX1VTRVIiLCJleHAiOjE2MzM3NzM0NTR9.Y80uM9kMI3JQnu3RPprXnTwgNz2QhrMcPDxkblSYpvtV2twsgTr4wHuOQc8JcbCvaXXEDq7mLqTysSJ82ZAaiA",
-  "refreshToken" : "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE2MzM3NzM0NTR9.4nzcsfaPCnEj2KkSsf5SHhireItfnhg0AV5s97RX9R3cOn3hEK7Q1_glsLToIrlowrSVKtTFGR930jpPpN6Cpg"
+  "accessToken" : "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIwMTAxMjM0NTY3OCIsImF1dGgiOiJST0xFX1VTRVIiLCJleHAiOjE2MzM3NzczMjh9.Fa9ImfkugRMLQwUrpd93QtjWCdkfOwmUl83lXXTOFeKTA_zlVd0DxvhiF8Jg5PhFNfsDi9ScrJaPag6l7Vw5-g",
+  "refreshToken" : "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE2MzM3NzczMjh9.njgergTGks8Z8rokH_uGNU2Zc5ePKTvcjRxFPpPdroMc7KgvRZBJbm0eNo4Q9SYVSAgABcQIjxjuBPNyOp0AKg"
 }'</code></pre>
 </div>
 </div>
@@ -834,8 +835,8 @@ Content-Length: 363
 Host: 3.38.61.13:8080
 
 {
-  "accessToken" : "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIwMTAxMjM0NTY3OCIsImF1dGgiOiJST0xFX1VTRVIiLCJleHAiOjE2MzM3NzM0NTR9.Y80uM9kMI3JQnu3RPprXnTwgNz2QhrMcPDxkblSYpvtV2twsgTr4wHuOQc8JcbCvaXXEDq7mLqTysSJ82ZAaiA",
-  "refreshToken" : "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE2MzM3NzM0NTR9.4nzcsfaPCnEj2KkSsf5SHhireItfnhg0AV5s97RX9R3cOn3hEK7Q1_glsLToIrlowrSVKtTFGR930jpPpN6Cpg"
+  "accessToken" : "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIwMTAxMjM0NTY3OCIsImF1dGgiOiJST0xFX1VTRVIiLCJleHAiOjE2MzM3NzczMjh9.Fa9ImfkugRMLQwUrpd93QtjWCdkfOwmUl83lXXTOFeKTA_zlVd0DxvhiF8Jg5PhFNfsDi9ScrJaPag6l7Vw5-g",
+  "refreshToken" : "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE2MzM3NzczMjh9.njgergTGks8Z8rokH_uGNU2Zc5ePKTvcjRxFPpPdroMc7KgvRZBJbm0eNo4Q9SYVSAgABcQIjxjuBPNyOp0AKg"
 }</code></pre>
 </div>
 </div>
@@ -887,16 +888,16 @@ Host: 3.38.61.13:8080
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-none hljs">{
-  "timestamp" : "2021-10-02T18:57:34.829725",
+  "timestamp" : "2021-10-02T20:02:08.404718",
   "status" : 200,
   "result" : "OK",
   "code" : "REISSUE_SUCCESS",
   "message" : "토큰 재발급 성공",
   "data" : {
     "grantType" : "bearer",
-    "accessToken" : "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIwMTAxMjM0NTY3OCIsImF1dGgiOiJST0xFX1VTRVIiLCJleHAiOjE2MzM3NzM0NTR9.Y80uM9kMI3JQnu3RPprXnTwgNz2QhrMcPDxkblSYpvtV2twsgTr4wHuOQc8JcbCvaXXEDq7mLqTysSJ82ZAaiA",
-    "accessTokenExpiresIn" : 1633773454827,
-    "refreshToken" : "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE2MzM3NzM0NTR9.4nzcsfaPCnEj2KkSsf5SHhireItfnhg0AV5s97RX9R3cOn3hEK7Q1_glsLToIrlowrSVKtTFGR930jpPpN6Cpg"
+    "accessToken" : "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIwMTAxMjM0NTY3OCIsImF1dGgiOiJST0xFX1VTRVIiLCJleHAiOjE2MzM3NzczMjh9.Fa9ImfkugRMLQwUrpd93QtjWCdkfOwmUl83lXXTOFeKTA_zlVd0DxvhiF8Jg5PhFNfsDi9ScrJaPag6l7Vw5-g",
+    "accessTokenExpiresIn" : 1633777328400,
+    "refreshToken" : "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE2MzM3NzczMjh9.njgergTGks8Z8rokH_uGNU2Zc5ePKTvcjRxFPpPdroMc7KgvRZBJbm0eNo4Q9SYVSAgABcQIjxjuBPNyOp0AKg"
   }
 }</code></pre>
 </div>
@@ -914,7 +915,7 @@ Host: 3.38.61.13:8080
 <div class="content">
 <pre class="highlightjs highlight"><code data-lang="bash" class="language-bash hljs">$ curl 'http://3.38.61.13:8080/api/v1/auth/nickname' -i -X POST \
     -H 'Content-Type: application/json;charset=UTF-8' \
-    -H 'Authorization: eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIwMTAxMjM0NTY3OCIsImF1dGgiOiJST0xFX1VTRVIiLCJleHAiOjE2MzM3NzM0NTR9.Y80uM9kMI3JQnu3RPprXnTwgNz2QhrMcPDxkblSYpvtV2twsgTr4wHuOQc8JcbCvaXXEDq7mLqTysSJ82ZAaiA' \
+    -H 'Authorization: eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIwMTAxMjM0NTY3OCIsImF1dGgiOiJST0xFX1VTRVIiLCJleHAiOjE2MzM3NzczMjd9.YlFfJMA-P5vdMv1tcVMb5-z6atBcL1BcB-d523ihz8rTxHgRIFLlEUDbTdjh5sNFHn2YqcNlB53idfCeg-Kr2Q' \
     -H 'Accept: application/json' \
     -d '{
   "nickname" : "testNickname"
@@ -973,7 +974,7 @@ Host: 3.38.61.13:8080
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /api/v1/auth/nickname HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIwMTAxMjM0NTY3OCIsImF1dGgiOiJST0xFX1VTRVIiLCJleHAiOjE2MzM3NzM0NTR9.Y80uM9kMI3JQnu3RPprXnTwgNz2QhrMcPDxkblSYpvtV2twsgTr4wHuOQc8JcbCvaXXEDq7mLqTysSJ82ZAaiA
+Authorization: eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIwMTAxMjM0NTY3OCIsImF1dGgiOiJST0xFX1VTRVIiLCJleHAiOjE2MzM3NzczMjd9.YlFfJMA-P5vdMv1tcVMb5-z6atBcL1BcB-d523ihz8rTxHgRIFLlEUDbTdjh5sNFHn2YqcNlB53idfCeg-Kr2Q
 Accept: application/json
 Content-Length: 33
 Host: 3.38.61.13:8080
@@ -992,7 +993,7 @@ Host: 3.38.61.13:8080
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-none hljs">{
-  "timestamp" : "2021-10-02T18:57:34.645766",
+  "timestamp" : "2021-10-02T20:02:08.110651",
   "status" : 201,
   "result" : "CREATED",
   "code" : "NICKNAME_CREATE_SUCCESS",
@@ -1014,7 +1015,7 @@ Host: 3.38.61.13:8080
 <div class="content">
 <pre class="highlightjs highlight"><code data-lang="bash" class="language-bash hljs">$ curl 'http://3.38.61.13:8080/api/v1/auth/local' -i -X POST \
     -H 'Content-Type: application/json;charset=UTF-8' \
-    -H 'Authorization: eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIwMTAxMjM0NTY3OCIsImF1dGgiOiJST0xFX1VTRVIiLCJleHAiOjE2MzM3NzM0NTR9.Y80uM9kMI3JQnu3RPprXnTwgNz2QhrMcPDxkblSYpvtV2twsgTr4wHuOQc8JcbCvaXXEDq7mLqTysSJ82ZAaiA' \
+    -H 'Authorization: eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIwMTAxMjM0NTY3OCIsImF1dGgiOiJST0xFX1VTRVIiLCJleHAiOjE2MzM3NzczMjh9.Fa9ImfkugRMLQwUrpd93QtjWCdkfOwmUl83lXXTOFeKTA_zlVd0DxvhiF8Jg5PhFNfsDi9ScrJaPag6l7Vw5-g' \
     -H 'Accept: application/json' \
     -d '{
   "local1" : "test_local1",
@@ -1079,7 +1080,7 @@ Host: 3.38.61.13:8080
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /api/v1/auth/local HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIwMTAxMjM0NTY3OCIsImF1dGgiOiJST0xFX1VTRVIiLCJleHAiOjE2MzM3NzM0NTR9.Y80uM9kMI3JQnu3RPprXnTwgNz2QhrMcPDxkblSYpvtV2twsgTr4wHuOQc8JcbCvaXXEDq7mLqTysSJ82ZAaiA
+Authorization: eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIwMTAxMjM0NTY3OCIsImF1dGgiOiJST0xFX1VTRVIiLCJleHAiOjE2MzM3NzczMjh9.Fa9ImfkugRMLQwUrpd93QtjWCdkfOwmUl83lXXTOFeKTA_zlVd0DxvhiF8Jg5PhFNfsDi9ScrJaPag6l7Vw5-g
 Accept: application/json
 Content-Length: 58
 Host: 3.38.61.13:8080
@@ -1099,11 +1100,79 @@ Host: 3.38.61.13:8080
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-none hljs">{
-  "timestamp" : "2021-10-02T18:57:34.738651",
+  "timestamp" : "2021-10-02T20:02:08.238482",
   "status" : 201,
   "result" : "CREATED",
   "code" : "LOCAL_CREATE_SUCCESS",
   "message" : "동네 설정 성공",
+  "data" : null
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_2_6_회원_탈퇴">2-6. 회원 탈퇴</h3>
+<div class="sect3">
+<h4 id="_request_6">Request</h4>
+<div class="paragraph">
+<p>CURL</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code data-lang="bash" class="language-bash hljs">$ curl 'http://3.38.61.13:8080/api/v1/auth/unsubscribe' -i -X PATCH \
+    -H 'Content-Type: application/json;charset=UTF-8' \
+    -H 'Authorization: eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIwMTAxMjM0NTY3OCIsImF1dGgiOiJST0xFX1VTRVIiLCJleHAiOjE2MzM3NzczMjh9.Fa9ImfkugRMLQwUrpd93QtjWCdkfOwmUl83lXXTOFeKTA_zlVd0DxvhiF8Jg5PhFNfsDi9ScrJaPag6l7Vw5-g' \
+    -H 'Accept: application/json'</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Request Header</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Authorization</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Bearer Type의 AccessToken 값</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>Request Http Example</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">PATCH /api/v1/auth/unsubscribe HTTP/1.1
+Content-Type: application/json;charset=UTF-8
+Authorization: eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIwMTAxMjM0NTY3OCIsImF1dGgiOiJST0xFX1VTRVIiLCJleHAiOjE2MzM3NzczMjh9.Fa9ImfkugRMLQwUrpd93QtjWCdkfOwmUl83lXXTOFeKTA_zlVd0DxvhiF8Jg5PhFNfsDi9ScrJaPag6l7Vw5-g
+Accept: application/json
+Host: 3.38.61.13:8080</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_response_6">Response</h4>
+<div class="paragraph">
+<p>Response Example</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code class="language-none hljs">{
+  "timestamp" : "2021-10-02T20:02:08.479139",
+  "status" : 200,
+  "result" : "OK",
+  "code" : "UNSUBSCRIBE_SUCCESS",
+  "message" : "탈퇴 처리 성공",
   "data" : null
 }</code></pre>
 </div>
@@ -1116,7 +1185,7 @@ Host: 3.38.61.13:8080
 <div id="footer">
 <div id="footer-text">
 Version 0.0.1-SNAPSHOT<br>
-Last updated 2021-10-02 18:56:56 +0900
+Last updated 2021-10-02 20:01:40 +0900
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/github.min.css">

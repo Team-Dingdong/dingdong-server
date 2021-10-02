@@ -7,6 +7,7 @@ import static org.springframework.restdocs.operation.preprocess.Preprocessors.mo
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -203,6 +204,27 @@ public class AuthControllerTest {
 
     @Test
     @DisplayName("회원 탈퇴 테스트")
-    void unsubscribeUser() {
+    void unsubscribeUser() throws Exception {
+        Auth auth = authRepository.findByPhone("01012345678");
+        AuthRequestDto authRequestDto = AuthRequestDto.builder()
+            .phone(auth.getPhone())
+            .authNumber(auth.getAuthNumber())
+            .build();
+        Map<AuthType, TokenDto> data = authService.auth(authRequestDto);
+
+        String header = data.get(AuthType.SIGNUP).getAccessToken();
+
+        mockMvc.perform(patch("/api/v1/auth/unsubscribe")
+            .header("Authorization", header)
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON))
+            .andDo(print()).andExpect(status().isOk()).andDo(print())
+            .andDo(document("{class-name}/{method-name}",
+                preprocessRequest(modifyUris().scheme(scheme).host(host).port(port), prettyPrint()),
+                preprocessResponse(prettyPrint()),
+                requestHeaders(
+                    headerWithName("Authorization").description("Bearer Type의 AccessToken 값")
+                )
+            ));
     }
 }

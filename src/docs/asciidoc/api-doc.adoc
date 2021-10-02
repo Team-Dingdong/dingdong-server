@@ -61,7 +61,7 @@ Response Body
 Response Example
 include::{snippets}/auth-controller-test/send-sms/response-body.adoc[]
 
-=== 2-2. 휴대폰 인증 번호 확인, 로그인 OR 회원가입
+=== 2-2. 휴대폰 인증 번호 확인(로그인, 회원가입)
 ==== Request
 CURL
 include::{snippets}/auth-controller-test/auth/curl-request.adoc[]
@@ -149,3 +149,15 @@ include::{snippets}/auth-controller-test/local/http-request.adoc[]
 ==== Response
 Response Example
 include::{snippets}/auth-controller-test/local/response-body.adoc[]
+
+=== 2-6. 회원 탈퇴
+==== Request
+CURL
+include::{snippets}/auth-controller-test/unsubscribe-user/curl-request.adoc[]
+Request Header
+include::{snippets}/auth-controller-test/unsubscribe-user/request-headers.adoc[]
+Request Http Example
+include::{snippets}/auth-controller-test/unsubscribe-user/http-request.adoc[]
+==== Response
+Response Example
+include::{snippets}/auth-controller-test/unsubscribe-user/response-body.adoc[]
