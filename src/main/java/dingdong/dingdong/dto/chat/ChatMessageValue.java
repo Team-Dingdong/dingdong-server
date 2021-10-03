@@ -1,10 +1,10 @@
 package dingdong.dingdong.dto.chat;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 @Getter
-@AllArgsConstructor
+@RequiredArgsConstructor
 public enum ChatMessageValue {
 
     ENTER_MESSAGE("님이 입장하셨습니다"),

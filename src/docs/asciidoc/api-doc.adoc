@@ -1,0 +1,152 @@
+= CrystalMine REST API
+:toc: left
+:toclevels: 2
+:source-highlighter: highlightjs
+
+== 1. 개요
+=== Domain
+|===
+| 환경 | Domain
+
+| 테스트서버
+| 3.38.61.13:8080
+
+| 운영서버
+| 3.38.61.13:8080
+|===
+=== Response Data
+|===
+| Field | Description
+
+| `timestamp`
+| 요청 시간
+
+| `status`
+| 응답 httpStatus
+
+| `result`
+| 응답 code
+
+| `code`
+| 응답 code
+
+| `message`
+| 응답 상세
+
+| `data`
+| 응답 데이터
+|===
+
+== 2. 인증
+=== 2-1. 휴대폰 인증 번호 전송
+==== Request
+CURL
+include::{snippets}/auth-controller-test/send-sms/curl-request.adoc[]
+Request Fields
+include::{snippets}/auth-controller-test/send-sms/request-fields.adoc[]
+Request Http Example
+include::{snippets}/auth-controller-test/send-sms/http-request.adoc[]
+==== Response
+Response Fields
+include::{snippets}/auth-controller-test/send-sms/response-fields.adoc[]
+Response Example
+include::{snippets}/auth-controller-test/send-sms/response-body.adoc[]
+
+=== 2-2. 휴대폰 인증 번호 확인(로그인, 회원가입)
+==== Request
+CURL
+include::{snippets}/auth-controller-test/auth/curl-request.adoc[]
+Request Fields
+include::{snippets}/auth-controller-test/auth/request-fields.adoc[]
+Request Http Example
+include::{snippets}/auth-controller-test/auth/http-request.adoc[]
+==== Response
+Response Fields
+include::{snippets}/auth-controller-test/auth/response-fields.adoc[]
+Response Example
+include::{snippets}/auth-controller-test/auth/response-body.adoc[]
+
+=== 2-3. 토큰 재발급
+==== Request
+CURL
+include::{snippets}/auth-controller-test/reissue/curl-request.adoc[]
+Request Fields
+include::{snippets}/auth-controller-test/reissue/request-fields.adoc[]
+Request Http Example
+include::{snippets}/auth-controller-test/reissue/http-request.adoc[]
+==== Response
+Response Fields
+include::{snippets}/auth-controller-test/reissue/response-fields.adoc[]
+Response Example
+include::{snippets}/auth-controller-test/reissue/response-body.adoc[]
+
+=== 2-4. 닉네임 설정
+==== Request
+CURL
+include::{snippets}/auth-controller-test/nickname/curl-request.adoc[]
+Request Header
+include::{snippets}/auth-controller-test/nickname/request-headers.adoc[]
+Request Fields
+include::{snippets}/auth-controller-test/nickname/request-fields.adoc[]
+Request Http Example
+include::{snippets}/auth-controller-test/nickname/http-request.adoc[]
+==== Response
+Response Example
+include::{snippets}/auth-controller-test/nickname/response-body.adoc[]
+
+=== 2-5. 동네 인증
+==== Request
+CURL
+include::{snippets}/auth-controller-test/local/curl-request.adoc[]
+Request Header
+include::{snippets}/auth-controller-test/local/request-headers.adoc[]
+Request Fields
+include::{snippets}/auth-controller-test/local/request-fields.adoc[]
+Request Http Example
+include::{snippets}/auth-controller-test/local/http-request.adoc[]
+==== Response
+Response Example
+include::{snippets}/auth-controller-test/local/response-body.adoc[]
+
+=== 2-6. 회원 탈퇴
+==== Request
+CURL
+include::{snippets}/auth-controller-test/unsubscribe-user/curl-request.adoc[]
+Request Header
+include::{snippets}/auth-controller-test/unsubscribe-user/request-headers.adoc[]
+Request Http Example
+include::{snippets}/auth-controller-test/unsubscribe-user/http-request.adoc[]
+==== Response
+Response Example
+include::{snippets}/auth-controller-test/unsubscribe-user/response-body.adoc[]
+
+== 3. 프로필
+=== 3-1. 본인 프로필 조회
+==== Request
+CURL
+include::{snippets}/profile-controller-test/get-my-profile/curl-request.adoc[]
+Request Header
+include::{snippets}/profile-controller-test/get-my-profile/request-headers.adoc[]
+Request Http Example
+include::{snippets}/profile-controller-test/get-my-profile/http-request.adoc[]
+==== Response
+Response Fields
+include::{snippets}/profile-controller-test/get-my-profile/response-fields.adoc[]
+Response Example
+include::{snippets}/profile-controller-test/get-my-profile/response-body.adoc[]
+
+=== 3-2. 프로필 조회
+==== Request
+CURL
+include::{snippets}/profile-controller-test/get-profile/curl-request.adoc[]
+Request Path Parameters ->
+include::{snippets}/profile-controller-test/get-profile/path-parameters.adoc[]
+Request Header
+include::{snippets}/profile-controller-test/get-profile/request-headers.adoc[]
+Request Http Example
+include::{snippets}/profile-controller-test/get-profile/http-request.adoc[]
+==== Response
+Response Fields
+include::{snippets}/profile-controller-test/get-profile/response-fields.adoc[]
+Response Example
+include::{snippets}/profile-controller-test/get-profile/response-body.adoc[]

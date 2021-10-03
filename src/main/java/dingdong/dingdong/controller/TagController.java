@@ -15,9 +15,8 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/v1/post/tag")
 public class TagController {
 
-    private TagService tagService;
+    private final TagService tagService;
 
-    // 해시태크 생성
     @PostMapping("/{id}")
     public ResponseEntity<Result> setTag(@PathVariable Long id, @RequestBody TagRequestDto request){
         tagService.addTags(id, request);

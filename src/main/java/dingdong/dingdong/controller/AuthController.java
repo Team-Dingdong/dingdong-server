@@ -67,9 +67,9 @@ public class AuthController {
     }
 
     // 탈퇴하기
-    @PatchMapping("/unsub")
+    @PatchMapping("/unsubscribe")
     public ResponseEntity<Result> unsubscribeUser (@CurrentUser User user){
-        authService.unsubscribeUser(user.getId());
+        authService.unsubscribeUser(user);
         return Result.toResult(ResultCode.UNSUBSCRIBE_SUCCESS);
     }
 }

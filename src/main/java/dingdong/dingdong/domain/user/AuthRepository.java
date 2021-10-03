@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 public interface AuthRepository extends JpaRepository<Auth, Long> {
+
     boolean existsByPhone(String phone);
     Auth findByPhone(String phone);
 

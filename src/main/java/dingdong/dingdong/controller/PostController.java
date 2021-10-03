@@ -2,10 +2,10 @@ package dingdong.dingdong.controller;
 
 import dingdong.dingdong.domain.user.CurrentUser;
 import dingdong.dingdong.domain.user.User;
-import dingdong.dingdong.dto.post.PostRequestDto;
 import dingdong.dingdong.dto.post.PostDetailResponseDto;
 import dingdong.dingdong.dto.post.PostGetResponseDto;
-
+import dingdong.dingdong.dto.post.PostRequestDto;
+import dingdong.dingdong.service.chat.ChatService;
 import dingdong.dingdong.service.post.PostService;
 import dingdong.dingdong.util.exception.Result;
 import dingdong.dingdong.util.exception.ResultCode;
@@ -27,6 +27,7 @@ import javax.validation.Valid;
 public class PostController {
 
     private final PostService postService;
+    private final ChatService chatService;
 
     // 홈화면, 모든 나누기 불러오기(정렬방식: 최신순)
     @GetMapping("/sorted_by=desc(createdDate)")
@@ -61,15 +62,6 @@ public class PostController {
             data = postService.findAllByEndDateWithLocal(local1, local2, pageable);
         }
         return Result.toResult(ResultCode.POST_READ_SUCCESS, data);
-    }
-
-    // 특정 나누기 상세보기 불러오기
-    @GetMapping("/{post_id}")
-    public ResponseEntity<Result<PostDetailResponseDto>> findPostById(@PathVariable Long post_id) {
-
-        PostDetailResponseDto data = postService.findPostById(post_id);
-        ResultCode message = ResultCode.POST_READ_SUCCESS;
-        return Result.toResult(message, data);
     }
 
     // 카테고리별 나누기 피드들 불러오기(카테고리 화면)(정렬 방식: 최신순)
@@ -120,11 +112,27 @@ public class PostController {
         return Result.toResult(ResultCode.POST_READ_SUCCESS, postPage);
     }
 
+    // 특정 나누기 상세보기 불러오기
+    @GetMapping("/{post_id}")
+    public ResponseEntity<Result<PostDetailResponseDto>> findPostById(@PathVariable Long post_id) {
+
+        PostDetailResponseDto data = postService.findPostById(post_id);
+        ResultCode message = ResultCode.POST_READ_SUCCESS;
+        return Result.toResult(message, data);
+    }
+
     // 나누기 생성
     @PostMapping("")
     public ResponseEntity<Result<Long>> createPost(@CurrentUser User user, @Valid @RequestBody PostRequestDto requestDto) {
         Long postId = postService.createPost(user, requestDto);
         return Result.toResult(ResultCode.POST_CREATE_SUCCESS, postId);
+    }
+
+    // 나누기 수정
+    @PatchMapping("/{id}")
+    public ResponseEntity<Result> updatePost(@Valid @RequestBody PostRequestDto request, @PathVariable Long id){
+        postService.updatePost(id, request);
+        return Result.toResult(ResultCode.POST_UPDATE_SUCCESS);
     }
 
     // 나누기 삭제
@@ -134,11 +142,11 @@ public class PostController {
        return Result.toResult(ResultCode.POST_DELETE_SUCCESS);
     }
 
-    // 나누기 수정
-    @PatchMapping("/{id}")
-    public ResponseEntity<Result> updatePost(@Valid @RequestBody PostRequestDto request, @PathVariable Long id){
-        postService.updatePost(id, request);
-        return Result.toResult(ResultCode.POST_UPDATE_SUCCESS);
+    // 나누기 거래 확정 하기
+    @PostMapping("/confirmed/{postId}")
+    public ResponseEntity<Result> confirmed(@CurrentUser User user, @PathVariable String postId) {
+        chatService.confirmedPost(user, postId);
+        return Result.toResult(ResultCode.POST_CONFIRMED_SUCCESS);
     }
 
     // 검색 기능 구현
@@ -160,5 +168,4 @@ public class PostController {
 
         return Result.toResult(ResultCode.SEARCH_SUCCESS, data);
     }
-
 }

@@ -7,7 +7,6 @@ import dingdong.dingdong.util.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
@@ -40,10 +39,10 @@ public class S3Service {
         }
 
         while(paths.size() < 3){
-            if(s3RequestDto.getImage_urls() != null){
-                List<String> image_urls = s3RequestDto.getImage_urls();
-                for(String image_url : image_urls){
-                    paths.add(image_url);
+            if(s3RequestDto.getImageUrls() != null){
+                List<String> imageUrls = s3RequestDto.getImageUrls();
+                for(String imageUrl : imageUrls){
+                    paths.add(imageUrl);
                 }
             }
         }

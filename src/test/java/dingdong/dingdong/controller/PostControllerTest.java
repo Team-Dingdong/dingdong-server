@@ -5,6 +5,7 @@ import dingdong.dingdong.domain.post.*;
 import dingdong.dingdong.domain.user.*;
 import dingdong.dingdong.dto.auth.AuthRequestDto;
 import dingdong.dingdong.dto.auth.TokenDto;
+import dingdong.dingdong.dto.post.PostRequestDto;
 import dingdong.dingdong.service.auth.AuthService;
 import dingdong.dingdong.service.auth.AuthType;
 import dingdong.dingdong.service.post.PostService;
@@ -27,7 +28,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Map;
-
 
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
@@ -187,6 +187,17 @@ class PostControllerTest {
     @DisplayName("나누기 생성")
     void createPost() throws Exception{
         TokenDto tokenDto = getTokenDto();
+
+        Post post = postRepository.findById(1L).get();
+        PostRequestDto postRequestDto = PostRequestDto.builder()
+                .title(post.getTitle())
+                .people(post.getPeople())
+                .cost(post.getCost())
+                .bio(post.getBio())
+                .local(post.getLocal())
+                .postTag("#test")
+                .categoryId(post.getCategory().getId())
+                .build();
 
         mockMvc.perform(RestDocumentationRequestBuilders.post("/api/v1/post")
                 .header(HttpHeaders.AUTHORIZATION, tokenDto.getAccessToken())

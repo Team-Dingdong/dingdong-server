@@ -24,7 +24,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
@@ -57,7 +56,6 @@ public class AuthService implements UserDetailsService {
     private final RefreshTokenRepository refreshTokenRepository;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final TokenProvider tokenProvider;
-    private final PasswordEncoder passwordEncoder;
 
     // 로그인한 유저 정보 반환 to @CurrentUser
     public User getUserInfo() {
@@ -99,7 +97,7 @@ public class AuthService implements UserDetailsService {
         return tokenDto;
     }
 
-    // 회원가입
+    // 회원 가입
     @Transactional
     public TokenDto signup(AuthRequestDto authRequestDto) {
         User user = new User(authRequestDto.getPhone());
@@ -110,6 +108,7 @@ public class AuthService implements UserDetailsService {
         return login(authRequestDto);
     }
 
+    // 토큰 재발급
     @Transactional
     public TokenDto reissue(TokenRequestDto tokenRequestDto) {
         // 1. Refresh Token 검증
@@ -242,8 +241,7 @@ public class AuthService implements UserDetailsService {
             }
         }
 
-        return new MessageResponseDto(sendSmsResponseDto.getRequestId(), sendSmsResponseDto.getRequestTime());
-
+        return MessageResponseDto.from(sendSmsResponseDto);
     }
 
     public String makeSignature(Long time) throws UnsupportedEncodingException, NoSuchAlgorithmException, InvalidKeyException {
@@ -298,8 +296,7 @@ public class AuthService implements UserDetailsService {
 
     // 회원 탈퇴
     @Transactional
-    public void unsubscribeUser(Long id){
-        User user = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(ResultCode.USER_NOT_FOUND));
+    public void unsubscribeUser(User user){
         user.setAuthority("ROLE_UNSUB_USER");
         userRepository.save(user);
     }

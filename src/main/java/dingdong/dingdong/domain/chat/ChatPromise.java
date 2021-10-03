@@ -2,7 +2,7 @@ package dingdong.dingdong.domain.chat;
 
 
 import dingdong.dingdong.domain.BaseTimeEntity;
-import dingdong.dingdong.dto.chatpromise.ChatPromiseRequestDto;
+import dingdong.dingdong.dto.chat.ChatPromiseRequestDto;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 

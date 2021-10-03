@@ -39,6 +39,8 @@ public enum ResultCode {
 
     SEARCH_SUCCESS(OK, "검색 성공"),
 
+    POST_CONFIRMED_SUCCESS(OK, "거래 확정 성공"),
+
     /* 201 CREATED */
     SIGNUP_SUCCESS(CREATED, "회원 가입 성공"),
     SEND_SMS_SUCCESS(CREATED, "인증 번호 전송 성공"),
@@ -81,11 +83,15 @@ public enum ResultCode {
 
     CHAT_ROOM_ENTER_FAIL_LIMIT(BAD_REQUEST, "해당 거래의 인원이 가득 찼습니다"),
     CHAT_ROOM_ENTER_FAIL_PROMISE(BAD_REQUEST, "해당 거래 약속이 생성되어 입장할 수 없습니다"),
+    CHAT_ROOM_ENTER_FAIL_DONE(BAD_REQUEST, "해당 거래가 완료되어 입장할 수 없습니다"),
     CHAT_ROOM_QUIT_FAIL(BAD_REQUEST, "해당 거래 약속 때문에 퇴장할 수 없습니다"),
 
     CHAT_PROMISE_CREATE_FAIL_ONLY(BAD_REQUEST, "방장 혼자 거래 약속을 생성할 수 없습니다"),
     CHAT_PROMISE_UPDATE_FAIL_CONFIRMED(BAD_REQUEST, "약속이 확정되어 수정할 수 없습니다"),
     CHAT_PROMISE_NOT_IN_PRGRESS(BAD_REQUEST, "약속 투표가 진행중이지 않습니다"),
+
+    POST_CONFIRMED_FAIL_PROMISE(BAD_REQUEST, "약속이 확정되지 않아 거래 확정이 불가능합니다"),
+    POST_CONFIRMED_FAIL_TIME(BAD_REQUEST, "거래 약속 시간이 지나지 않아 거래 확정이 불가능합니다"),
 
     /* 401 UNAUTHORIZED : 인증되지 않은 사용자 */
     INVALID_AUTH_TOKEN(UNAUTHORIZED, "권한 정보가 없는 토큰입니다"),
@@ -119,6 +125,7 @@ public enum ResultCode {
     CHAT_ROOM_DUPLICATION(CONFLICT, "이미 입장한 채팅방입니다"),
     CHAT_PROMISE_DUPLICATION(CONFLICT, "이미 약속 투표가 진행중입니다"),
     CHAT_PROMISE_VOTE_DUPLICATION(CONFLICT, "이미 투표하였습니다"),
+    POST_CONFIRMED_DUPLICATION(CONFLICT, "이미 거래 확정하였습니다"),
 
     /* 500 CONFLICT */
     AUTH_ERROR(INTERNAL_SERVER_ERROR, "인증 오류 발생"),

@@ -57,6 +57,10 @@ public class Post extends BaseTimeEntity {
     @Column(columnDefinition = "boolean default false")
     private boolean done;
 
+    public void confirmed() {
+        this.done = true;
+    }
+
     @ManyToOne
     @JoinColumn(name = "category_id")
     @JsonBackReference
