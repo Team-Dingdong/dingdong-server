@@ -9,6 +9,7 @@ import static org.springframework.restdocs.operation.preprocess.Preprocessors.pr
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.relaxedResponseFields;
+import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -23,10 +24,10 @@ import dingdong.dingdong.domain.user.User;
 import dingdong.dingdong.domain.user.UserRepository;
 import dingdong.dingdong.dto.auth.AuthRequestDto;
 import dingdong.dingdong.dto.auth.TokenDto;
-import dingdong.dingdong.dto.profile.ProfileUpdateRequestDto;
+import dingdong.dingdong.dto.rating.RatingRequestDto;
 import dingdong.dingdong.service.auth.AuthService;
 import dingdong.dingdong.service.auth.AuthType;
-import dingdong.dingdong.service.profile.ProfileService;
+import dingdong.dingdong.service.rating.RatingType;
 import java.time.LocalDateTime;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
@@ -39,18 +40,16 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 @SpringBootTest
 @AutoConfigureMockMvc
 @AutoConfigureRestDocs
 @Transactional
-class ProfileControllerTest {
+class RatingControllerTest {
 
     @Autowired
     MockMvc mockMvc;
@@ -60,9 +59,6 @@ class ProfileControllerTest {
 
     @Autowired
     AuthService authService;
-
-    @Autowired
-    ProfileService profileService;
 
     @Autowired
     AuthRepository authRepository;
@@ -82,14 +78,15 @@ class ProfileControllerTest {
 
     @BeforeEach
     void setUp() {
-        Long id = 1L;
-        String phone = "01012345678";
+        // user1 생성
+        Long id1 = 1L;
+        String phone1 = "01011111111";
         String authNumber = "123456";
         String requestId = "testRequestId";
         LocalDateTime requestTime = LocalDateTime.now();
         Auth auth = Auth.builder()
-            .id(id)
-            .phone(phone)
+            .id(id1)
+            .phone(phone1)
             .authNumber(authNumber)
             .requestId(requestId)
             .requestTime(requestTime)
@@ -97,27 +94,46 @@ class ProfileControllerTest {
 
         authRepository.save(auth);
 
-        String nickname = "testNickname";
-        String profileImageUrl = "testProfileImageUrl";
-        Profile profile = Profile.builder()
-            .id(id)
-            .nickname(nickname)
-            .profileImageUrl(profileImageUrl)
+        Profile profile1 = Profile.builder()
+            .id(id1)
+            .good(0L)
+            .bad(0L)
             .build();
 
         String authority = "ROLE_USER";
-        User user = User.builder()
-            .id(id)
-            .phone(phone)
-            .profile(profile)
+        User user1 = User.builder()
+            .id(id1)
+            .phone(phone1)
+            .profile(profile1)
             .authority(authority)
             .build();
 
-        profileRepository.save(profile);
-        userRepository.save(user);
+        profileRepository.save(profile1);
+        userRepository.save(user1);
+
+        // user2 생성
+        Long id2 = 2L;
+        String phone2 = "01022222222";
+
+        Profile profile2 = Profile.builder()
+            .id(id2)
+            .good(0L)
+            .bad(0L)
+            .build();
+
+        User user2 = User.builder()
+            .id(id2)
+            .phone(phone2)
+            .profile(profile2)
+            .authority(authority)
+            .build();
+
+        profileRepository.save(profile2);
+        userRepository.save(user2);
     }
 
     TokenDto getTokenDto() {
+        // user1의 token
         Auth auth = authRepository.findById(1L).get();
         AuthRequestDto authRequestDto = AuthRequestDto.builder()
             .phone(auth.getPhone())
@@ -129,11 +145,11 @@ class ProfileControllerTest {
     }
 
     @Test
-    @DisplayName("본인 프로필 조회 테스트")
-    void getMyProfile() throws Exception {
+    @DisplayName("본인 평가 조회")
+    void getRating() throws Exception {
         TokenDto tokenDto = getTokenDto();
 
-        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v1/profile")
+        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v1/rating")
             .header(HttpHeaders.AUTHORIZATION, tokenDto.getAccessToken())
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON))
@@ -142,22 +158,24 @@ class ProfileControllerTest {
                 preprocessRequest(modifyUris().scheme(scheme).host(host).port(port), prettyPrint()),
                 preprocessResponse(prettyPrint()),
                 requestHeaders(
-                    headerWithName(HttpHeaders.AUTHORIZATION).description("Bearer Type의 AccessToken 값")
+                    headerWithName(HttpHeaders.AUTHORIZATION)
+                        .description("Bearer Type의 AccessToken 값")
                 ),
                 relaxedResponseFields(
-                    fieldWithPath("data.userId").type(JsonFieldType.NUMBER).description("사용자의 고유한 아이디 값"),
-                    fieldWithPath("data.nickname").type("String").description("사용자의 닉네임"),
-                    fieldWithPath("data.profileImageUrl").type("String").description("사용자의 프로필 이미지 URL")
+                    fieldWithPath("data.good").type(JsonFieldType.NUMBER).description("사용자 추천 수"),
+                    fieldWithPath("data.bad").type(JsonFieldType.NUMBER).description("사용자 비추천 수"),
+                    fieldWithPath("data.total").type(JsonFieldType.NUMBER)
+                        .description("사용자의 총 평가 수")
                 )
             ));
     }
 
     @Test
-    @DisplayName("프로필 조회 테스트")
-    void getProfile() throws Exception {
+    @DisplayName("평가 조회")
+    void testGetRating() throws Exception {
         TokenDto tokenDto = getTokenDto();
 
-        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v1/profile/{userId}", 1L)
+        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v1/rating/{userId}", 2L)
             .header(HttpHeaders.AUTHORIZATION, tokenDto.getAccessToken())
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON))
@@ -166,28 +184,49 @@ class ProfileControllerTest {
                 preprocessRequest(modifyUris().scheme(scheme).host(host).port(port), prettyPrint()),
                 preprocessResponse(prettyPrint()),
                 requestHeaders(
-                    headerWithName(HttpHeaders.AUTHORIZATION).description("Bearer Type의 AccessToken 값")
+                    headerWithName(HttpHeaders.AUTHORIZATION)
+                        .description("Bearer Type의 AccessToken 값")
                 ),
                 pathParameters(
                     parameterWithName("userId").description("조회하고자 하는 사용자의 고유 아이디 값")
                 ),
                 relaxedResponseFields(
-                    fieldWithPath("data.userId").type(JsonFieldType.NUMBER).description("사용자의 고유한 아이디 값"),
-                    fieldWithPath("data.nickname").type("String").description("사용자의 닉네임"),
-                    fieldWithPath("data.profileImageUrl").type("String").description("사용자의 프로필 이미지 URL")
+                    fieldWithPath("data.good").type(JsonFieldType.NUMBER).description("사용자 추천 수"),
+                    fieldWithPath("data.bad").type(JsonFieldType.NUMBER).description("사용자 비추천 수"),
+                    fieldWithPath("data.total").type(JsonFieldType.NUMBER)
+                        .description("사용자의 총 평가 수")
                 )
             ));
     }
 
     @Test
-    @DisplayName("프로필 수정 테스트")
-    void updateProfile() throws Exception {
+    @DisplayName("평가 생성")
+    void createRating() throws Exception {
         TokenDto tokenDto = getTokenDto();
 
-        MultipartFile profileImage = new MockMultipartFile("file", "profileImage.jpeg", "image/jpeg", "<<jpeg data>>".getBytes());
-        ProfileUpdateRequestDto profileUpdateRequestDto = ProfileUpdateRequestDto.builder()
-            .profileImage(profileImage)
-            .nickname("testNickname2")
+        RatingRequestDto ratingRequestDto = RatingRequestDto.builder()
+            .type(RatingType.GOOD)
             .build();
+
+        mockMvc.perform(RestDocumentationRequestBuilders.post("/api/v1/rating/{userId}", 2L)
+            .header(HttpHeaders.AUTHORIZATION, tokenDto.getAccessToken())
+            .content(objectMapper.writeValueAsString(ratingRequestDto))
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON))
+            .andDo(print()).andExpect(status().is2xxSuccessful()).andDo(print())
+            .andDo(document("{class-name}/{method-name}",
+                preprocessRequest(modifyUris().scheme(scheme).host(host).port(port), prettyPrint()),
+                preprocessResponse(prettyPrint()),
+                requestHeaders(
+                    headerWithName(HttpHeaders.AUTHORIZATION)
+                        .description("Bearer Type의 AccessToken 값")
+                ),
+                pathParameters(
+                    parameterWithName("userId").description("평가하고자 하는 사용자의 고유 아이디 값")
+                ),
+                requestFields(
+                    fieldWithPath("type").type(JsonFieldType.STRING).description("GOOD 또는 BAD")
+                )
+            ));
     }
 }
