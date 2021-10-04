@@ -1,14 +1,14 @@
 [source,options="nowrap"]
 ----
 {
-  "timestamp" : "2021-10-03T00:58:04.155708",
+  "timestamp" : "2021-10-05T02:09:00.682799",
   "status" : 201,
   "result" : "CREATED",
   "code" : "SEND_SMS_SUCCESS",
   "message" : "인증 번호 전송 성공",
   "data" : {
-    "requestId" : "902d8fdcc30f402f9b0409d4d5a3f829",
-    "requestTime" : "2021-10-03T00:58:04.23"
+    "requestId" : "49b0cde10cb34c7ab31a95a03cdfd8e2",
+    "requestTime" : "2021-10-05T02:09:00.301"
   }
 }
 ----
