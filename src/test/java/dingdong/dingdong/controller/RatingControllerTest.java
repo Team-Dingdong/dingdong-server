@@ -20,6 +20,7 @@ import dingdong.dingdong.domain.user.Auth;
 import dingdong.dingdong.domain.user.AuthRepository;
 import dingdong.dingdong.domain.user.Profile;
 import dingdong.dingdong.domain.user.ProfileRepository;
+import dingdong.dingdong.domain.user.RatingRepository;
 import dingdong.dingdong.domain.user.User;
 import dingdong.dingdong.domain.user.UserRepository;
 import dingdong.dingdong.dto.auth.AuthRequestDto;
@@ -68,6 +69,9 @@ class RatingControllerTest {
 
     @Autowired
     UserRepository userRepository;
+
+    @Autowired
+    RatingRepository ratingRepository;
 
     @Value("${test.server.http.scheme}")
     String scheme;
