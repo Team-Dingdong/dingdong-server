@@ -40,17 +40,7 @@
 == 2. 인증
 === 2-1. 휴대폰 인증 번호 전송
 ==== Request
-CURL
-include::{snippets}/../../src/docs/asciidoc/send-sms/curl-request.adoc[]
-Request Fields
-include::{snippets}/../../src/docs/asciidoc/send-sms/request-fields.adoc[]
-Request Http Example
-include::{snippets}/../../src/docs/asciidoc/send-sms/http-request.adoc[]
 ==== Response
-Response Fields
-include::{snippets}/../../src/docs/asciidoc/send-sms/response-fields.adoc[]
-Response Example
-include::{snippets}/../../src/docs/asciidoc/send-sms/response-body.adoc[]
 
 === 2-2. 휴대폰 인증 번호 확인(로그인, 회원가입)
 ==== Request
