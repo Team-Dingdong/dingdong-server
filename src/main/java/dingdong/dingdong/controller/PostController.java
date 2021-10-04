@@ -98,14 +98,14 @@ public class PostController {
         return Result.toResult(ResultCode.POST_READ_SUCCESS, data);
     }
 
-    // 유저 별로 나누기 피드들 불러오기 // 판매내역 조회
+    // 유저가 생성한 나누기 피드들 불러오기 (마이페이지 판매내역 조회)
     @GetMapping("/user/sell")
     public ResponseEntity<Result<Page<PostGetResponseDto>>> findPostByUserId(@CurrentUser User user, @PageableDefault(size = 5, direction = Sort.Direction.DESC) Pageable pageable){
         Page<PostGetResponseDto> postPage = postService.findPostByUserId(user, pageable);
         return Result.toResult(ResultCode.POST_READ_SUCCESS, postPage);
     }
 
-    // 유저 별로 나누기 피드들 불러오기 // 구매내역 조회
+    // 유저가 공동구매에 참여한 나누기 피드들 불러오기 (마이페이지 구매내역 조회)
     @GetMapping("/user/buy")
     public ResponseEntity<Result<Page<PostGetResponseDto>>> findPostByUserIdOnChat(@CurrentUser User user, @PageableDefault(size = 5, direction = Sort.Direction.DESC) Pageable pageable){
         Page<PostGetResponseDto> postPage = postService.findPostByUserIdOnChatJoin(user, pageable);
@@ -150,7 +150,7 @@ public class PostController {
     }
 
     // 검색 기능 구현
-    //키워드로 제목과 카테고리 검색
+    // 키워드로 제목과 카테고리, 해시태그 검색
    @GetMapping("/search")
     public ResponseEntity<Result<Page<PostGetResponseDto>>> search(@RequestParam(value = "keyword") String keyword, @CurrentUser User user, @PageableDefault(size = 5, direction = Sort.Direction.DESC) Pageable pageable) {
 

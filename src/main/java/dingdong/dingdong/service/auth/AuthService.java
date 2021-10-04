@@ -296,8 +296,7 @@ public class AuthService implements UserDetailsService {
 
     // 회원 탈퇴
     @Transactional
-    public void unsubscribeUser(Long id){
-        User user = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(ResultCode.USER_NOT_FOUND));
+    public void unsubscribeUser(User user){
         user.setAuthority("ROLE_UNSUB_USER");
         userRepository.save(user);
     }

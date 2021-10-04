@@ -24,4 +24,5 @@ public class PostRequestDto {
     private String postTag;
 
     private Long categoryId;
+
 }

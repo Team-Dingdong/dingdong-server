@@ -1,7 +1,7 @@
 plugins {
 	id 'org.springframework.boot' version '2.5.3'
 	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
-	id 'org.asciidoctor.convert' version '1.5.8'
+	id 'org.asciidoctor.jvm.convert' version '3.3.2'
 	id 'java'
 }
 
@@ -10,9 +10,7 @@ version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '11'
 
 configurations {
-	compileOnly {
-		extendsFrom annotationProcessor
-	}
+	asciidoctorExtensions
 }
 
 repositories {
@@ -20,7 +18,7 @@ repositories {
 }
 
 ext {
-	set('snippetsDir', file("build/generated-snippets"))
+	snippetsDir = file('build/generated-snippets')
 }
 
 dependencies {
@@ -61,6 +59,8 @@ dependencies {
 
 	implementation group: 'ca.pjer', name: 'logback-awslogs-appender', version: '1.4.0'
 	implementation group: 'org.springframework.cloud', name:'spring-cloud-starter-aws', version: '2.2.1.RELEASE'
+
+	asciidoctorExtensions 'org.springframework.restdocs:spring-restdocs-asciidoctor'
 }
 
 test {
@@ -69,6 +69,15 @@ test {
 }
 
 asciidoctor {
+	configurations 'asciidoctorExtensions'
 	inputs.dir snippetsDir
 	dependsOn test
+}
+
+bootJar {
+	dependsOn asciidoctor
+	copy {
+		from "${asciidoctor.outputDir}"            // /html5를 사용하지 않는다!
+		into 'src/main/resources/static/docs'    // /static/docs로 복사!
+	}
 }
