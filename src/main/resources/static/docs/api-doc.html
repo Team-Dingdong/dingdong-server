@@ -558,107 +558,17 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="sect3">
 <h4 id="_request">Request</h4>
 <div class="paragraph">
-<p>CURL</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code data-lang="bash" class="language-bash hljs">$ curl 'http://3.38.61.13:8080/api/v1/auth/send-sms' -i -X POST \
-    -H 'Content-Type: application/json;charset=UTF-8' \
-    -H 'Accept: application/json' \
-    -d '{
-  "to" : "01084071066"
-}'</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Request Fields</p>
-</div>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 33.3333%;">
-<col style="width: 33.3333%;">
-<col style="width: 33.3334%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Path</th>
-<th class="tableblock halign-left valign-top">Type</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>to</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">인증 번호를 전송할 휴대폰 번호</p></td>
-</tr>
-</tbody>
-</table>
-<div class="paragraph">
-<p>Request Http Example</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /api/v1/auth/send-sms HTTP/1.1
-Content-Type: application/json;charset=UTF-8
-Accept: application/json
-Content-Length: 26
-Host: 3.38.61.13:8080
-
-{
-  "to" : "01084071066"
-}</code></pre>
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_response">Response</h4>
-<div class="paragraph">
-<p>Response Fields</p>
-</div>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 33.3333%;">
-<col style="width: 33.3333%;">
-<col style="width: 33.3334%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Path</th>
-<th class="tableblock halign-left valign-top">Type</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.requestId</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">휴대폰 인증 번호 전송 요청 아이디 값</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.requestTime</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">휴대폰 인증 번호 전송 요청 시간</p></td>
-</tr>
-</tbody>
-</table>
-<div class="paragraph">
-<p>Response Example</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight nowrap"><code class="language-none hljs">{
-  "timestamp" : "2021-10-03T00:58:04.155708",
-  "status" : 201,
-  "result" : "CREATED",
-  "code" : "SEND_SMS_SUCCESS",
-  "message" : "인증 번호 전송 성공",
-  "data" : {
-    "requestId" : "902d8fdcc30f402f9b0409d4d5a3f829",
-    "requestTime" : "2021-10-03T00:58:04.23"
-  }
-}</code></pre>
-</div>
+<p>CURL
+Unresolved directive in api-doc.adoc - include::/home/ec2-user/app/step1/dingdong/build/generated-snippets/auth-controller-test/send-sms/curl-request.adoc[]
+Request Fields
+Unresolved directive in api-doc.adoc - include::/home/ec2-user/app/step1/dingdong/build/generated-snippets/auth-controller-test/send-sms/request-fields.adoc[]
+Request Http Example
+Unresolved directive in api-doc.adoc - include::/home/ec2-user/app/step1/dingdong/build/generated-snippets/auth-controller-test/send-sms/http-request.adoc[]
+==== Response
+Response Fields
+Unresolved directive in api-doc.adoc - include::/home/ec2-user/app/step1/dingdong/build/generated-snippets/auth-controller-test/send-sms/response-fields.adoc[]
+Response Example
+Unresolved directive in api-doc.adoc - include::/home/ec2-user/app/step1/dingdong/build/generated-snippets/auth-controller-test/send-sms/response-body.adoc[]</p>
 </div>
 </div>
 </div>
@@ -728,6 +638,134 @@ Host: 3.38.61.13:8080
 </div>
 </div>
 <div class="sect3">
+<h4 id="_response">Response</h4>
+<div class="paragraph">
+<p>Response Fields</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Path</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.grantType</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">JWT Token 타입</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.accessToken</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">JWT Access Token 값</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.accessTokenExpiresIn</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">JWT Access Token 유효기간</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.refreshToken</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">JWT Refresh Token 값</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>Response Example</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code class="language-none hljs">{
+  "timestamp" : "2021-10-05T00:50:37.318939",
+  "status" : 200,
+  "result" : "OK",
+  "code" : "LOGIN_SUCCESS",
+  "message" : "로그인 성공",
+  "data" : {
+    "grantType" : "bearer",
+    "accessToken" : "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIwMTAxMjM0NTY3OCIsImF1dGgiOiJST0xFX1VTRVIiLCJleHAiOjE2MzM5Njc0Mzd9.FHOpRNFIVRyh5Qrz1LNRhInJXDYdfQ9X8eirImGm2_O8SB04vMKWtExZ3o4aHqFLphIw4ODSt_zJR-o6dDlasA",
+    "accessTokenExpiresIn" : 1633967437233,
+    "refreshToken" : "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE2MzM5Njc0Mzd9.fufoqIOCqafeVO9TB6ScIf0359PkfALyyZvFPvcAJsJpi6H9LFwJxUBMp-U21-Oc3QfMuN6YCYidNiNrl1TvRw"
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_2_3_토큰_재발급">2-3. 토큰 재발급</h3>
+<div class="sect3">
+<h4 id="_request_3">Request</h4>
+<div class="paragraph">
+<p>CURL</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code data-lang="bash" class="language-bash hljs">$ curl 'http://3.38.61.13:8080/api/v1/auth/reissue' -i -X POST \
+    -H 'Content-Type: application/json;charset=UTF-8' \
+    -H 'Accept: application/json' \
+    -d '{
+  "accessToken" : "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIwMTAxMjM0NTY3OCIsImF1dGgiOiJST0xFX1VTRVIiLCJleHAiOjE2MzM5Njc0Mzd9.FHOpRNFIVRyh5Qrz1LNRhInJXDYdfQ9X8eirImGm2_O8SB04vMKWtExZ3o4aHqFLphIw4ODSt_zJR-o6dDlasA",
+  "refreshToken" : "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE2MzM5Njc0Mzd9.fufoqIOCqafeVO9TB6ScIf0359PkfALyyZvFPvcAJsJpi6H9LFwJxUBMp-U21-Oc3QfMuN6YCYidNiNrl1TvRw"
+}'</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Request Fields</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Path</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>accessToken</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">사용자의 현재 AccessToken 값</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>refreshToken</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">사용자의 현재 RefreshToken 값</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>Request Http Example</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /api/v1/auth/reissue HTTP/1.1
+Content-Type: application/json;charset=UTF-8
+Accept: application/json
+Content-Length: 363
+Host: 3.38.61.13:8080
+
+{
+  "accessToken" : "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIwMTAxMjM0NTY3OCIsImF1dGgiOiJST0xFX1VTRVIiLCJleHAiOjE2MzM5Njc0Mzd9.FHOpRNFIVRyh5Qrz1LNRhInJXDYdfQ9X8eirImGm2_O8SB04vMKWtExZ3o4aHqFLphIw4ODSt_zJR-o6dDlasA",
+  "refreshToken" : "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE2MzM5Njc0Mzd9.fufoqIOCqafeVO9TB6ScIf0359PkfALyyZvFPvcAJsJpi6H9LFwJxUBMp-U21-Oc3QfMuN6YCYidNiNrl1TvRw"
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
 <h4 id="_response_2">Response</h4>
 <div class="paragraph">
 <p>Response Fields</p>
@@ -774,144 +812,16 @@ Host: 3.38.61.13:8080
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-none hljs">{
-  "timestamp" : "2021-10-04T18:23:33.138645",
-  "status" : 200,
-  "result" : "OK",
-  "code" : "LOGIN_SUCCESS",
-  "message" : "로그인 성공",
-  "data" : {
-    "grantType" : "bearer",
-    "accessToken" : "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIwMTAxMjM0NTY3OCIsImF1dGgiOiJST0xFX1VTRVIiLCJleHAiOjE2MzM5NDQyMTN9.4QuFatIKIREQGJtIMyePhw5MdCOY5mjbX4_sPj5eKG5FU3Wx_FjeDnaPGQfzIscOWY5Cr1SOj2zRqpNoRLQqfw",
-    "accessTokenExpiresIn" : 1633944213134,
-    "refreshToken" : "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE2MzM5NDQyMTN9.TyKOUjOqZCv-y_fwnDYFH-ueT0_0ZSztmOx0YHrmH8SznBafPWe-JqBcc_scBXdYVulNN-yIhm2ieXUgWOaZuw"
-  }
-}</code></pre>
-</div>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_2_3_토큰_재발급">2-3. 토큰 재발급</h3>
-<div class="sect3">
-<h4 id="_request_3">Request</h4>
-<div class="paragraph">
-<p>CURL</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code data-lang="bash" class="language-bash hljs">$ curl 'http://3.38.61.13:8080/api/v1/auth/reissue' -i -X POST \
-    -H 'Content-Type: application/json;charset=UTF-8' \
-    -H 'Accept: application/json' \
-    -d '{
-  "accessToken" : "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIwMTAxMjM0NTY3OCIsImF1dGgiOiJST0xFX1VTRVIiLCJleHAiOjE2MzM5NDQyMTN9.4QuFatIKIREQGJtIMyePhw5MdCOY5mjbX4_sPj5eKG5FU3Wx_FjeDnaPGQfzIscOWY5Cr1SOj2zRqpNoRLQqfw",
-  "refreshToken" : "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE2MzM5NDQyMTN9.TyKOUjOqZCv-y_fwnDYFH-ueT0_0ZSztmOx0YHrmH8SznBafPWe-JqBcc_scBXdYVulNN-yIhm2ieXUgWOaZuw"
-}'</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Request Fields</p>
-</div>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 33.3333%;">
-<col style="width: 33.3333%;">
-<col style="width: 33.3334%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Path</th>
-<th class="tableblock halign-left valign-top">Type</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>accessToken</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">사용자의 현재 AccessToken 값</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>refreshToken</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">사용자의 현재 RefreshToken 값</p></td>
-</tr>
-</tbody>
-</table>
-<div class="paragraph">
-<p>Request Http Example</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /api/v1/auth/reissue HTTP/1.1
-Content-Type: application/json;charset=UTF-8
-Accept: application/json
-Content-Length: 363
-Host: 3.38.61.13:8080
-
-{
-  "accessToken" : "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIwMTAxMjM0NTY3OCIsImF1dGgiOiJST0xFX1VTRVIiLCJleHAiOjE2MzM5NDQyMTN9.4QuFatIKIREQGJtIMyePhw5MdCOY5mjbX4_sPj5eKG5FU3Wx_FjeDnaPGQfzIscOWY5Cr1SOj2zRqpNoRLQqfw",
-  "refreshToken" : "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE2MzM5NDQyMTN9.TyKOUjOqZCv-y_fwnDYFH-ueT0_0ZSztmOx0YHrmH8SznBafPWe-JqBcc_scBXdYVulNN-yIhm2ieXUgWOaZuw"
-}</code></pre>
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_response_3">Response</h4>
-<div class="paragraph">
-<p>Response Fields</p>
-</div>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 33.3333%;">
-<col style="width: 33.3333%;">
-<col style="width: 33.3334%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Path</th>
-<th class="tableblock halign-left valign-top">Type</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.grantType</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">JWT Token 타입</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.accessToken</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">JWT Access Token 값</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.accessTokenExpiresIn</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">JWT Access Token 유효기간</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.refreshToken</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">JWT Refresh Token 값</p></td>
-</tr>
-</tbody>
-</table>
-<div class="paragraph">
-<p>Response Example</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight nowrap"><code class="language-none hljs">{
-  "timestamp" : "2021-10-04T18:23:33.56175",
+  "timestamp" : "2021-10-05T00:50:38.074604",
   "status" : 200,
   "result" : "OK",
   "code" : "REISSUE_SUCCESS",
   "message" : "토큰 재발급 성공",
   "data" : {
     "grantType" : "bearer",
-    "accessToken" : "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIwMTAxMjM0NTY3OCIsImF1dGgiOiJST0xFX1VTRVIiLCJleHAiOjE2MzM5NDQyMTN9.4QuFatIKIREQGJtIMyePhw5MdCOY5mjbX4_sPj5eKG5FU3Wx_FjeDnaPGQfzIscOWY5Cr1SOj2zRqpNoRLQqfw",
-    "accessTokenExpiresIn" : 1633944213558,
-    "refreshToken" : "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE2MzM5NDQyMTN9.TyKOUjOqZCv-y_fwnDYFH-ueT0_0ZSztmOx0YHrmH8SznBafPWe-JqBcc_scBXdYVulNN-yIhm2ieXUgWOaZuw"
+    "accessToken" : "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIwMTAxMjM0NTY3OCIsImF1dGgiOiJST0xFX1VTRVIiLCJleHAiOjE2MzM5Njc0Mzh9.geL1eei9K--F9cRI9wr092X7Bg6SUETVeJP0qE4w6dhVx3TY7q7xwqPeC7RJbbCJMZU_pIpHDOEhD_TBzf6hSw",
+    "accessTokenExpiresIn" : 1633967438072,
+    "refreshToken" : "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE2MzM5Njc0Mzh9.Wt2-98aMHsQZyAvYQW4e14iPrtve3WdIuLpgOZ2jv_Zurwcs9gHv70mqbkBjfKLnvf62sLrm0EcIu-2xKT0Unw"
   }
 }</code></pre>
 </div>
@@ -929,7 +839,7 @@ Host: 3.38.61.13:8080
 <div class="content">
 <pre class="highlightjs highlight"><code data-lang="bash" class="language-bash hljs">$ curl 'http://3.38.61.13:8080/api/v1/auth/nickname' -i -X POST \
     -H 'Content-Type: application/json;charset=UTF-8' \
-    -H 'Authorization: eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIwMTAxMjM0NTY3OCIsImF1dGgiOiJST0xFX1VTRVIiLCJleHAiOjE2MzM5NDQyMTN9.4QuFatIKIREQGJtIMyePhw5MdCOY5mjbX4_sPj5eKG5FU3Wx_FjeDnaPGQfzIscOWY5Cr1SOj2zRqpNoRLQqfw' \
+    -H 'Authorization: eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIwMTAxMjM0NTY3OCIsImF1dGgiOiJST0xFX1VTRVIiLCJleHAiOjE2MzM5Njc0Mzd9.FHOpRNFIVRyh5Qrz1LNRhInJXDYdfQ9X8eirImGm2_O8SB04vMKWtExZ3o4aHqFLphIw4ODSt_zJR-o6dDlasA' \
     -H 'Accept: application/json' \
     -d '{
   "nickname" : "testNickname2"
@@ -988,7 +898,7 @@ Host: 3.38.61.13:8080
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /api/v1/auth/nickname HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIwMTAxMjM0NTY3OCIsImF1dGgiOiJST0xFX1VTRVIiLCJleHAiOjE2MzM5NDQyMTN9.4QuFatIKIREQGJtIMyePhw5MdCOY5mjbX4_sPj5eKG5FU3Wx_FjeDnaPGQfzIscOWY5Cr1SOj2zRqpNoRLQqfw
+Authorization: eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIwMTAxMjM0NTY3OCIsImF1dGgiOiJST0xFX1VTRVIiLCJleHAiOjE2MzM5Njc0Mzd9.FHOpRNFIVRyh5Qrz1LNRhInJXDYdfQ9X8eirImGm2_O8SB04vMKWtExZ3o4aHqFLphIw4ODSt_zJR-o6dDlasA
 Accept: application/json
 Content-Length: 34
 Host: 3.38.61.13:8080
@@ -1000,14 +910,14 @@ Host: 3.38.61.13:8080
 </div>
 </div>
 <div class="sect3">
-<h4 id="_response_4">Response</h4>
+<h4 id="_response_3">Response</h4>
 <div class="paragraph">
 <p>Response Example</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-none hljs">{
-  "timestamp" : "2021-10-04T18:23:33.329266",
+  "timestamp" : "2021-10-05T00:50:37.694612",
   "status" : 201,
   "result" : "CREATED",
   "code" : "NICKNAME_CREATE_SUCCESS",
@@ -1029,11 +939,11 @@ Host: 3.38.61.13:8080
 <div class="content">
 <pre class="highlightjs highlight"><code data-lang="bash" class="language-bash hljs">$ curl 'http://3.38.61.13:8080/api/v1/auth/local' -i -X POST \
     -H 'Content-Type: application/json;charset=UTF-8' \
-    -H 'Authorization: eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIwMTAxMjM0NTY3OCIsImF1dGgiOiJST0xFX1VTRVIiLCJleHAiOjE2MzM5NDQyMTN9.4QuFatIKIREQGJtIMyePhw5MdCOY5mjbX4_sPj5eKG5FU3Wx_FjeDnaPGQfzIscOWY5Cr1SOj2zRqpNoRLQqfw' \
+    -H 'Authorization: eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIwMTAxMjM0NTY3OCIsImF1dGgiOiJST0xFX1VTRVIiLCJleHAiOjE2MzM5Njc0Mzd9.FHOpRNFIVRyh5Qrz1LNRhInJXDYdfQ9X8eirImGm2_O8SB04vMKWtExZ3o4aHqFLphIw4ODSt_zJR-o6dDlasA' \
     -H 'Accept: application/json' \
     -d '{
-  "local1" : "test_local1",
-  "local2" : "test_local2"
+  "local1" : "성북구 성북동",
+  "local2" : "성북구 삼선동"
 }'</code></pre>
 </div>
 </div>
@@ -1094,27 +1004,27 @@ Host: 3.38.61.13:8080
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /api/v1/auth/local HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIwMTAxMjM0NTY3OCIsImF1dGgiOiJST0xFX1VTRVIiLCJleHAiOjE2MzM5NDQyMTN9.4QuFatIKIREQGJtIMyePhw5MdCOY5mjbX4_sPj5eKG5FU3Wx_FjeDnaPGQfzIscOWY5Cr1SOj2zRqpNoRLQqfw
+Authorization: eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIwMTAxMjM0NTY3OCIsImF1dGgiOiJST0xFX1VTRVIiLCJleHAiOjE2MzM5Njc0Mzd9.FHOpRNFIVRyh5Qrz1LNRhInJXDYdfQ9X8eirImGm2_O8SB04vMKWtExZ3o4aHqFLphIw4ODSt_zJR-o6dDlasA
 Accept: application/json
-Content-Length: 58
+Content-Length: 74
 Host: 3.38.61.13:8080
 
 {
-  "local1" : "test_local1",
-  "local2" : "test_local2"
+  "local1" : "성북구 성북동",
+  "local2" : "성북구 삼선동"
 }</code></pre>
 </div>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_response_5">Response</h4>
+<h4 id="_response_4">Response</h4>
 <div class="paragraph">
 <p>Response Example</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-none hljs">{
-  "timestamp" : "2021-10-04T18:23:33.44581",
+  "timestamp" : "2021-10-05T00:50:37.874268",
   "status" : 201,
   "result" : "CREATED",
   "code" : "LOCAL_CREATE_SUCCESS",
@@ -1136,7 +1046,7 @@ Host: 3.38.61.13:8080
 <div class="content">
 <pre class="highlightjs highlight"><code data-lang="bash" class="language-bash hljs">$ curl 'http://3.38.61.13:8080/api/v1/auth/unsubscribe' -i -X PATCH \
     -H 'Content-Type: application/json;charset=UTF-8' \
-    -H 'Authorization: eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIwMTAxMjM0NTY3OCIsImF1dGgiOiJST0xFX1VTRVIiLCJleHAiOjE2MzM5NDQyMTN9.4QuFatIKIREQGJtIMyePhw5MdCOY5mjbX4_sPj5eKG5FU3Wx_FjeDnaPGQfzIscOWY5Cr1SOj2zRqpNoRLQqfw' \
+    -H 'Authorization: eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIwMTAxMjM0NTY3OCIsImF1dGgiOiJST0xFX1VTRVIiLCJleHAiOjE2MzM5Njc0Mzh9.geL1eei9K--F9cRI9wr092X7Bg6SUETVeJP0qE4w6dhVx3TY7q7xwqPeC7RJbbCJMZU_pIpHDOEhD_TBzf6hSw' \
     -H 'Accept: application/json'</code></pre>
 </div>
 </div>
@@ -1168,21 +1078,21 @@ Host: 3.38.61.13:8080
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">PATCH /api/v1/auth/unsubscribe HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIwMTAxMjM0NTY3OCIsImF1dGgiOiJST0xFX1VTRVIiLCJleHAiOjE2MzM5NDQyMTN9.4QuFatIKIREQGJtIMyePhw5MdCOY5mjbX4_sPj5eKG5FU3Wx_FjeDnaPGQfzIscOWY5Cr1SOj2zRqpNoRLQqfw
+Authorization: eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIwMTAxMjM0NTY3OCIsImF1dGgiOiJST0xFX1VTRVIiLCJleHAiOjE2MzM5Njc0Mzh9.geL1eei9K--F9cRI9wr092X7Bg6SUETVeJP0qE4w6dhVx3TY7q7xwqPeC7RJbbCJMZU_pIpHDOEhD_TBzf6hSw
 Accept: application/json
 Host: 3.38.61.13:8080</code></pre>
 </div>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_response_6">Response</h4>
+<h4 id="_response_5">Response</h4>
 <div class="paragraph">
 <p>Response Example</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-none hljs">{
-  "timestamp" : "2021-10-04T18:23:33.663842",
+  "timestamp" : "2021-10-05T00:50:38.22162",
   "status" : 200,
   "result" : "OK",
   "code" : "UNSUBSCRIBE_SUCCESS",
@@ -1209,7 +1119,7 @@ Host: 3.38.61.13:8080</code></pre>
 <div class="content">
 <pre class="highlightjs highlight"><code data-lang="bash" class="language-bash hljs">$ curl 'http://3.38.61.13:8080/api/v1/profile' -i -X GET \
     -H 'Content-Type: application/json;charset=UTF-8' \
-    -H 'Authorization: eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIwMTAxMjM0NTY3OCIsImF1dGgiOiJST0xFX1VTRVIiLCJleHAiOjE2MzM5NDQyMTJ9.jUsE_MKta-Mb6amF_znH0ATHGDX3vgwMbvo2eTlFutbwOz452TSUS4ZRDTgUs7VfMXR4jM3zpCf3twsIHH9W7g' \
+    -H 'Authorization: eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIwMTAxMjM0NTY3OCIsImF1dGgiOiJST0xFX1VTRVIiLCJleHAiOjE2MzM5Njc0Mzl9.lFtCa5-GlWLlnltbbhuO3mX-A6tthZCRrOyj-zETtIEcTscS18nNyQtAm8W0GG9z0aOe2aaRzsho1Uj0Qwf-lQ' \
     -H 'Accept: application/json'</code></pre>
 </div>
 </div>
@@ -1241,14 +1151,14 @@ Host: 3.38.61.13:8080</code></pre>
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /api/v1/profile HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIwMTAxMjM0NTY3OCIsImF1dGgiOiJST0xFX1VTRVIiLCJleHAiOjE2MzM5NDQyMTJ9.jUsE_MKta-Mb6amF_znH0ATHGDX3vgwMbvo2eTlFutbwOz452TSUS4ZRDTgUs7VfMXR4jM3zpCf3twsIHH9W7g
+Authorization: eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIwMTAxMjM0NTY3OCIsImF1dGgiOiJST0xFX1VTRVIiLCJleHAiOjE2MzM5Njc0Mzl9.lFtCa5-GlWLlnltbbhuO3mX-A6tthZCRrOyj-zETtIEcTscS18nNyQtAm8W0GG9z0aOe2aaRzsho1Uj0Qwf-lQ
 Accept: application/json
 Host: 3.38.61.13:8080</code></pre>
 </div>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_response_7">Response</h4>
+<h4 id="_response_6">Response</h4>
 <div class="paragraph">
 <p>Response Fields</p>
 </div>
@@ -1289,7 +1199,7 @@ Host: 3.38.61.13:8080</code></pre>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-none hljs">{
-  "timestamp" : "2021-10-04T18:23:32.630688",
+  "timestamp" : "2021-10-05T00:50:39.45394",
   "status" : 200,
   "result" : "OK",
   "code" : "PROFILE_READ_SUCCESS",
@@ -1315,7 +1225,7 @@ Host: 3.38.61.13:8080</code></pre>
 <div class="content">
 <pre class="highlightjs highlight"><code data-lang="bash" class="language-bash hljs">$ curl 'http://3.38.61.13:8080/api/v1/profile/1' -i -X GET \
     -H 'Content-Type: application/json;charset=UTF-8' \
-    -H 'Authorization: eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIwMTAxMjM0NTY3OCIsImF1dGgiOiJST0xFX1VTRVIiLCJleHAiOjE2MzM5NDQyMTJ9.jUsE_MKta-Mb6amF_znH0ATHGDX3vgwMbvo2eTlFutbwOz452TSUS4ZRDTgUs7VfMXR4jM3zpCf3twsIHH9W7g' \
+    -H 'Authorization: eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIwMTAxMjM0NTY3OCIsImF1dGgiOiJST0xFX1VTRVIiLCJleHAiOjE2MzM5Njc0Mzl9.lFtCa5-GlWLlnltbbhuO3mX-A6tthZCRrOyj-zETtIEcTscS18nNyQtAm8W0GG9z0aOe2aaRzsho1Uj0Qwf-lQ' \
     -H 'Accept: application/json'</code></pre>
 </div>
 </div>
@@ -1369,14 +1279,14 @@ Host: 3.38.61.13:8080</code></pre>
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /api/v1/profile/1 HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Authorization: eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIwMTAxMjM0NTY3OCIsImF1dGgiOiJST0xFX1VTRVIiLCJleHAiOjE2MzM5NDQyMTJ9.jUsE_MKta-Mb6amF_znH0ATHGDX3vgwMbvo2eTlFutbwOz452TSUS4ZRDTgUs7VfMXR4jM3zpCf3twsIHH9W7g
+Authorization: eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIwMTAxMjM0NTY3OCIsImF1dGgiOiJST0xFX1VTRVIiLCJleHAiOjE2MzM5Njc0Mzl9.lFtCa5-GlWLlnltbbhuO3mX-A6tthZCRrOyj-zETtIEcTscS18nNyQtAm8W0GG9z0aOe2aaRzsho1Uj0Qwf-lQ
 Accept: application/json
 Host: 3.38.61.13:8080</code></pre>
 </div>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_response_8">Response</h4>
+<h4 id="_response_7">Response</h4>
 <div class="paragraph">
 <p>Response Fields</p>
 </div>
@@ -1417,7 +1327,7 @@ Host: 3.38.61.13:8080</code></pre>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-none hljs">{
-  "timestamp" : "2021-10-04T18:23:32.936083",
+  "timestamp" : "2021-10-05T00:50:39.657855",
   "status" : 200,
   "result" : "OK",
   "code" : "PROFILE_READ_SUCCESS",
@@ -1446,104 +1356,17 @@ Host: 3.38.61.13:8080</code></pre>
 <div class="sect3">
 <h4 id="_request_9">Request</h4>
 <div class="paragraph">
-<p>CURL</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code data-lang="bash" class="language-bash hljs">$ curl 'http://3.38.61.13:8080/api/v1/rating' -i -X GET \
-    -H 'Content-Type: application/json;charset=UTF-8' \
-    -H 'Authorization: eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIwMTAxMTExMTExMSIsImF1dGgiOiJST0xFX1VTRVIiLCJleHAiOjE2MzM5NDQyMTN9.DvGtsvX6O66IB_Wsi9-w0xxlyKRHv2SBKK9pJZXjuYm7g4riatEBsZs7svpQyzvMEruJvAoyFKUbnciEnge4SA' \
-    -H 'Accept: application/json'</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Request Header</p>
-</div>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Name</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Authorization</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Bearer Type의 AccessToken 값</p></td>
-</tr>
-</tbody>
-</table>
-<div class="paragraph">
-<p>Request Http Example</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /api/v1/rating HTTP/1.1
-Content-Type: application/json;charset=UTF-8
-Authorization: eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIwMTAxMTExMTExMSIsImF1dGgiOiJST0xFX1VTRVIiLCJleHAiOjE2MzM5NDQyMTN9.DvGtsvX6O66IB_Wsi9-w0xxlyKRHv2SBKK9pJZXjuYm7g4riatEBsZs7svpQyzvMEruJvAoyFKUbnciEnge4SA
-Accept: application/json
-Host: 3.38.61.13:8080</code></pre>
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_response_9">Response</h4>
-<div class="paragraph">
-<p>Response Fields</p>
-</div>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 33.3333%;">
-<col style="width: 33.3333%;">
-<col style="width: 33.3334%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Path</th>
-<th class="tableblock halign-left valign-top">Type</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.good</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">사용자 추천 수</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.bad</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">사용자 비추천 수</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.total</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">사용자의 총 평가 수</p></td>
-</tr>
-</tbody>
-</table>
-<div class="paragraph">
-<p>Response Example</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight nowrap"><code class="language-none hljs">{
-  "timestamp" : "2021-10-04T18:23:33.831309",
-  "status" : 200,
-  "result" : "OK",
-  "code" : "RATING_READ_SUCCESS",
-  "message" : "평가 조회 성공",
-  "data" : {
-    "good" : 0,
-    "bad" : 0,
-    "total" : 0
-  }
-}</code></pre>
-</div>
+<p>CURL
+Unresolved directive in api-doc.adoc - include::/home/ec2-user/app/step1/dingdong/build/generated-snippets/rating-controller-test/get-rating/curl-request.adoc[]
+Request Header
+Unresolved directive in api-doc.adoc - include::/home/ec2-user/app/step1/dingdong/build/generated-snippets/rating-controller-test/get-rating/request-headers.adoc[]
+Request Http Example
+Unresolved directive in api-doc.adoc - include::/home/ec2-user/app/step1/dingdong/build/generated-snippets/rating-controller-test/get-rating/http-request.adoc[]
+==== Response
+Response Fields
+Unresolved directive in api-doc.adoc - include::/home/ec2-user/app/step1/dingdong/build/generated-snippets/rating-controller-test/get-rating/response-fields.adoc[]
+Response Example
+Unresolved directive in api-doc.adoc - include::/home/ec2-user/app/step1/dingdong/build/generated-snippets/rating-controller-test/get-rating/response-body.adoc[]</p>
 </div>
 </div>
 </div>
@@ -1552,126 +1375,19 @@ Host: 3.38.61.13:8080</code></pre>
 <div class="sect3">
 <h4 id="_request_10">Request</h4>
 <div class="paragraph">
-<p>CURL</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code data-lang="bash" class="language-bash hljs">$ curl 'http://3.38.61.13:8080/api/v1/rating/2' -i -X GET \
-    -H 'Content-Type: application/json;charset=UTF-8' \
-    -H 'Authorization: eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIwMTAxMTExMTExMSIsImF1dGgiOiJST0xFX1VTRVIiLCJleHAiOjE2MzM5NDQyMTN9.DvGtsvX6O66IB_Wsi9-w0xxlyKRHv2SBKK9pJZXjuYm7g4riatEBsZs7svpQyzvMEruJvAoyFKUbnciEnge4SA' \
-    -H 'Accept: application/json'</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Request Header</p>
-</div>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Name</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Authorization</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Bearer Type의 AccessToken 값</p></td>
-</tr>
-</tbody>
-</table>
-<div class="paragraph">
-<p>Request Path Parameters &#8594;
-./api/v1/rating/{userId}</p>
-</div>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Parameter</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>userId</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">조회하고자 하는 사용자의 고유 아이디 값</p></td>
-</tr>
-</tbody>
-</table>
-<div class="paragraph">
-<p>Request Http Example</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /api/v1/rating/2 HTTP/1.1
-Content-Type: application/json;charset=UTF-8
-Authorization: eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIwMTAxMTExMTExMSIsImF1dGgiOiJST0xFX1VTRVIiLCJleHAiOjE2MzM5NDQyMTN9.DvGtsvX6O66IB_Wsi9-w0xxlyKRHv2SBKK9pJZXjuYm7g4riatEBsZs7svpQyzvMEruJvAoyFKUbnciEnge4SA
-Accept: application/json
-Host: 3.38.61.13:8080</code></pre>
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_response_10">Response</h4>
-<div class="paragraph">
-<p>Response Fields</p>
-</div>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 33.3333%;">
-<col style="width: 33.3333%;">
-<col style="width: 33.3334%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Path</th>
-<th class="tableblock halign-left valign-top">Type</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.good</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">사용자 추천 수</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.bad</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">사용자 비추천 수</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.total</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">사용자의 총 평가 수</p></td>
-</tr>
-</tbody>
-</table>
-<div class="paragraph">
-<p>Response Example</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight nowrap"><code class="language-none hljs">{
-  "timestamp" : "2021-10-04T18:23:33.958161",
-  "status" : 200,
-  "result" : "OK",
-  "code" : "RATING_READ_SUCCESS",
-  "message" : "평가 조회 성공",
-  "data" : {
-    "good" : 0,
-    "bad" : 0,
-    "total" : 0
-  }
-}</code></pre>
-</div>
+<p>CURL
+Unresolved directive in api-doc.adoc - include::/home/ec2-user/app/step1/dingdong/build/generated-snippets/rating-controller-test/test-get-rating/curl-request.adoc[]
+Request Header
+Unresolved directive in api-doc.adoc - include::/home/ec2-user/app/step1/dingdong/build/generated-snippets/rating-controller-test/test-get-rating/request-headers.adoc[]
+Request Path Parameters &#8594;
+Unresolved directive in api-doc.adoc - include::/home/ec2-user/app/step1/dingdong/build/generated-snippets/rating-controller-test/test-get-rating/path-parameters.adoc[]
+Request Http Example
+Unresolved directive in api-doc.adoc - include::/home/ec2-user/app/step1/dingdong/build/generated-snippets/rating-controller-test/test-get-rating/http-request.adoc[]
+==== Response
+Response Fields
+Unresolved directive in api-doc.adoc - include::/home/ec2-user/app/step1/dingdong/build/generated-snippets/rating-controller-test/test-get-rating/response-fields.adoc[]
+Response Example
+Unresolved directive in api-doc.adoc - include::/home/ec2-user/app/step1/dingdong/build/generated-snippets/rating-controller-test/test-get-rating/response-body.adoc[]</p>
 </div>
 </div>
 </div>
@@ -1680,120 +1396,19 @@ Host: 3.38.61.13:8080</code></pre>
 <div class="sect3">
 <h4 id="_request_11">Request</h4>
 <div class="paragraph">
-<p>CURL</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code data-lang="bash" class="language-bash hljs">$ curl 'http://3.38.61.13:8080/api/v1/rating/2' -i -X POST \
-    -H 'Content-Type: application/json;charset=UTF-8' \
-    -H 'Authorization: eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIwMTAxMTExMTExMSIsImF1dGgiOiJST0xFX1VTRVIiLCJleHAiOjE2MzM5NDQyMTR9.7IIJ6IPIVgSoLn1DWvarA9r_BbVtJJSuaReBOYoMiJ3kh0t7MCWh7tL8bgFGmFrDPYCe5hLhrqHSDnqgcjfwpw' \
-    -H 'Accept: application/json' \
-    -d '{
-  "type" : "GOOD"
-}'</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Request Header</p>
-</div>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Name</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Authorization</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Bearer Type의 AccessToken 값</p></td>
-</tr>
-</tbody>
-</table>
-<div class="paragraph">
-<p>Request Path Parameters &#8594;
-./api/v1/rating/{userId}</p>
-</div>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Parameter</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>userId</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">평가하고자 하는 사용자의 고유 아이디 값</p></td>
-</tr>
-</tbody>
-</table>
-<div class="paragraph">
-<p>Request Fields</p>
-</div>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 33.3333%;">
-<col style="width: 33.3333%;">
-<col style="width: 33.3334%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Path</th>
-<th class="tableblock halign-left valign-top">Type</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>type</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">GOOD 또는 BAD</p></td>
-</tr>
-</tbody>
-</table>
-<div class="paragraph">
-<p>Request Http Example</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /api/v1/rating/2 HTTP/1.1
-Content-Type: application/json;charset=UTF-8
-Authorization: eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIwMTAxMTExMTExMSIsImF1dGgiOiJST0xFX1VTRVIiLCJleHAiOjE2MzM5NDQyMTR9.7IIJ6IPIVgSoLn1DWvarA9r_BbVtJJSuaReBOYoMiJ3kh0t7MCWh7tL8bgFGmFrDPYCe5hLhrqHSDnqgcjfwpw
-Accept: application/json
-Content-Length: 21
-Host: 3.38.61.13:8080
-
-{
-  "type" : "GOOD"
-}</code></pre>
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_response_11">Response</h4>
-<div class="paragraph">
-<p>Response Example</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight nowrap"><code class="language-none hljs">{
-  "timestamp" : "2021-10-04T18:23:34.100079",
-  "status" : 201,
-  "result" : "CREATED",
-  "code" : "RATING_CREATE_SUCCESS",
-  "message" : "평가 생성 성공",
-  "data" : null
-}</code></pre>
-</div>
+<p>CURL
+Unresolved directive in api-doc.adoc - include::/home/ec2-user/app/step1/dingdong/build/generated-snippets/rating-controller-test/create-rating/curl-request.adoc[]
+Request Header
+Unresolved directive in api-doc.adoc - include::/home/ec2-user/app/step1/dingdong/build/generated-snippets/rating-controller-test/create-rating/request-headers.adoc[]
+Request Path Parameters &#8594;
+Unresolved directive in api-doc.adoc - include::/home/ec2-user/app/step1/dingdong/build/generated-snippets/rating-controller-test/create-rating/path-parameters.adoc[]
+Request Fields
+Unresolved directive in api-doc.adoc - include::/home/ec2-user/app/step1/dingdong/build/generated-snippets/rating-controller-test/create-rating/request-fields.adoc[]
+Request Http Example
+Unresolved directive in api-doc.adoc - include::/home/ec2-user/app/step1/dingdong/build/generated-snippets/rating-controller-test/create-rating/http-request.adoc[]
+==== Response
+Response Example
+Unresolved directive in api-doc.adoc - include::/home/ec2-user/app/step1/dingdong/build/generated-snippets/rating-controller-test/create-rating/response-body.adoc[]</p>
 </div>
 </div>
 </div>
@@ -1803,7 +1418,7 @@ Host: 3.38.61.13:8080
 <div id="footer">
 <div id="footer-text">
 Version 0.0.1-SNAPSHOT<br>
-Last updated 2021-10-04 18:00:50 +0900
+Last updated 2021-10-04 18:31:37 +0900
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/github.min.css">
