@@ -150,3 +150,52 @@ Response Fields
 include::{snippets}/profile-controller-test/get-profile/response-fields.adoc[]
 Response Example
 include::{snippets}/profile-controller-test/get-profile/response-body.adoc[]
+
+=== 3-3. 프로필 수정
+
+== 4. 평가
+=== 4-1. 본인 평가 조회
+==== Request
+CURL
+include::{snippets}/rating-controller-test/get-rating/curl-request.adoc[]
+Request Header
+include::{snippets}/rating-controller-test/get-rating/request-headers.adoc[]
+Request Http Example
+include::{snippets}/rating-controller-test/get-rating/http-request.adoc[]
+==== Response
+Response Fields
+include::{snippets}/rating-controller-test/get-rating/response-fields.adoc[]
+Response Example
+include::{snippets}/rating-controller-test/get-rating/response-body.adoc[]
+
+=== 4-2. 평가 조회
+==== Request
+CURL
+include::{snippets}/rating-controller-test/test-get-rating/curl-request.adoc[]
+Request Header
+include::{snippets}/rating-controller-test/test-get-rating/request-headers.adoc[]
+Request Path Parameters ->
+include::{snippets}/rating-controller-test/test-get-rating/path-parameters.adoc[]
+Request Http Example
+include::{snippets}/rating-controller-test/test-get-rating/http-request.adoc[]
+==== Response
+Response Fields
+include::{snippets}/rating-controller-test/test-get-rating/response-fields.adoc[]
+Response Example
+include::{snippets}/rating-controller-test/test-get-rating/response-body.adoc[]
+
+=== 4-3. 평가 생성
+==== Request
+CURL
+include::{snippets}/rating-controller-test/create-rating/curl-request.adoc[]
+Request Header
+include::{snippets}/rating-controller-test/create-rating/request-headers.adoc[]
+Request Path Parameters ->
+include::{snippets}/rating-controller-test/create-rating/path-parameters.adoc[]
+Request Fields
+include::{snippets}/rating-controller-test/create-rating/request-fields.adoc[]
+Request Http Example
+include::{snippets}/rating-controller-test/create-rating/http-request.adoc[]
+==== Response
+Response Example
+include::{snippets}/rating-controller-test/create-rating/response-body.adoc[]
