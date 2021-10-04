@@ -91,7 +91,8 @@ public class Post extends BaseTimeEntity {
     @JsonBackReference
     private List<PostTag> postTags = new ArrayList<>();
 
-    // title, people, price, bio, local, done
+
+    // title, people, price, bio, local
     public void setPost(Category category, PostRequestDto request) {
         this.category = category;
         this.title = request.getTitle();
