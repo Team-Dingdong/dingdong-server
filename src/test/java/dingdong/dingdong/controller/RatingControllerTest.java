@@ -98,8 +98,12 @@ class RatingControllerTest {
 
         authRepository.save(auth);
 
+        String nickname1 = "testNickname1";
+        String profileImageUrl1 = "testProfileImageUrl1";
         Profile profile1 = Profile.builder()
             .id(id1)
+            .nickname(nickname1)
+            .profileImageUrl(profileImageUrl1)
             .good(0L)
             .bad(0L)
             .build();
@@ -119,8 +123,12 @@ class RatingControllerTest {
         Long id2 = 2L;
         String phone2 = "01022222222";
 
+        String nickname2 = "testNickname2";
+        String profileImageUrl2 = "testProfileImageUrl2";
         Profile profile2 = Profile.builder()
             .id(id2)
+            .nickname(nickname2)
+            .profileImageUrl(profileImageUrl2)
             .good(0L)
             .bad(0L)
             .build();
