@@ -1,4 +1,4 @@
-= CrystalMine REST API
+= Dingdong REST API
 :toc: left
 :toclevels: 2
 :source-highlighter: highlightjs
