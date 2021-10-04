@@ -23,6 +23,7 @@ import dingdong.dingdong.domain.user.User;
 import dingdong.dingdong.domain.user.UserRepository;
 import dingdong.dingdong.dto.auth.AuthRequestDto;
 import dingdong.dingdong.dto.auth.TokenDto;
+import dingdong.dingdong.dto.profile.ProfileUpdateRequestDto;
 import dingdong.dingdong.service.auth.AuthService;
 import dingdong.dingdong.service.auth.AuthType;
 import dingdong.dingdong.service.profile.ProfileService;
@@ -38,10 +39,12 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -178,7 +181,13 @@ class ProfileControllerTest {
 
     @Test
     @DisplayName("프로필 수정 테스트")
-    void updateProfile() {
+    void updateProfile() throws Exception {
+        TokenDto tokenDto = getTokenDto();
 
+        MultipartFile profileImage = new MockMultipartFile("file", "profileImage.jpeg", "image/jpeg", "<<jpeg data>>".getBytes());
+        ProfileUpdateRequestDto profileUpdateRequestDto = ProfileUpdateRequestDto.builder()
+            .profileImage(profileImage)
+            .nickname("testNickname2")
+            .build();
     }
 }
