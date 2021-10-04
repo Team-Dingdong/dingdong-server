@@ -112,8 +112,8 @@ class RatingControllerTest {
         userRepository.save(user1);
 
         // user2 생성
-        Long id2 = 1L;
-        String phone2 = "01011111111";
+        Long id2 = 2L;
+        String phone2 = "01022222222";
 
         Profile profile2 = Profile.builder()
             .id(id2)
