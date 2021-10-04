@@ -1,0 +1,12 @@
+|===
+|Path|Type|Description
+
+|`+data.requestId+`
+|`+String+`
+|휴대폰 인증 번호 전송 요청 아이디 값
+
+|`+data.requestTime+`
+|`+String+`
+|휴대폰 인증 번호 전송 요청 시간
+
+|===

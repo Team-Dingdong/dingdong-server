@@ -1,0 +1,8 @@
+|===
+|Path|Type|Description
+
+|`+to+`
+|`+String+`
+|인증 번호를 전송할 휴대폰 번호
+
+|===
