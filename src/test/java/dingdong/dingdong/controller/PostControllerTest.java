@@ -27,6 +27,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
@@ -146,8 +149,7 @@ class PostControllerTest {
         String imageUrl1 = "test_url1";
         String imageUrl2 = "test_url2";
         String imageUrl3 = "test_url3";
-        LocalDateTime createdDate = LocalDateTime.now();
-        LocalDateTime modifiedDate = LocalDateTime.now();
+
         Post post = Post.builder()
                 .title(title)
                 .cost(cost)
@@ -168,7 +170,6 @@ class PostControllerTest {
                 .tag(tag)
                 .build();
         postTagRepository.save(postTag);
-
     }
 
     TokenDto getTokenDto() {
@@ -482,6 +483,56 @@ class PostControllerTest {
         ));
     }
 
+    @Test
+    @DisplayName("나누기 거래 확정")
+    void confirmed() throws Exception {
+        TokenDto tokenDto = getTokenDto();
+
+        mockMvc.perform(RestDocumentationRequestBuilders.post("/api/v1/post/confirmed/{:postId}", 1L)
+                .header(HttpHeaders.AUTHORIZATION, tokenDto.getAccessToken())
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
+                .andDo(print()).andExpect(status().isOk()).andDo(print())
+                .andDo(print()).andDo(document("{class-name}/{method-name}",
+                preprocessRequest(modifyUris().scheme(scheme).host(host).port(port), prettyPrint()),
+                preprocessResponse(prettyPrint()),
+                requestHeaders(
+                        headerWithName(HttpHeaders.AUTHORIZATION).description("Bearer Type의 AccessToken 값")
+                ),
+                pathParameters(
+                        parameterWithName("postId").description("조회하고자 하는 나누기의 고유값")
+                )
+        ));
+    }
+
+    @Test
+    @DisplayName("나누기 검색")
+    void search() throws Exception {
+        TokenDto tokenDto = getTokenDto();
+
+        mockMvc.perform(RestDocumentationRequestBuilders.post("/api/v1/post/search")
+                .header(HttpHeaders.AUTHORIZATION, tokenDto.getAccessToken())
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
+                .andDo(print()).andExpect(status().isOk()).andDo(print())
+                .andDo(print()).andDo(document("{class-name}/{method-name}",
+                preprocessRequest(modifyUris().scheme(scheme).host(host).port(port), prettyPrint()),
+                preprocessResponse(prettyPrint()),
+                requestHeaders(
+                        headerWithName(HttpHeaders.AUTHORIZATION).description("Bearer Type의 AccessToken 값")
+                ),
+                relaxedResponseFields(
+                        fieldWithPath("data.title").type("String").description("나누기의 제목"),
+                        fieldWithPath("data.people").type(JsonFieldType.NUMBER).description("나누기의 모집인원수"),
+                        fieldWithPath("data.cost").type(JsonFieldType.NUMBER).description("나누기의 비용"),
+                        fieldWithPath("data.title").type("String").description("나누기의 제목값"),
+                        fieldWithPath("data.bio").type("String").description("나누기의 설명글"),
+                        fieldWithPath("data.local").type("String").description("나누기의 장소"),
+                        fieldWithPath("data.createdDate").type("LocalDateTime").description("나누기의 생성날짜"),
+                        fieldWithPath("data.imageUrl1").type("String").description("나누기의 이미지1")
+                )
+        ));
+    }
 
 }
 
