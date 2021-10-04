@@ -84,7 +84,7 @@ class RatingControllerTest {
     void setUp() {
         // user1 생성
         Long id1 = 1L;
-        String phone1 = "01011111111";
+        String phone1 = "01012345678";
         String authNumber = "123456";
         String requestId = "testRequestId";
         LocalDateTime requestTime = LocalDateTime.now();
@@ -121,7 +121,7 @@ class RatingControllerTest {
 
         // user2 생성
         Long id2 = 2L;
-        String phone2 = "01022222222";
+        String phone2 = "02012345678";
 
         String nickname2 = "testNickname2";
         String profileImageUrl2 = "testProfileImageUrl2";
