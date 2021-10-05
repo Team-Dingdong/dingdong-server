@@ -41,16 +41,16 @@
 === 2-1. 휴대폰 인증 번호 전송
 ==== Request
 CURL
-include::{snippets}/auth-controller-test/send-sms/curl-request.adoc[]
+include::send-sms/curl-request.adoc[]
 Request Fields
-include::{snippets}/auth-controller-test/send-sms/request-fields.adoc[]
+include::send-sms/request-fields.adoc[]
 Request Http Example
-include::{snippets}/auth-controller-test/send-sms/http-request.adoc[]
+include::send-sms/http-request.adoc[]
 ==== Response
 Response Fields
-include::{snippets}/auth-controller-test/send-sms/response-fields.adoc[]
+include::send-sms/response-fields.adoc[]
 Response Example
-include::{snippets}/auth-controller-test/send-sms/response-body.adoc[]
+include::send-sms/response-body.adoc[]
 
 === 2-2. 휴대폰 인증 번호 확인(로그인, 회원가입)
 ==== Request
