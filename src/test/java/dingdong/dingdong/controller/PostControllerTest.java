@@ -1,6 +1,7 @@
 package dingdong.dingdong.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import dingdong.dingdong.domain.chat.*;
 import dingdong.dingdong.domain.post.*;
 import dingdong.dingdong.domain.user.*;
 import dingdong.dingdong.dto.auth.AuthRequestDto;
@@ -26,10 +27,13 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Map;
 
+import static dingdong.dingdong.domain.chat.PromiseType.END;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
@@ -80,6 +84,18 @@ public class PostControllerTest {
 
     @Autowired
     PostTagRepository postTagRepository;
+
+    @Autowired
+    ChatRoomRepository chatRoomRepository;
+
+    @Autowired
+    ChatJoinRepository chatJoinRepository;
+
+    @Autowired
+    ChatPromiseRepository chatPromiseRepository;
+
+    @Autowired
+    ChatPromiseVoteRepository chatPromiseVoteRepository;
 
     @Value("${test.server.http.scheme}")
     String scheme;
@@ -161,6 +177,7 @@ public class PostControllerTest {
                 .imageUrl3(imageUrl3)
                 .user(user)
                 .category(category)
+                .done(false)
                 .build();
         postRepository.save(post);
 
@@ -169,6 +186,40 @@ public class PostControllerTest {
                 .tag(tag)
                 .build();
         postTagRepository.save(postTag);
+
+        ChatRoom chatRoom = ChatRoom.builder()
+                .id(1L)
+                .post(post)
+                .endDate(LocalDateTime.now())
+                .lastChatTime(LocalDateTime.now())
+                .build();
+        chatRoomRepository.save(chatRoom);
+
+        ChatJoin chatJoin = ChatJoin.builder()
+                .id(1L)
+                .chatRoom(chatRoom)
+                .user(user)
+                .build();
+        chatJoinRepository.save(chatJoin);
+
+        ChatPromise chatPromise = ChatPromise.builder()
+                .id(1L)
+                .chatRoom(chatRoom)
+                .promiseDate(LocalDate.now())
+                .promiseTime(LocalTime.now())
+                .promiseEndTime(LocalDateTime.now().plusHours(3))
+                .promiseLocal("test")
+                .type(END)
+                .build();
+        chatPromiseRepository.save(chatPromise);
+
+        ChatPromiseVote chatPromiseVote = ChatPromiseVote.builder()
+                .id(1L)
+                .chatRoom(chatRoom)
+                .user(user)
+                .build();
+        chatPromiseVoteRepository.save(chatPromiseVote);
+
     }
 
     TokenDto getTokenDto() {
@@ -250,6 +301,8 @@ public class PostControllerTest {
         TokenDto tokenDto = getTokenDto();
 
         mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v1/post/sorted_by=desc(endDate)")
+                .param("page", "1")
+                .param("size", "5")
                 .header(HttpHeaders.AUTHORIZATION, tokenDto.getAccessToken())
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
@@ -279,6 +332,8 @@ public class PostControllerTest {
         TokenDto tokenDto = getTokenDto();
 
         mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v1/post/category/sorted_by=desc(createdDate)/{categoryId}", 1L)
+                .param("page", "1")
+                .param("size", "5")
                 .header(HttpHeaders.AUTHORIZATION, tokenDto.getAccessToken())
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
@@ -311,6 +366,8 @@ public class PostControllerTest {
         TokenDto tokenDto = getTokenDto();
 
         mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v1/post/category/sorted_by=desc(endDate)/{categoryId}", 1L)
+                .param("page", "1")
+                .param("size", "5")
                 .header(HttpHeaders.AUTHORIZATION, tokenDto.getAccessToken())
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
@@ -381,6 +438,8 @@ public class PostControllerTest {
 
     @Test
     @DisplayName("나누기 삭제")
+
+
     public void deletePost() throws Exception {
         TokenDto tokenDto = getTokenDto();
 
@@ -441,6 +500,8 @@ public class PostControllerTest {
         TokenDto tokenDto = getTokenDto();
 
         mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v1/post/user/sell")
+                .param("page", "1")
+                .param("size", "5")
                 .header(HttpHeaders.AUTHORIZATION, tokenDto.getAccessToken())
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
@@ -470,6 +531,8 @@ public class PostControllerTest {
         TokenDto tokenDto = getTokenDto();
 
         mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v1/post/user/buy")
+                .param("page", "1")
+                .param("size", "5")
                 .header(HttpHeaders.AUTHORIZATION, tokenDto.getAccessToken())
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
@@ -481,14 +544,14 @@ public class PostControllerTest {
                         headerWithName(HttpHeaders.AUTHORIZATION).description("Bearer Type의 AccessToken 값")
                 ),
                 relaxedResponseFields(
-                        fieldWithPath("data.content[].title").type("String").description("나누기의 제목"),
-                        fieldWithPath("data.content[].people").type(JsonFieldType.NUMBER).description("나누기의 모집인원수"),
-                        fieldWithPath("data.content[].cost").type(JsonFieldType.NUMBER).description("나누기의 비용"),
-                        fieldWithPath("data.content[].title").type("String").description("나누기의 제목값"),
-                        fieldWithPath("data.content[].bio").type("String").description("나누기의 설명글"),
-                        fieldWithPath("data.content[].local").type("String").description("나누기의 장소"),
-                        fieldWithPath("data.content[].createdDate").type("LocalDateTime").description("나누기의 생성날짜"),
-                        fieldWithPath("data.content[].imageUrl1").type("String").description("나누기의 이미지1")
+                        fieldWithPath("data.content[].title").type("String").description("나누기의 제목").optional(),
+                        fieldWithPath("data.content[].people").type(JsonFieldType.NUMBER).description("나누기의 모집인원수").optional(),
+                        fieldWithPath("data.content[].cost").type(JsonFieldType.NUMBER).description("나누기의 비용").optional(),
+                        fieldWithPath("data.content[].title").type("String").description("나누기의 제목값").optional(),
+                        fieldWithPath("data.content[].bio").type("String").description("나누기의 설명글").optional(),
+                        fieldWithPath("data.content[].local").type("String").description("나누기의 장소").optional(),
+                        fieldWithPath("data.content[].createdDate").type("LocalDateTime").description("나누기의 생성날짜").optional(),
+                        fieldWithPath("data.content[].imageUrl1").type("String").description("나누기의 이미지1").optional()
                 )
         ));
     }
@@ -514,7 +577,6 @@ public class PostControllerTest {
                 )
         ));
     }
-
 
     @Test
     @DisplayName("나누기 검색")

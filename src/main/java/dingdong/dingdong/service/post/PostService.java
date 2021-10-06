@@ -197,7 +197,7 @@ public class PostService {
     // 나누기 피드(post) 제거
     public void  deletePost(Long id){
         Post post = postRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(POST_NOT_FOUND));
-        postTagRepository.deleteByPost(post);
+        postTagRepository.deleteByPostId(post.getId());
 
         if(chatPromiseRepository.existsById(id)){
             chatPromiseRepository.deleteById(id);
@@ -226,7 +226,7 @@ public class PostService {
         String str = postRequestDto.getPostTag();
         String[] array = (str.substring(1)).split("#");
 
-        postTagRepository.deleteByPost(post);
+        postTagRepository.deleteByPostId(post.getId());
 
         for(int i = 0; i < array.length; i++) {
             Tag tag = new Tag();
