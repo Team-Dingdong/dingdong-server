@@ -1,6 +1,8 @@
 HELP.md
 *.yml
+*.log
 .gradle
+api-doc.html
 
 # image
 *.PNG

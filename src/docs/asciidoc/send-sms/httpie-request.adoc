@@ -1,8 +1,0 @@
-[source,bash]
-----
-$ echo '{
-  "to" : "01084071066"
-}' | http POST 'http://3.38.61.13:8080/api/v1/auth/send-sms' \
-    'Content-Type:application/json;charset=UTF-8' \
-    'Accept:application/json'
-----

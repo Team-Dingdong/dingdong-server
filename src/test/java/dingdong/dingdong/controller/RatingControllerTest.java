@@ -84,7 +84,7 @@ class RatingControllerTest {
     void setUp() {
         // user1 생성
         Long id1 = 1L;
-        String phone1 = "01011111111";
+        String phone1 = "01012345678";
         String authNumber = "123456";
         String requestId = "testRequestId";
         LocalDateTime requestTime = LocalDateTime.now();
@@ -98,8 +98,12 @@ class RatingControllerTest {
 
         authRepository.save(auth);
 
+        String nickname1 = "testNickname1";
+        String profileImageUrl1 = "testProfileImageUrl1";
         Profile profile1 = Profile.builder()
             .id(id1)
+            .nickname(nickname1)
+            .profileImageUrl(profileImageUrl1)
             .good(0L)
             .bad(0L)
             .build();
@@ -117,10 +121,14 @@ class RatingControllerTest {
 
         // user2 생성
         Long id2 = 2L;
-        String phone2 = "01022222222";
+        String phone2 = "02012345678";
 
+        String nickname2 = "testNickname2";
+        String profileImageUrl2 = "testProfileImageUrl2";
         Profile profile2 = Profile.builder()
             .id(id2)
+            .nickname(nickname2)
+            .profileImageUrl(profileImageUrl2)
             .good(0L)
             .bad(0L)
             .build();
@@ -153,8 +161,11 @@ class RatingControllerTest {
     void getRating() throws Exception {
         TokenDto tokenDto = getTokenDto();
 
+        String tokenType = "Bearer ";
+        String token = tokenType + tokenDto.getAccessToken();
+
         mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v1/rating")
-            .header(HttpHeaders.AUTHORIZATION, tokenDto.getAccessToken())
+            .header(HttpHeaders.AUTHORIZATION, token)
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON))
             .andDo(print()).andExpect(status().isOk()).andDo(print())
@@ -179,8 +190,11 @@ class RatingControllerTest {
     void testGetRating() throws Exception {
         TokenDto tokenDto = getTokenDto();
 
+        String tokenType = "Bearer ";
+        String token = tokenType + tokenDto.getAccessToken();
+
         mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v1/rating/{userId}", 2L)
-            .header(HttpHeaders.AUTHORIZATION, tokenDto.getAccessToken())
+            .header(HttpHeaders.AUTHORIZATION, token)
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON))
             .andDo(print()).andExpect(status().isOk()).andDo(print())
@@ -208,12 +222,15 @@ class RatingControllerTest {
     void createRating() throws Exception {
         TokenDto tokenDto = getTokenDto();
 
+        String tokenType = "Bearer ";
+        String token = tokenType + tokenDto.getAccessToken();
+
         RatingRequestDto ratingRequestDto = RatingRequestDto.builder()
             .type(RatingType.GOOD)
             .build();
 
         mockMvc.perform(RestDocumentationRequestBuilders.post("/api/v1/rating/{userId}", 2L)
-            .header(HttpHeaders.AUTHORIZATION, tokenDto.getAccessToken())
+            .header(HttpHeaders.AUTHORIZATION, token)
             .content(objectMapper.writeValueAsString(ratingRequestDto))
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON))
