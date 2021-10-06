@@ -33,6 +33,7 @@ import java.time.LocalTime;
 import java.util.List;
 import java.util.Map;
 
+import static dingdong.dingdong.domain.chat.MessageType.TALK;
 import static dingdong.dingdong.domain.chat.PromiseType.END;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
@@ -96,6 +97,9 @@ public class PostControllerTest {
 
     @Autowired
     ChatPromiseVoteRepository chatPromiseVoteRepository;
+
+    @Autowired
+    ChatMessageRepository chatMessageRepository;
 
     @Value("${test.server.http.scheme}")
     String scheme;
@@ -212,7 +216,7 @@ public class PostControllerTest {
                 .type(END)
                 .build();
         chatPromiseRepository.save(chatPromise);
-
+        
         ChatPromiseVote chatPromiseVote = ChatPromiseVote.builder()
                 .id(1L)
                 .chatRoom(chatRoom)
@@ -438,8 +442,6 @@ public class PostControllerTest {
 
     @Test
     @DisplayName("나누기 삭제")
-
-
     public void deletePost() throws Exception {
         TokenDto tokenDto = getTokenDto();
 

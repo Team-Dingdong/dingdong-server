@@ -2,10 +2,7 @@ package dingdong.dingdong.domain.chat;
 
 import dingdong.dingdong.domain.user.User;
 import dingdong.dingdong.dto.chat.RedisChatMessage;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -13,6 +10,7 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class ChatMessage {
