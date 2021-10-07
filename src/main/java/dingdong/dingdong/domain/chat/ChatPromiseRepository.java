@@ -12,6 +12,8 @@ public interface ChatPromiseRepository extends JpaRepository<ChatPromise, Long> 
 
     Optional<ChatPromise> findByChatRoomId(Long id);
     boolean existsByChatRoomId(Long id);
+
+    @Transactional
     void deleteById(Long id);
 
     @Modifying

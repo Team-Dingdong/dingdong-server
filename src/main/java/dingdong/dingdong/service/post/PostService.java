@@ -9,15 +9,20 @@ import dingdong.dingdong.dto.post.PostDetailResponseDto;
 import dingdong.dingdong.dto.post.PostGetResponseDto;
 import dingdong.dingdong.dto.post.PostRequestDto;
 import dingdong.dingdong.service.chat.ChatService;
+import dingdong.dingdong.service.s3.S3Uploader;
 import dingdong.dingdong.util.exception.ForbiddenException;
 import dingdong.dingdong.util.exception.ResourceNotFoundException;
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import static dingdong.dingdong.util.exception.ResultCode.*;
@@ -31,6 +36,7 @@ public class PostService {
     private final PostTagRepository postTagRepository;
     private final TagRepository tagRepository;
     private final CategoryRepository categoryRepository;
+    private final S3Uploader s3Uploader;
 
     private final ChatRoomRepository chatRoomRepository;
     private final ChatJoinRepository chatJoinRepository;
@@ -153,7 +159,7 @@ public class PostService {
 
     // 나누기 피드(post) 생성
     @Transactional
-    public Long createPost(User user, PostRequestDto postRequestDto) {
+    public Long createPost(User user, PostRequestDto postRequestDto) throws IOException {
         Post post = new Post();
         if(postRequestDto == null) {
             throw new ForbiddenException(POST_CREATE_FAIL);
@@ -162,15 +168,32 @@ public class PostService {
         // CategoryId
         Category category = categoryRepository.findById(postRequestDto.getCategoryId()).orElseThrow(() -> new ResourceNotFoundException(CATEGORY_NOT_FOUND));
 
-        post.setImageUrl1("https://dingdongbucket.s3.ap-northeast-2.amazonaws.com/static/default_post.png");
-        post.setImageUrl2("https://dingdongbucket.s3.ap-northeast-2.amazonaws.com/static/default_post.png");
-        post.setImageUrl3("https://dingdongbucket.s3.ap-northeast-2.amazonaws.com/static/default_post.png");
+        // ImageList to S3
+        if(postRequestDto.getPostImages() != null) {
+            List<String> paths = new ArrayList<>();
+
+            List<MultipartFile> files = postRequestDto.getPostImages();
+            for (MultipartFile file : files) {
+                paths.add(s3Uploader.upload(file, "static"));
+            }
+
+            if(paths.size() < 3){
+               while (paths.size() < 3){
+                   paths.add("https://dingdongbucket.s3.ap-northeast-2.amazonaws.com/static/default_post.png");
+               }
+            }
+            post.setImageUrl1(paths.get(0));
+            post.setImageUrl2(paths.get(1));
+            post.setImageUrl3(paths.get(2));
+        }
+
         post.setPost(category, postRequestDto);
         post.setUser(user);
 
         postRepository.save(post);
         postRepository.flush();
 
+        // Post PostTag 업로드
         String str = postRequestDto.getPostTag();
         String[] array = (str.substring(1)).split("#");
 
@@ -197,7 +220,7 @@ public class PostService {
     // 나누기 피드(post) 제거
     public void  deletePost(Long id){
         Post post = postRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(POST_NOT_FOUND));
-        postTagRepository.deleteByPost(post);
+        postTagRepository.deleteByPostId(post.getId());
 
         if(chatPromiseRepository.existsById(id)){
             chatPromiseRepository.deleteById(id);
@@ -212,21 +235,41 @@ public class PostService {
 
     // 나누기 피드(post) 수정
     @Transactional
-    public void updatePost(Long id, PostRequestDto postRequestDto){
+    public void updatePost(Long id, PostRequestDto postRequestDto) throws IOException {
         Post post = postRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(POST_NOT_FOUND));
 
         // CategoryId
         Category category = categoryRepository.findById(postRequestDto.getCategoryId()).orElseThrow(() -> new ResourceNotFoundException(CATEGORY_NOT_FOUND));
 
+        // ImageList to S3
+        if(postRequestDto.getPostImages() != null) {
+            List<String> paths = new ArrayList<>();
+
+            // 이미지를 AWS S3에 업로드
+            List<MultipartFile> files = postRequestDto.getPostImages();
+            for (MultipartFile file : files) {
+                paths.add(s3Uploader.upload(file, "static"));
+            }
+
+            if(paths.size() < 3){
+                while (paths.size() < 3){
+                    paths.add("https://dingdongbucket.s3.ap-northeast-2.amazonaws.com/static/default_post.png");
+                }
+            }
+            post.setImageUrl1(paths.get(0));
+            post.setImageUrl2(paths.get(1));
+            post.setImageUrl3(paths.get(2));
+        }
+
         post.setPost(category, postRequestDto);
         postRepository.save(post);
 
+        // 나누기 PostTag Update
         postRepository.flush();
-
         String str = postRequestDto.getPostTag();
         String[] array = (str.substring(1)).split("#");
 
-        postTagRepository.deleteByPost(post);
+        postTagRepository.deleteByPostId(post.getId());
 
         for(int i = 0; i < array.length; i++) {
             Tag tag = new Tag();

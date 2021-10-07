@@ -19,7 +19,7 @@ public class ChatPromiseVote {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "room_id")
     private ChatRoom chatRoom;
 

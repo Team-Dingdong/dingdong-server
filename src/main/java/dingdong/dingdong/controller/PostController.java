@@ -19,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.io.IOException;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -123,14 +124,14 @@ public class PostController {
 
     // 나누기 생성
     @PostMapping("")
-    public ResponseEntity<Result<Long>> createPost(@CurrentUser User user, @Valid @RequestBody PostRequestDto requestDto) {
+    public ResponseEntity<Result<Long>> createPost(@CurrentUser User user, @ModelAttribute PostRequestDto requestDto) throws IOException {
         Long postId = postService.createPost(user, requestDto);
         return Result.toResult(ResultCode.POST_CREATE_SUCCESS, postId);
     }
 
     // 나누기 수정
     @PatchMapping("/{id}")
-    public ResponseEntity<Result> updatePost(@Valid @RequestBody PostRequestDto request, @PathVariable Long id){
+    public ResponseEntity<Result> updatePost(@ModelAttribute PostRequestDto request, @PathVariable Long id) throws IOException{
         postService.updatePost(id, request);
         return Result.toResult(ResultCode.POST_UPDATE_SUCCESS);
     }
