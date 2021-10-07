@@ -25,7 +25,7 @@ public class Profile {
 
     private String nickname;
 
-    @Column(columnDefinition = "varchar(255) default 'https://dingdongbucket.s3.ap-northeast-2.amazonaws.com/static/default_profile.jpg'")
+    @ColumnDefault("varchar(255) default 'https://dingdongbucket.s3.ap-northeast-2.amazonaws.com/static/default_profile.jpg'")
     private String profileImageUrl;
 
     @ColumnDefault("0")
@@ -34,17 +34,13 @@ public class Profile {
     @ColumnDefault("0")
     private Long bad;
 
-    /**
-     * insert 되기전 (persist 되기전) 실행된다.
-     *
-     * null을 제외하고 insert 하기 위해 사용.
-     * 또는 @DynamicInsert를 사용하면 된다.
-     * */
     @PrePersist
     public void prePersist() {
         this.good = this.good == null ? 0 : this.good;
         this.bad = this.bad == null ? 0 : this.bad;
-        this.profileImageUrl = "https://dingdongbucket.s3.ap-northeast-2.amazonaws.com/static/default_profile.jpg";
+        this.profileImageUrl = this.profileImageUrl == null
+            ? "https://dingdongbucket.s3.ap-northeast-2.amazonaws.com/static/default_profile.jpg"
+            : this.profileImageUrl;
     }
 
     public Profile(User user) {
