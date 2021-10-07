@@ -1,27 +1,24 @@
 package dingdong.dingdong.service.s3;
 
-import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
-import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.Optional;
-
 @Slf4j
 @RequiredArgsConstructor
 @Component
 public class S3Uploader {
 
-    //private final static String TEMP_FILE_PATH = "src/main/resources/static/"; // local에서의 path
+//    private final static String TEMP_FILE_PATH = "src/main/resources/static/"; // local에서의 path
     private final static String TEMP_FILE_PATH = "/home/ec2-user/app/static"; // ec2 서버 path
     private final AmazonS3Client amazonS3Client;
 
