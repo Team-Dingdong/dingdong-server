@@ -101,8 +101,15 @@ public class PostController {
 
     // 유저가 생성한 나누기 피드들 불러오기 (마이페이지 판매내역 조회)
     @GetMapping("/user/sell")
-    public ResponseEntity<Result<Page<PostGetResponseDto>>> findPostByUserId(@CurrentUser User user, @PageableDefault(size = 5, direction = Sort.Direction.DESC) Pageable pageable){
-        Page<PostGetResponseDto> postPage = postService.findPostByUserId(user, pageable);
+    public ResponseEntity<Result<Page<PostGetResponseDto>>> findPostByUser(@CurrentUser User user, @PageableDefault(size = 5, direction = Sort.Direction.DESC) Pageable pageable){
+        Page<PostGetResponseDto> postPage = postService.findPostByUser(user, pageable);
+        return Result.toResult(ResultCode.POST_READ_SUCCESS, postPage);
+    }
+
+    // 특정 유저(본인 제외)가 생성한 나누기 피드들 불러오기
+    @GetMapping("/user/{id}")
+    public ResponseEntity<Result<Page<PostGetResponseDto>>> findPostByUserId(@PathVariable Long id, @PageableDefault(size = 5, direction = Sort.Direction.DESC) Pageable pageable){
+        Page<PostGetResponseDto> postPage = postService.findPostByUserId(id, pageable);
         return Result.toResult(ResultCode.POST_READ_SUCCESS, postPage);
     }
 
