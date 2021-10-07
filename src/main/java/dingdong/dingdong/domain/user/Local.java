@@ -21,6 +21,11 @@ public class Local {
     private Long id;
 
     @Column(nullable = false)
-    private String name;
+    private String city;
 
+    @Column(nullable = false)
+    private String district;
+
+    @Column(nullable = false)
+    private String dong;
 }

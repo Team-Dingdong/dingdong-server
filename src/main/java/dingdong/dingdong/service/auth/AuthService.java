@@ -10,6 +10,7 @@ import dingdong.dingdong.util.exception.DuplicateException;
 import dingdong.dingdong.util.exception.JwtAuthException;
 import dingdong.dingdong.util.exception.ResourceNotFoundException;
 import dingdong.dingdong.util.exception.ResultCode;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tomcat.util.codec.binary.Base64;
@@ -66,7 +67,7 @@ public class AuthService implements UserDetailsService {
     public UserDetails loadUserByUsername(String phone) throws UsernameNotFoundException {
         Auth auth = authRepository.findByPhone(phone);
         User user = userRepository.findByPhone(phone);
-        if(auth == null || user == null) {
+        if (auth == null || user == null) {
             throw new UsernameNotFoundException(phone);
         }
 
@@ -81,13 +82,15 @@ public class AuthService implements UserDetailsService {
 
         // 2. 검증 (사용자 비밀번호 체크) 이 이루어지는 부분
         //    authenticate 메서드가 실행이 될 때 loadUserByUsername 메서드가 실행됨
-        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+        Authentication authentication = authenticationManagerBuilder.getObject()
+            .authenticate(authenticationToken);
 
         // 3. 인증 정보를 기반으로 JWT 토큰 생성
         TokenDto tokenDto = tokenProvider.generateTokenDto(authentication);
 
         // 4. RefreshToken 저장
-        RefreshToken refreshToken = new RefreshToken(authentication.getName(), tokenDto.getRefreshToken());
+        RefreshToken refreshToken = new RefreshToken(authentication.getName(),
+            tokenDto.getRefreshToken());
 
         refreshTokenRepository.save(refreshToken);
 
@@ -117,11 +120,12 @@ public class AuthService implements UserDetailsService {
         }
 
         // 2. Access Token 에서 Member ID 가져오기
-        Authentication authentication = tokenProvider.getAuthentication(tokenRequestDto.getAccessToken());
+        Authentication authentication = tokenProvider
+            .getAuthentication(tokenRequestDto.getAccessToken());
 
         // 3. 저장소에서 Member ID 를 기반으로 Refresh Token 값 가져옴
         RefreshToken refreshToken = refreshTokenRepository.findByPhone(authentication.getName())
-                .orElseThrow(() -> new JwtAuthException(ResultCode.REFRESH_TOKEN_NOT_FOUND));
+            .orElseThrow(() -> new JwtAuthException(ResultCode.REFRESH_TOKEN_NOT_FOUND));
 
         // 4. Refresh Token 일치하는지 검사
         if (!refreshToken.getValue().equals(tokenRequestDto.getRefreshToken())) {
@@ -142,7 +146,7 @@ public class AuthService implements UserDetailsService {
     // 닉네임 중복 확인
     @Transactional
     public void checkNickname(String nickname) {
-        if(profileRepository.existsByNickname(nickname)) {
+        if (profileRepository.existsByNickname(nickname)) {
             throw new DuplicateException(ResultCode.NICKNAME_DUPLICATION);
         }
     }
@@ -151,17 +155,29 @@ public class AuthService implements UserDetailsService {
     @Transactional
     public void setNickname(User user, NicknameRequestDto nicknameRequestDto) {
         checkNickname(nicknameRequestDto.getNickname());
-        Profile profile = profileRepository.findById(user.getId()).orElseThrow(() -> new ResourceNotFoundException(ResultCode.PROFILE_NOT_FOUND));
+        Profile profile = profileRepository.findById(user.getId())
+            .orElseThrow(() -> new ResourceNotFoundException(ResultCode.PROFILE_NOT_FOUND));
         profile.setNickname(nicknameRequestDto.getNickname());
         profileRepository.save(profile);
+    }
+
+    // 동네 목록 조회
+    @Transactional
+    public List<LocalResponseDto> getLocalList(String city, String district) {
+        List<Local> localList = localRepository.findByCityAndDistrict(city, district);
+        List<LocalResponseDto> data = localList.stream().map(LocalResponseDto::from).collect(
+            Collectors.toList());
+        return data;
     }
 
     // 동네 인증
     @Transactional
     public void setLocal(User user, LocalRequestDto localRequestDto) {
-        Local local1 = localRepository.findByName(localRequestDto.getLocal1());
-        Local local2 = localRepository.findByName(localRequestDto.getLocal2());
-        if(local1 == null || local2 == null) {
+        Local local1 = localRepository.findById(localRequestDto.getLocal1())
+            .orElseThrow(() -> new ResourceNotFoundException(ResultCode.LOCAL_NOT_FOUND));
+        Local local2 = localRepository.findById(localRequestDto.getLocal2())
+            .orElseThrow(() -> new ResourceNotFoundException(ResultCode.LOCAL_NOT_FOUND));
+        if (local1 == null || local2 == null) {
             throw new ResourceNotFoundException(ResultCode.LOCAL_NOT_FOUND);
         }
         user.setLocal(local1, local2);
@@ -172,7 +188,8 @@ public class AuthService implements UserDetailsService {
     @Transactional
     public Map<AuthType, TokenDto> auth(AuthRequestDto authRequestDto) {
         LocalDateTime now = LocalDateTime.now();
-        LocalDateTime requestTime = authRepository.findRequestTimeByPhone(authRequestDto.getPhone()).orElseThrow(() -> new UsernameNotFoundException(authRequestDto.getPhone()));
+        LocalDateTime requestTime = authRepository.findRequestTimeByPhone(authRequestDto.getPhone())
+            .orElseThrow(() -> new UsernameNotFoundException(authRequestDto.getPhone()));
         log.info("now -> {}", now);
         log.info("requestTime -> {}", requestTime);
 
@@ -183,7 +200,7 @@ public class AuthService implements UserDetailsService {
 //            throw new JwtAuthException(ResultCode.AUTH_TIME_ERROR);
 //        }
 
-        if(userRepository.existsByPhone(authRequestDto.getPhone())) {
+        if (userRepository.existsByPhone(authRequestDto.getPhone())) {
             return Map.of(AuthType.LOGIN, login(authRequestDto));
         } else {
             return Map.of(AuthType.SIGNUP, signup(authRequestDto));
@@ -192,7 +209,8 @@ public class AuthService implements UserDetailsService {
 
     // 휴대폰 인증 번호 전송
     @Transactional
-    public MessageResponseDto sendSms(MessageRequestDto messageRequestDto) throws JsonProcessingException, UnsupportedEncodingException, NoSuchAlgorithmException, InvalidKeyException, URISyntaxException {
+    public MessageResponseDto sendSms(MessageRequestDto messageRequestDto)
+        throws JsonProcessingException, UnsupportedEncodingException, NoSuchAlgorithmException, InvalidKeyException, URISyntaxException {
         Long time = Timestamp.valueOf(LocalDateTime.now()).getTime();
         String random = makeRandom();
         String content = String.format("[띵-동] 인증번호 [%s] *타인에게 노출하지 마세요.", random);
@@ -203,7 +221,8 @@ public class AuthService implements UserDetailsService {
         messages.add(sendSmsMessage);
 
         // 전체 json에 대해 메시지를 만든다.
-        SendSmsRequestDto sendSmsRequestDto = new SendSmsRequestDto("SMS", "COMM", "82", applicationNaverSENS.getSendFrom(), "Default message", messages);
+        SendSmsRequestDto sendSmsRequestDto = new SendSmsRequestDto("SMS", "COMM", "82",
+            applicationNaverSENS.getSendFrom(), "Default message", messages);
 
         // 쌓아온 바디를 json 형태로 변환시켜준다.
         ObjectMapper objectMapper = new ObjectMapper();
@@ -227,16 +246,20 @@ public class AuthService implements UserDetailsService {
         // restTemplate로 post 요청을 보낸다. 성공하면 202 코드가 반환된다.
         RestTemplate restTemplate = new RestTemplate();
         restTemplate.setRequestFactory(new HttpComponentsClientHttpRequestFactory());
-        SendSmsResponseDto sendSmsResponseDto = restTemplate.postForObject(new URI("https://sens.apigw.ntruss.com/sms/v2/services/"+applicationNaverSENS.getServiceId()+"/messages"), body, SendSmsResponseDto.class);
+        SendSmsResponseDto sendSmsResponseDto = restTemplate.postForObject(new URI(
+            "https://sens.apigw.ntruss.com/sms/v2/services/" + applicationNaverSENS.getServiceId()
+                + "/messages"), body, SendSmsResponseDto.class);
         log.info(sendSmsResponseDto.getStatusCode());
 
-        if(sendSmsResponseDto.getStatusCode().equals("202")) {
-            if(authRepository.existsByPhone(messageRequestDto.getTo())) {
+        if (sendSmsResponseDto.getStatusCode().equals("202")) {
+            if (authRepository.existsByPhone(messageRequestDto.getTo())) {
                 Auth auth = authRepository.findByPhone(messageRequestDto.getTo());
-                auth.reauth(random, sendSmsResponseDto.getRequestId(), sendSmsResponseDto.getRequestTime(), false);
+                auth.reauth(random, sendSmsResponseDto.getRequestId(),
+                    sendSmsResponseDto.getRequestTime(), false);
                 authRepository.save(auth);
             } else {
-                Auth auth = new Auth(messageRequestDto.getTo(), random, sendSmsResponseDto.getRequestId(), sendSmsResponseDto.getRequestTime());
+                Auth auth = new Auth(messageRequestDto.getTo(), random,
+                    sendSmsResponseDto.getRequestId(), sendSmsResponseDto.getRequestTime());
                 authRepository.save(auth);
             }
         }
@@ -244,24 +267,25 @@ public class AuthService implements UserDetailsService {
         return MessageResponseDto.from(sendSmsResponseDto);
     }
 
-    public String makeSignature(Long time) throws UnsupportedEncodingException, NoSuchAlgorithmException, InvalidKeyException {
+    public String makeSignature(Long time)
+        throws UnsupportedEncodingException, NoSuchAlgorithmException, InvalidKeyException {
         String space = " ";
         String newLine = "\n";
         String method = "POST";
-        String url = "/sms/v2/services/"+applicationNaverSENS.getServiceId()+"/messages";
+        String url = "/sms/v2/services/" + applicationNaverSENS.getServiceId() + "/messages";
         String timestamp = time.toString();
         String accessKey = applicationNaverSENS.getAccessKey();
         String secretKey = applicationNaverSENS.getSecretKey();
 
         String message = new StringBuilder()
-                .append(method)
-                .append(space)
-                .append(url)
-                .append(newLine)
-                .append(timestamp)
-                .append(newLine)
-                .append(accessKey)
-                .toString();
+            .append(method)
+            .append(space)
+            .append(url)
+            .append(newLine)
+            .append(timestamp)
+            .append(newLine)
+            .append(accessKey)
+            .toString();
 
         SecretKeySpec signingKey = new SecretKeySpec(secretKey.getBytes("UTF-8"), "HmacSHA256");
         Mac mac = Mac.getInstance("HmacSHA256");
@@ -277,13 +301,13 @@ public class AuthService implements UserDetailsService {
         Random rand = new Random();
         String numStr = "";
 
-        for(int i=0; i<6; i++) {
+        for (int i = 0; i < 6; i++) {
 
             // 0~9까지 난수 생성
             String num = Integer.toString(rand.nextInt(10));
 
             // 중복된 값이 있는지 검사한다
-            if(!numStr.contains(num)) {
+            if (!numStr.contains(num)) {
                 // 중복된 값이 없으면 numStr에 append
                 numStr += num;
             } else {
@@ -296,7 +320,7 @@ public class AuthService implements UserDetailsService {
 
     // 회원 탈퇴
     @Transactional
-    public void unsubscribeUser(User user){
+    public void unsubscribeUser(User user) {
         user.setAuthority("ROLE_UNSUB_USER");
         userRepository.save(user);
     }

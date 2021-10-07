@@ -11,6 +11,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class LocalRequestDto {
 
-    private String local1;
-    private String local2;
+    private Long local1;
+    private Long local2;
 }
