@@ -240,6 +240,7 @@ public class PostControllerTest {
         return data.get(AuthType.LOGIN);
     }
 
+    /*
     @Test
     @DisplayName("나누기 생성")
     public void createPost() throws Exception{
@@ -270,7 +271,7 @@ public class PostControllerTest {
                 )
         ));
     }
-
+     */
     @Test
     @DisplayName("홈화면, 모든 나누기 불러오기(정렬방식: 최신순)")
     public void findPostsSortByCreatedDate() throws Exception {
@@ -443,6 +444,7 @@ public class PostControllerTest {
         ));
     }
 
+    /*
     @Test
     @DisplayName("나누기 삭제")
     public void deletePost() throws Exception {
@@ -498,7 +500,7 @@ public class PostControllerTest {
                 )
         ));
     }
-
+     */
     @Test
     @DisplayName("현재 유저가 올린 나누기 목록 보기(프로필 판매내역 보기 화면)")
     public void findPostByUserId() throws Exception{
@@ -560,7 +562,7 @@ public class PostControllerTest {
                 )
         ));
     }
-
+/*
     @Test
     @DisplayName("나누기 거래 확정")
     public void confirmed() throws Exception {
@@ -582,6 +584,8 @@ public class PostControllerTest {
                 )
         ));
     }
+    
+ */
 
     @Test
     @DisplayName("나누기 검색")
