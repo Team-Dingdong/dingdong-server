@@ -9,6 +9,7 @@ import dingdong.dingdong.dto.post.PostDetailResponseDto;
 import dingdong.dingdong.dto.post.PostGetResponseDto;
 import dingdong.dingdong.dto.post.PostRequestDto;
 import dingdong.dingdong.service.chat.ChatService;
+import dingdong.dingdong.service.s3.S3Uploader;
 import dingdong.dingdong.util.exception.ForbiddenException;
 import dingdong.dingdong.util.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +32,7 @@ public class PostService {
     private final PostTagRepository postTagRepository;
     private final TagRepository tagRepository;
     private final CategoryRepository categoryRepository;
+    private final S3Uploader s3Uploader;
 
     private final ChatRoomRepository chatRoomRepository;
     private final ChatJoinRepository chatJoinRepository;
@@ -162,6 +164,8 @@ public class PostService {
         // CategoryId
         Category category = categoryRepository.findById(postRequestDto.getCategoryId()).orElseThrow(() -> new ResourceNotFoundException(CATEGORY_NOT_FOUND));
 
+        // Image to S3
+
         post.setImageUrl1("https://dingdongbucket.s3.ap-northeast-2.amazonaws.com/static/default_post.png");
         post.setImageUrl2("https://dingdongbucket.s3.ap-northeast-2.amazonaws.com/static/default_post.png");
         post.setImageUrl3("https://dingdongbucket.s3.ap-northeast-2.amazonaws.com/static/default_post.png");
@@ -171,6 +175,7 @@ public class PostService {
         postRepository.save(post);
         postRepository.flush();
 
+        // PostTag
         String str = postRequestDto.getPostTag();
         String[] array = (str.substring(1)).split("#");
 
