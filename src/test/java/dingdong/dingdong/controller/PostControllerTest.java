@@ -503,7 +503,7 @@ public class PostControllerTest {
      */
     @Test
     @DisplayName("현재 유저가 올린 나누기 목록 보기(프로필 판매내역 보기 화면)")
-    public void findPostByUserId() throws Exception{
+    public void findPostByUser() throws Exception{
         TokenDto tokenDto = getTokenDto();
 
         mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v1/post/user/sell")
@@ -584,7 +584,7 @@ public class PostControllerTest {
                 )
         ));
     }
-    
+
  */
 
     @Test

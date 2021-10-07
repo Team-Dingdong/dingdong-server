@@ -5,6 +5,7 @@ import dingdong.dingdong.domain.chat.ChatPromiseRepository;
 import dingdong.dingdong.domain.chat.ChatRoomRepository;
 import dingdong.dingdong.domain.post.*;
 import dingdong.dingdong.domain.user.User;
+import dingdong.dingdong.domain.user.UserRepository;
 import dingdong.dingdong.dto.post.PostDetailResponseDto;
 import dingdong.dingdong.dto.post.PostGetResponseDto;
 import dingdong.dingdong.dto.post.PostRequestDto;
@@ -36,6 +37,7 @@ public class PostService {
     private final PostTagRepository postTagRepository;
     private final TagRepository tagRepository;
     private final CategoryRepository categoryRepository;
+    private final UserRepository userRepository;
     private final S3Uploader s3Uploader;
 
     private final ChatRoomRepository chatRoomRepository;
@@ -86,8 +88,19 @@ public class PostService {
 
     // 유저의 판매내역 리스트 (GET: 유저별로 출력되는 나누기 피드)
     @Transactional
-    public Page<PostGetResponseDto> findPostByUserId(User user, Pageable pageable){
+    public Page<PostGetResponseDto> findPostByUser(User user, Pageable pageable){
         Page<Post> posts = postRepository.findByUserId(user.getId(), pageable);
+
+        Page<PostGetResponseDto> data = posts.map(PostGetResponseDto::from);
+
+        return data;
+    }
+
+    // 특정 유저(본인 제외)가 생성한 나누기 피드들 불러오기
+    @Transactional
+    public Page<PostGetResponseDto> findPostByUserId(Long id, Pageable pageable){
+        User user = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(USER_NOT_FOUND));
+        Page<Post> posts = postRepository.findByUserId(id, pageable);
 
         Page<PostGetResponseDto> data = posts.map(PostGetResponseDto::from);
 
