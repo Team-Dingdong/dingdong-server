@@ -10,6 +10,8 @@ import static org.springframework.restdocs.operation.preprocess.Preprocessors.pr
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.relaxedResponseFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.requestParameters;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -249,14 +251,41 @@ class AuthControllerTest {
     }
 
     @Test
+    @DisplayName("동네 목록 조회 테스트")
+    void getLocalList() throws Exception {
+        TokenDto tokenDto = getTokenDto();
+
+        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v1/auth/local?city=서울특별시&district=성북구")
+            .header(HttpHeaders.AUTHORIZATION, tokenDto.getAccessToken())
+            .accept(MediaType.APPLICATION_JSON))
+            .andDo(print()).andExpect(status().isOk()).andDo(print())
+            .andDo(document("{class-name}/{method-name}",
+                preprocessRequest(modifyUris().scheme(scheme).host(host).port(port), prettyPrint()),
+                preprocessResponse(prettyPrint()),
+                requestHeaders(
+                    headerWithName(HttpHeaders.AUTHORIZATION)
+                        .description("Bearer Type의 AccessToken 값")
+                ),
+                requestParameters(
+                    parameterWithName("city").description("동네를 조회할 시, 도 이름"),
+                    parameterWithName("district").description("동네를 조회할 구, 군 이름")
+                ),
+                relaxedResponseFields(
+                    fieldWithPath("data.[].id").type(JsonFieldType.NUMBER).description("동네 고유 아이디"),
+                    fieldWithPath("data.[].name").type(JsonFieldType.STRING).description("동네 이름")
+                )
+            ));
+    }
+
+    @Test
     @DisplayName("동네 인증 테스트")
     void local() throws Exception {
         TokenDto tokenDto = getTokenDto();
         Local local1 = localRepository.findById(1L).get();
         Local local2 = localRepository.findById(2L).get();
         LocalRequestDto localRequestDto = LocalRequestDto.builder()
-            .local1(local1.getName())
-            .local2(local2.getName())
+            .local1(local1.getId())
+            .local2(local2.getId())
             .build();
 
         mockMvc.perform(RestDocumentationRequestBuilders.post("/api/v1/auth/local")
@@ -273,8 +302,8 @@ class AuthControllerTest {
                         .description("Bearer Type의 AccessToken 값")
                 ),
                 requestFields(
-                    fieldWithPath("local1").type(JsonFieldType.STRING).description("인증할 동네 이름1"),
-                    fieldWithPath("local2").type(JsonFieldType.STRING).description("인증할 동네 이름2")
+                    fieldWithPath("local1").type(JsonFieldType.NUMBER).description("인증할 동네 아이디1"),
+                    fieldWithPath("local2").type(JsonFieldType.NUMBER).description("인증할 동네 아이2")
                 )
             ));
     }

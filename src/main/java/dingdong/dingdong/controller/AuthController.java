@@ -3,21 +3,34 @@ package dingdong.dingdong.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import dingdong.dingdong.domain.user.CurrentUser;
 import dingdong.dingdong.domain.user.User;
-import dingdong.dingdong.dto.auth.*;
+import dingdong.dingdong.dto.auth.AuthRequestDto;
+import dingdong.dingdong.dto.auth.LocalRequestDto;
+import dingdong.dingdong.dto.auth.LocalResponseDto;
+import dingdong.dingdong.dto.auth.MessageRequestDto;
+import dingdong.dingdong.dto.auth.MessageResponseDto;
+import dingdong.dingdong.dto.auth.NicknameRequestDto;
+import dingdong.dingdong.dto.auth.TokenDto;
+import dingdong.dingdong.dto.auth.TokenRequestDto;
 import dingdong.dingdong.service.auth.AuthService;
 import dingdong.dingdong.service.auth.AuthType;
 import dingdong.dingdong.util.exception.Result;
 import dingdong.dingdong.util.exception.ResultCode;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
 import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.util.List;
 import java.util.Map;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -57,6 +70,13 @@ public class AuthController {
     public ResponseEntity<Result> nickname(@CurrentUser User user, @RequestBody NicknameRequestDto nicknameRequestDto) {
         authService.setNickname(user, nicknameRequestDto);
         return Result.toResult(ResultCode.NICKNAME_CREATE_SUCCESS);
+    }
+
+    // 동네 목록 조회
+    @GetMapping("/local")
+    public ResponseEntity<Result<List<LocalResponseDto>>> getLocalList(@CurrentUser User user, @RequestParam String city, @RequestParam String district) {
+        List<LocalResponseDto> data = authService.getLocalList(city, district);
+        return Result.toResult(ResultCode.LOCAL_READ_SUCCESS, data);
     }
 
     // 동네 인증

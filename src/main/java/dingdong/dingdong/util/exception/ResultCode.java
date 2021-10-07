@@ -1,10 +1,17 @@
 package dingdong.dingdong.util.exception;
 
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.CONFLICT;
+import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.http.HttpStatus.FORBIDDEN;
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static org.springframework.http.HttpStatus.OK;
+import static org.springframework.http.HttpStatus.UNAUTHORIZED;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
-
-import static org.springframework.http.HttpStatus.*;
 
 @Getter
 @AllArgsConstructor
@@ -16,6 +23,8 @@ public enum ResultCode {
     CHECK_EMAIL_SUCCESS(OK, "사용가능한 이메일입니다"),
     CHECK_NICKNAME_SUCCESS(OK, "사용가능한 닉네임입니다"),
     UNSUBSCRIBE_SUCCESS(OK, "탈퇴 처리 성공"),
+
+    LOCAL_READ_SUCCESS(OK, "동네 목록 조회 성공"),
 
     PROFILE_READ_SUCCESS(OK, "프로필 조회 성공"),
     PROFILE_UPDATE_SUCCESS(OK, "프로필 수정 성공"),
