@@ -29,7 +29,8 @@ public class ProfileService {
     // 프로필 조회
     @Transactional
     public ProfileResponseDto getProfile(Long id) {
-        Profile profile = profileRepository.findByUserId(id).orElseThrow(() -> new ResourceNotFoundException(ResultCode.PROFILE_NOT_FOUND));
+        Profile profile = profileRepository.findByUserId(id)
+            .orElseThrow(() -> new ResourceNotFoundException(ResultCode.PROFILE_NOT_FOUND));
 
         return ProfileResponseDto.from(profile);
     }
@@ -37,21 +38,23 @@ public class ProfileService {
     // 닉네임 중복 확인
     @Transactional
     public void checkNickname(String nickname) {
-        if(profileRepository.existsByNickname(nickname)) {
+        if (profileRepository.existsByNickname(nickname)) {
             throw new DuplicateException(ResultCode.NICKNAME_DUPLICATION);
         }
     }
 
     // 프로필 수정
     @Transactional
-    public void updateProfile(User user, ProfileUpdateRequestDto profileUpdateRequestDto) throws IOException {
-        Profile profile = profileRepository.findById(user.getId()).orElseThrow(() -> new ResourceNotFoundException(PROFILE_NOT_FOUND));
+    public void updateProfile(User user, ProfileUpdateRequestDto profileUpdateRequestDto)
+        throws IOException {
+        Profile profile = profileRepository.findById(user.getId())
+            .orElseThrow(() -> new ResourceNotFoundException(PROFILE_NOT_FOUND));
 
-        if(profileUpdateRequestDto.getProfileImage() != null) {
+        if (profileUpdateRequestDto.getProfileImage() != null) {
             String path = s3Uploader.upload(profileUpdateRequestDto.getProfileImage(), "static");
             profile.setProfileImageUrl(path);
         }
-        if(profileUpdateRequestDto.getNickname() != null) {
+        if (profileUpdateRequestDto.getNickname() != null) {
             checkNickname(profileUpdateRequestDto.getNickname());
             profile.setNickname(profileUpdateRequestDto.getNickname());
         }

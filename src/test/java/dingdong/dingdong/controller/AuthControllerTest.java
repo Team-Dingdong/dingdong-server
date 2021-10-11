@@ -255,9 +255,10 @@ class AuthControllerTest {
     void getLocalList() throws Exception {
         TokenDto tokenDto = getTokenDto();
 
-        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v1/auth/local?city=서울특별시&district=성북구")
-            .header(HttpHeaders.AUTHORIZATION, tokenDto.getAccessToken())
-            .accept(MediaType.APPLICATION_JSON))
+        mockMvc.perform(
+            RestDocumentationRequestBuilders.get("/api/v1/auth/local?city=서울특별시&district=성북구")
+                .header(HttpHeaders.AUTHORIZATION, tokenDto.getAccessToken())
+                .accept(MediaType.APPLICATION_JSON))
             .andDo(print()).andExpect(status().isOk()).andDo(print())
             .andDo(document("{class-name}/{method-name}",
                 preprocessRequest(modifyUris().scheme(scheme).host(host).port(port), prettyPrint()),

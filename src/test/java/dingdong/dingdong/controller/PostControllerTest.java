@@ -112,7 +112,7 @@ public class PostControllerTest {
     int port;
 
     @BeforeEach
-    public void setUp(){
+    public void setUp() {
         // user 설정
         Long id = 1L;
         String phone = "01012345678";
@@ -120,45 +120,45 @@ public class PostControllerTest {
         String requestId = "testRequestId";
         LocalDateTime requestTime = LocalDateTime.now();
         Auth auth = Auth.builder()
-                .id(id)
-                .phone(phone)
-                .authNumber(authNumber)
-                .requestId(requestId)
-                .requestTime(requestTime)
-                .build();
+            .id(id)
+            .phone(phone)
+            .authNumber(authNumber)
+            .requestId(requestId)
+            .requestTime(requestTime)
+            .build();
 
         authRepository.save(auth);
 
         //profile 설정
         Profile profile = Profile.builder()
-                .id(1L)
-                .good(0L)
-                .bad(0L)
-                .build();
+            .id(1L)
+            .good(0L)
+            .bad(0L)
+            .build();
 
         String authority = "ROLE_USER";
         User user = User.builder()
-                .id(id)
-                .phone(phone)
-                .profile(profile)
-                .authority(authority)
-                .build();
+            .id(id)
+            .phone(phone)
+            .profile(profile)
+            .authority(authority)
+            .build();
 
         profileRepository.save(profile);
         userRepository.save(user);
 
         String categoryName = "test";
         Category category = Category.builder()
-                .id(1L)
-                .name(categoryName)
-                .build();
+            .id(1L)
+            .name(categoryName)
+            .build();
         categoryRepository.save(category);
 
         String tagName = "test";
         Tag tag = Tag.builder()
-                .id(1L)
-                .name(tagName)
-                .build();
+            .id(1L)
+            .name(tagName)
+            .build();
         tagRepository.save(tag);
 
         String title = "test";
@@ -172,59 +172,59 @@ public class PostControllerTest {
         String imageUrl3 = "test_url3";
 
         Post post = Post.builder()
-                .id(1L)
-                .title(title)
-                .cost(cost)
-                .people(people)
-                .gatheredPeople(gatheredPeople)
-                .bio(bio)
-                .local(local)
-                .imageUrl1(imageUrl1)
-                .imageUrl2(imageUrl2)
-                .imageUrl3(imageUrl3)
-                .user(user)
-                .category(category)
-                .done(false)
-                .build();
+            .id(1L)
+            .title(title)
+            .cost(cost)
+            .people(people)
+            .gatheredPeople(gatheredPeople)
+            .bio(bio)
+            .local(local)
+            .imageUrl1(imageUrl1)
+            .imageUrl2(imageUrl2)
+            .imageUrl3(imageUrl3)
+            .user(user)
+            .category(category)
+            .done(false)
+            .build();
         postRepository.save(post);
 
         PostTag postTag = PostTag.builder()
-                .post(post)
-                .tag(tag)
-                .build();
+            .post(post)
+            .tag(tag)
+            .build();
         postTagRepository.save(postTag);
 
         ChatRoom chatRoom = ChatRoom.builder()
-                .id(1L)
-                .post(post)
-                .endDate(LocalDateTime.now())
-                .lastChatTime(LocalDateTime.now())
-                .build();
+            .id(1L)
+            .post(post)
+            .endDate(LocalDateTime.now())
+            .lastChatTime(LocalDateTime.now())
+            .build();
         chatRoomRepository.save(chatRoom);
 
         ChatJoin chatJoin = ChatJoin.builder()
-                .id(1L)
-                .chatRoom(chatRoom)
-                .user(user)
-                .build();
+            .id(1L)
+            .chatRoom(chatRoom)
+            .user(user)
+            .build();
         chatJoinRepository.save(chatJoin);
 
         ChatPromise chatPromise = ChatPromise.builder()
-                .id(1L)
-                .chatRoom(chatRoom)
-                .promiseDate(LocalDate.now())
-                .promiseTime(LocalTime.now())
-                .promiseEndTime(LocalDateTime.now().plusHours(3))
-                .promiseLocal("test")
-                .type(END)
-                .build();
+            .id(1L)
+            .chatRoom(chatRoom)
+            .promiseDate(LocalDate.now())
+            .promiseTime(LocalTime.now())
+            .promiseEndTime(LocalDateTime.now().plusHours(3))
+            .promiseLocal("test")
+            .type(END)
+            .build();
         chatPromiseRepository.save(chatPromise);
-        
+
         ChatPromiseVote chatPromiseVote = ChatPromiseVote.builder()
-                .id(1L)
-                .chatRoom(chatRoom)
-                .user(user)
-                .build();
+            .id(1L)
+            .chatRoom(chatRoom)
+            .user(user)
+            .build();
         chatPromiseVoteRepository.save(chatPromiseVote);
 
     }
@@ -232,9 +232,9 @@ public class PostControllerTest {
     TokenDto getTokenDto() {
         Auth auth = authRepository.findById(1L).get();
         AuthRequestDto authRequestDto = AuthRequestDto.builder()
-                .phone(auth.getPhone())
-                .authNumber(auth.getAuthNumber())
-                .build();
+            .phone(auth.getPhone())
+            .authNumber(auth.getAuthNumber())
+            .build();
         Map<AuthType, TokenDto> data = authService.auth(authRequestDto);
 
         return data.get(AuthType.LOGIN);
@@ -277,170 +277,190 @@ public class PostControllerTest {
     public void findPostsSortByCreatedDate() throws Exception {
         TokenDto tokenDto = getTokenDto();
 
-        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v1/post/sorted_by=desc(createdDate)")
+        mockMvc.perform(
+            RestDocumentationRequestBuilders.get("/api/v1/post/sorted_by=desc(createdDate)")
                 .param("page", "1")
                 .param("size", "5")
                 .header(HttpHeaders.AUTHORIZATION, tokenDto.getAccessToken())
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
-                .andDo(print()).andExpect(status().is2xxSuccessful()).andDo(print())
-                .andDo(print()).andDo(document("{class-name}/{method-name}",
-                preprocessRequest(modifyUris().scheme(scheme).host(host).port(port), prettyPrint()),
-                preprocessResponse(prettyPrint()),
-                requestHeaders(
-                        headerWithName(HttpHeaders.AUTHORIZATION).description("Bearer Type의 AccessToken 값")
-                ),
-                relaxedResponseFields(
-                        fieldWithPath("data.content[].title").type("String").description("나누기의 제목"),
-                        fieldWithPath("data.content[].people").type(JsonFieldType.NUMBER).description("나누기의 모집인원수"),
-                        fieldWithPath("data.content[].cost").type(JsonFieldType.NUMBER).description("나누기의 비용"),
-                        fieldWithPath("data.content[].title").type("String").description("나누기의 제목값"),
-                        fieldWithPath("data.content[].bio").type("String").description("나누기의 설명글"),
-                        fieldWithPath("data.content[].local").type("String").description("나누기의 장소"),
-                        fieldWithPath("data.content[].createdDate").type("LocalDateTime").description("나누기의 생성날짜"),
-                        fieldWithPath("data.content[].imageUrl1").type("String").description("나누기의 이미지1")
-                )
+            .andDo(print()).andExpect(status().is2xxSuccessful()).andDo(print())
+            .andDo(print()).andDo(document("{class-name}/{method-name}",
+            preprocessRequest(modifyUris().scheme(scheme).host(host).port(port), prettyPrint()),
+            preprocessResponse(prettyPrint()),
+            requestHeaders(
+                headerWithName(HttpHeaders.AUTHORIZATION).description("Bearer Type의 AccessToken 값")
+            ),
+            relaxedResponseFields(
+                fieldWithPath("data.content[].title").type("String").description("나누기의 제목"),
+                fieldWithPath("data.content[].people").type(JsonFieldType.NUMBER)
+                    .description("나누기의 모집인원수"),
+                fieldWithPath("data.content[].cost").type(JsonFieldType.NUMBER)
+                    .description("나누기의 비용"),
+                fieldWithPath("data.content[].title").type("String").description("나누기의 제목값"),
+                fieldWithPath("data.content[].bio").type("String").description("나누기의 설명글"),
+                fieldWithPath("data.content[].local").type("String").description("나누기의 장소"),
+                fieldWithPath("data.content[].createdDate").type("LocalDateTime")
+                    .description("나누기의 생성날짜"),
+                fieldWithPath("data.content[].imageUrl1").type("String").description("나누기의 이미지1")
+            )
         ));
     }
 
     @Test
     @DisplayName("홈화면, 모든 나누기 불러오기(정렬방식: 마감임박순)")
-    public void findPostsSortByEndDate() throws Exception{
+    public void findPostsSortByEndDate() throws Exception {
         TokenDto tokenDto = getTokenDto();
 
         mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v1/post/sorted_by=desc(endDate)")
-                .param("page", "1")
-                .param("size", "5")
-                .header(HttpHeaders.AUTHORIZATION, tokenDto.getAccessToken())
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON))
-                .andDo(print()).andExpect(status().isOk()).andDo(print())
-                .andDo(print()).andDo(document("{class-name}/{method-name}",
-                preprocessRequest(modifyUris().scheme(scheme).host(host).port(port), prettyPrint()),
-                preprocessResponse(prettyPrint()),
-                requestHeaders(
-                        headerWithName(HttpHeaders.AUTHORIZATION).description("Bearer Type의 AccessToken 값")
-                ),
-                relaxedResponseFields(
-                        fieldWithPath("data.content[].title").type("String").description("나누기의 제목"),
-                        fieldWithPath("data.content[].people").type(JsonFieldType.NUMBER).description("나누기의 모집인원수"),
-                        fieldWithPath("data.content[].cost").type(JsonFieldType.NUMBER).description("나누기의 비용"),
-                        fieldWithPath("data.content[].title").type("String").description("나누기의 제목값"),
-                        fieldWithPath("data.content[].bio").type("String").description("나누기의 설명글"),
-                        fieldWithPath("data.content[].local").type("String").description("나누기의 장소"),
-                        fieldWithPath("data.content[].createdDate").type("LocalDateTime").description("나누기의 생성날짜"),
-                        fieldWithPath("data.content[].imageUrl1").type("String").description("나누기의 이미지1")
-                )
+            .param("page", "1")
+            .param("size", "5")
+            .header(HttpHeaders.AUTHORIZATION, tokenDto.getAccessToken())
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON))
+            .andDo(print()).andExpect(status().isOk()).andDo(print())
+            .andDo(print()).andDo(document("{class-name}/{method-name}",
+            preprocessRequest(modifyUris().scheme(scheme).host(host).port(port), prettyPrint()),
+            preprocessResponse(prettyPrint()),
+            requestHeaders(
+                headerWithName(HttpHeaders.AUTHORIZATION).description("Bearer Type의 AccessToken 값")
+            ),
+            relaxedResponseFields(
+                fieldWithPath("data.content[].title").type("String").description("나누기의 제목"),
+                fieldWithPath("data.content[].people").type(JsonFieldType.NUMBER)
+                    .description("나누기의 모집인원수"),
+                fieldWithPath("data.content[].cost").type(JsonFieldType.NUMBER)
+                    .description("나누기의 비용"),
+                fieldWithPath("data.content[].title").type("String").description("나누기의 제목값"),
+                fieldWithPath("data.content[].bio").type("String").description("나누기의 설명글"),
+                fieldWithPath("data.content[].local").type("String").description("나누기의 장소"),
+                fieldWithPath("data.content[].createdDate").type("LocalDateTime")
+                    .description("나누기의 생성날짜"),
+                fieldWithPath("data.content[].imageUrl1").type("String").description("나누기의 이미지1")
+            )
         ));
     }
 
     @Test
     @DisplayName("카테고리별 나누기 피드들 불러오기(카테고리 화면)(정렬 방식: 최신순)")
-    public void findPostByCategoryIdSortByCreatedDate() throws Exception{
+    public void findPostByCategoryIdSortByCreatedDate() throws Exception {
         TokenDto tokenDto = getTokenDto();
 
-        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v1/post/category/sorted_by=desc(createdDate)/{categoryId}", 1L)
-                .param("page", "1")
-                .param("size", "5")
-                .header(HttpHeaders.AUTHORIZATION, tokenDto.getAccessToken())
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON))
-                .andDo(print()).andExpect(status().isOk()).andDo(print())
-                .andDo(print()).andDo(document("{class-name}/{method-name}",
-                preprocessRequest(modifyUris().scheme(scheme).host(host).port(port), prettyPrint()),
-                preprocessResponse(prettyPrint()),
-                requestHeaders(
-                        headerWithName(HttpHeaders.AUTHORIZATION).description("Bearer Type의 AccessToken 값")
-                ),
-                pathParameters(
-                        parameterWithName("categoryId").description("조회하고자 하는 카테고리의 고유값")
-                ),
-                relaxedResponseFields(
-                        fieldWithPath("data.content[].title").type("String").description("나누기의 제목"),
-                        fieldWithPath("data.content[].people").type(JsonFieldType.NUMBER).description("나누기의 모집인원수"),
-                        fieldWithPath("data.content[].cost").type(JsonFieldType.NUMBER).description("나누기의 비용"),
-                        fieldWithPath("data.content[].title").type("String").description("나누기의 제목값"),
-                        fieldWithPath("data.content[].bio").type("String").description("나누기의 설명글"),
-                        fieldWithPath("data.content[].local").type("String").description("나누기의 장소"),
-                        fieldWithPath("data.content[].createdDate").type("LocalDateTime").description("나누기의 생성날짜"),
-                        fieldWithPath("data.content[].imageUrl1").type("String").description("나누기의 이미지1")
-                )
+        mockMvc.perform(RestDocumentationRequestBuilders
+            .get("/api/v1/post/category/sorted_by=desc(createdDate)/{categoryId}", 1L)
+            .param("page", "1")
+            .param("size", "5")
+            .header(HttpHeaders.AUTHORIZATION, tokenDto.getAccessToken())
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON))
+            .andDo(print()).andExpect(status().isOk()).andDo(print())
+            .andDo(print()).andDo(document("{class-name}/{method-name}",
+            preprocessRequest(modifyUris().scheme(scheme).host(host).port(port), prettyPrint()),
+            preprocessResponse(prettyPrint()),
+            requestHeaders(
+                headerWithName(HttpHeaders.AUTHORIZATION).description("Bearer Type의 AccessToken 값")
+            ),
+            pathParameters(
+                parameterWithName("categoryId").description("조회하고자 하는 카테고리의 고유값")
+            ),
+            relaxedResponseFields(
+                fieldWithPath("data.content[].title").type("String").description("나누기의 제목"),
+                fieldWithPath("data.content[].people").type(JsonFieldType.NUMBER)
+                    .description("나누기의 모집인원수"),
+                fieldWithPath("data.content[].cost").type(JsonFieldType.NUMBER)
+                    .description("나누기의 비용"),
+                fieldWithPath("data.content[].title").type("String").description("나누기의 제목값"),
+                fieldWithPath("data.content[].bio").type("String").description("나누기의 설명글"),
+                fieldWithPath("data.content[].local").type("String").description("나누기의 장소"),
+                fieldWithPath("data.content[].createdDate").type("LocalDateTime")
+                    .description("나누기의 생성날짜"),
+                fieldWithPath("data.content[].imageUrl1").type("String").description("나누기의 이미지1")
+            )
         ));
     }
 
     @Test
     @DisplayName("카테고리별 나누기 피드들 불러오기(카테고리 화면)(정렬 방식: 마감임박순)")
-    public void findPostByCategoryIdSortByEndDate() throws Exception{
+    public void findPostByCategoryIdSortByEndDate() throws Exception {
         TokenDto tokenDto = getTokenDto();
 
-        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v1/post/category/sorted_by=desc(endDate)/{categoryId}", 1L)
-                .param("page", "1")
-                .param("size", "5")
-                .header(HttpHeaders.AUTHORIZATION, tokenDto.getAccessToken())
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON))
-                .andDo(print()).andExpect(status().isOk()).andDo(print())
-                .andDo(print()).andDo(document("{class-name}/{method-name}",
-                preprocessRequest(modifyUris().scheme(scheme).host(host).port(port), prettyPrint()),
-                preprocessResponse(prettyPrint()),
-                requestHeaders(
-                        headerWithName(HttpHeaders.AUTHORIZATION).description("Bearer Type의 AccessToken 값")
-                ),
-                pathParameters(
-                        parameterWithName("categoryId").description("조회하고자 하는 카테고리의 고유값")
-                ),
-                relaxedResponseFields(
-                        fieldWithPath("data.content[].title").type("String").description("나누기의 제목"),
-                        fieldWithPath("data.content[].people").type(JsonFieldType.NUMBER).description("나누기의 모집인원수"),
-                        fieldWithPath("data.content[].cost").type(JsonFieldType.NUMBER).description("나누기의 비용"),
-                        fieldWithPath("data.content[].title").type("String").description("나누기의 제목값"),
-                        fieldWithPath("data.content[].bio").type("String").description("나누기의 설명글"),
-                        fieldWithPath("data.content[].local").type("String").description("나누기의 장소"),
-                        fieldWithPath("data.content[].createdDate").type("LocalDateTime").description("나누기의 생성날짜"),
-                        fieldWithPath("data.content[].imageUrl1").type("String").description("나누기의 이미지1")
-                )
+        mockMvc.perform(RestDocumentationRequestBuilders
+            .get("/api/v1/post/category/sorted_by=desc(endDate)/{categoryId}", 1L)
+            .param("page", "1")
+            .param("size", "5")
+            .header(HttpHeaders.AUTHORIZATION, tokenDto.getAccessToken())
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON))
+            .andDo(print()).andExpect(status().isOk()).andDo(print())
+            .andDo(print()).andDo(document("{class-name}/{method-name}",
+            preprocessRequest(modifyUris().scheme(scheme).host(host).port(port), prettyPrint()),
+            preprocessResponse(prettyPrint()),
+            requestHeaders(
+                headerWithName(HttpHeaders.AUTHORIZATION).description("Bearer Type의 AccessToken 값")
+            ),
+            pathParameters(
+                parameterWithName("categoryId").description("조회하고자 하는 카테고리의 고유값")
+            ),
+            relaxedResponseFields(
+                fieldWithPath("data.content[].title").type("String").description("나누기의 제목"),
+                fieldWithPath("data.content[].people").type(JsonFieldType.NUMBER)
+                    .description("나누기의 모집인원수"),
+                fieldWithPath("data.content[].cost").type(JsonFieldType.NUMBER)
+                    .description("나누기의 비용"),
+                fieldWithPath("data.content[].title").type("String").description("나누기의 제목값"),
+                fieldWithPath("data.content[].bio").type("String").description("나누기의 설명글"),
+                fieldWithPath("data.content[].local").type("String").description("나누기의 장소"),
+                fieldWithPath("data.content[].createdDate").type("LocalDateTime")
+                    .description("나누기의 생성날짜"),
+                fieldWithPath("data.content[].imageUrl1").type("String").description("나누기의 이미지1")
+            )
         ));
     }
 
 
     @Test
     @DisplayName("나누기 상세 보기")
-    public void findPostById() throws Exception{
+    public void findPostById() throws Exception {
         TokenDto tokenDto = getTokenDto();
 
         mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v1/post/{id}", 1L)
-                .header(HttpHeaders.AUTHORIZATION, tokenDto.getAccessToken())
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON))
-                .andDo(print()).andExpect(status().is2xxSuccessful()).andDo(print())
-                .andDo(print()).andDo(document("{class-name}/{method-name}",
-                preprocessRequest(modifyUris().scheme(scheme).host(host).port(port), prettyPrint()),
-                preprocessResponse(prettyPrint()),
-                requestHeaders(
-                        headerWithName(HttpHeaders.AUTHORIZATION).description("Bearer Type의 AccessToken 값")
-                ),
-                pathParameters(
-                        parameterWithName("id").description("조회하고자 하는 나누기의 고유값")
-                ),
-                relaxedResponseFields(
-                        fieldWithPath("data.category").type("String").description("나누기가 속한 카테고리"),
-                        fieldWithPath("data.userId").type(JsonFieldType.NUMBER).description("나누기를 생성한 유저 Id"),
-                        fieldWithPath("data.nickname").type("String").description("나누기를 생성한 유저의 닉네임"),
-                        fieldWithPath("data.profileImageUrl").type("String").description("나누기를 생성한 유저의 프로필 이미지 Url"),
-                        fieldWithPath("data.title").type("String").description("나누기의 제목"),
-                        fieldWithPath("data.good").type(JsonFieldType.NUMBER).description("나누기 생성한 유저의 좋아요 평가 수"),
-                        fieldWithPath("data.bad").type(JsonFieldType.NUMBER).description("나누기 생성한 유저의 싫어요 평가 수"),
-                        fieldWithPath("data.cost").type(JsonFieldType.NUMBER).description("나누기의 비용"),
-                        fieldWithPath("data.bio").type("String").description("나누기의 설명글"),
-                        fieldWithPath("data.local").type("String").description("나누기의 장소"),
-                        fieldWithPath("data.createdDate").type("LocalDateTime").description("나누기의 생성날짜"),
-                        fieldWithPath("data.modifiedDate").type("LocalDateTime").description("나누기의 수정날짜"),
-                        fieldWithPath("data.people").type(JsonFieldType.NUMBER).description("나누기의 모집인원수"),
-                        fieldWithPath("data.gatheredPeople").type(JsonFieldType.NUMBER).description("나누기의 현재 모집된 인원수"),
-                        fieldWithPath("data.imageUrl1").type("String").description("나누기의 이미지1"),
-                        fieldWithPath("data.imageUrl2").type("String").description("나누기의 이미지2"),
-                        fieldWithPath("data.imageUrl3").type("String").description("나누기의 이미지3")
-                )
+            .header(HttpHeaders.AUTHORIZATION, tokenDto.getAccessToken())
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON))
+            .andDo(print()).andExpect(status().is2xxSuccessful()).andDo(print())
+            .andDo(print()).andDo(document("{class-name}/{method-name}",
+            preprocessRequest(modifyUris().scheme(scheme).host(host).port(port), prettyPrint()),
+            preprocessResponse(prettyPrint()),
+            requestHeaders(
+                headerWithName(HttpHeaders.AUTHORIZATION).description("Bearer Type의 AccessToken 값")
+            ),
+            pathParameters(
+                parameterWithName("id").description("조회하고자 하는 나누기의 고유값")
+            ),
+            relaxedResponseFields(
+                fieldWithPath("data.category").type("String").description("나누기가 속한 카테고리"),
+                fieldWithPath("data.userId").type(JsonFieldType.NUMBER)
+                    .description("나누기를 생성한 유저 Id"),
+                fieldWithPath("data.nickname").type("String").description("나누기를 생성한 유저의 닉네임"),
+                fieldWithPath("data.profileImageUrl").type("String")
+                    .description("나누기를 생성한 유저의 프로필 이미지 Url"),
+                fieldWithPath("data.title").type("String").description("나누기의 제목"),
+                fieldWithPath("data.good").type(JsonFieldType.NUMBER)
+                    .description("나누기 생성한 유저의 좋아요 평가 수"),
+                fieldWithPath("data.bad").type(JsonFieldType.NUMBER)
+                    .description("나누기 생성한 유저의 싫어요 평가 수"),
+                fieldWithPath("data.cost").type(JsonFieldType.NUMBER).description("나누기의 비용"),
+                fieldWithPath("data.bio").type("String").description("나누기의 설명글"),
+                fieldWithPath("data.local").type("String").description("나누기의 장소"),
+                fieldWithPath("data.createdDate").type("LocalDateTime").description("나누기의 생성날짜"),
+                fieldWithPath("data.modifiedDate").type("LocalDateTime").description("나누기의 수정날짜"),
+                fieldWithPath("data.people").type(JsonFieldType.NUMBER).description("나누기의 모집인원수"),
+                fieldWithPath("data.gatheredPeople").type(JsonFieldType.NUMBER)
+                    .description("나누기의 현재 모집된 인원수"),
+                fieldWithPath("data.imageUrl1").type("String").description("나누기의 이미지1"),
+                fieldWithPath("data.imageUrl2").type("String").description("나누기의 이미지2"),
+                fieldWithPath("data.imageUrl3").type("String").description("나누기의 이미지3")
+            )
         ));
     }
 
@@ -503,63 +523,74 @@ public class PostControllerTest {
      */
     @Test
     @DisplayName("현재 유저가 올린 나누기 목록 보기(프로필 판매내역 보기 화면)")
-    public void findPostByUser() throws Exception{
+    public void findPostByUser() throws Exception {
         TokenDto tokenDto = getTokenDto();
 
         mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v1/post/user/sell")
-                .param("page", "1")
-                .param("size", "5")
-                .header(HttpHeaders.AUTHORIZATION, tokenDto.getAccessToken())
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON))
-                .andDo(print()).andExpect(status().isOk()).andDo(print())
-                .andDo(print()).andDo(document("{class-name}/{method-name}",
-                preprocessRequest(modifyUris().scheme(scheme).host(host).port(port), prettyPrint()),
-                preprocessResponse(prettyPrint()),
-                requestHeaders(
-                        headerWithName(HttpHeaders.AUTHORIZATION).description("Bearer Type의 AccessToken 값")
-                ),
-                relaxedResponseFields(
-                        fieldWithPath("data.content[].title").type("String").description("나누기의 제목"),
-                        fieldWithPath("data.content[].people").type(JsonFieldType.NUMBER).description("나누기의 모집인원수"),
-                        fieldWithPath("data.content[].cost").type(JsonFieldType.NUMBER).description("나누기의 비용"),
-                        fieldWithPath("data.content[].title").type("String").description("나누기의 제목값"),
-                        fieldWithPath("data.content[].bio").type("String").description("나누기의 설명글"),
-                        fieldWithPath("data.content[].local").type("String").description("나누기의 장소"),
-                        fieldWithPath("data.content[].createdDate").type("LocalDateTime").description("나누기의 생성날짜"),
-                        fieldWithPath("data.content[].imageUrl1").type("String").description("나누기의 이미지1")
-                )
+            .param("page", "1")
+            .param("size", "5")
+            .header(HttpHeaders.AUTHORIZATION, tokenDto.getAccessToken())
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON))
+            .andDo(print()).andExpect(status().isOk()).andDo(print())
+            .andDo(print()).andDo(document("{class-name}/{method-name}",
+            preprocessRequest(modifyUris().scheme(scheme).host(host).port(port), prettyPrint()),
+            preprocessResponse(prettyPrint()),
+            requestHeaders(
+                headerWithName(HttpHeaders.AUTHORIZATION).description("Bearer Type의 AccessToken 값")
+            ),
+            relaxedResponseFields(
+                fieldWithPath("data.content[].title").type("String").description("나누기의 제목"),
+                fieldWithPath("data.content[].people").type(JsonFieldType.NUMBER)
+                    .description("나누기의 모집인원수"),
+                fieldWithPath("data.content[].cost").type(JsonFieldType.NUMBER)
+                    .description("나누기의 비용"),
+                fieldWithPath("data.content[].title").type("String").description("나누기의 제목값"),
+                fieldWithPath("data.content[].bio").type("String").description("나누기의 설명글"),
+                fieldWithPath("data.content[].local").type("String").description("나누기의 장소"),
+                fieldWithPath("data.content[].createdDate").type("LocalDateTime")
+                    .description("나누기의 생성날짜"),
+                fieldWithPath("data.content[].imageUrl1").type("String").description("나누기의 이미지1")
+            )
         ));
     }
 
     @Test
     @DisplayName("현재 유저가 올린 나누기 목록 보기(프로필 구매내역 보기 화면)")
-    public void findPostByUserIdOnChatJoin() throws Exception{
+    public void findPostByUserIdOnChatJoin() throws Exception {
         TokenDto tokenDto = getTokenDto();
 
         mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v1/post/user/buy")
-                .param("page", "1")
-                .param("size", "5")
-                .header(HttpHeaders.AUTHORIZATION, tokenDto.getAccessToken())
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON))
-                .andDo(print()).andExpect(status().isOk()).andDo(print())
-                .andDo(print()).andDo(document("{class-name}/{method-name}",
-                preprocessRequest(modifyUris().scheme(scheme).host(host).port(port), prettyPrint()),
-                preprocessResponse(prettyPrint()),
-                requestHeaders(
-                        headerWithName(HttpHeaders.AUTHORIZATION).description("Bearer Type의 AccessToken 값")
-                ),
-                relaxedResponseFields(
-                        fieldWithPath("data.content[].title").type("String").description("나누기의 제목").optional(),
-                        fieldWithPath("data.content[].people").type(JsonFieldType.NUMBER).description("나누기의 모집인원수").optional(),
-                        fieldWithPath("data.content[].cost").type(JsonFieldType.NUMBER).description("나누기의 비용").optional(),
-                        fieldWithPath("data.content[].title").type("String").description("나누기의 제목값").optional(),
-                        fieldWithPath("data.content[].bio").type("String").description("나누기의 설명글").optional(),
-                        fieldWithPath("data.content[].local").type("String").description("나누기의 장소").optional(),
-                        fieldWithPath("data.content[].createdDate").type("LocalDateTime").description("나누기의 생성날짜").optional(),
-                        fieldWithPath("data.content[].imageUrl1").type("String").description("나누기의 이미지1").optional()
-                )
+            .param("page", "1")
+            .param("size", "5")
+            .header(HttpHeaders.AUTHORIZATION, tokenDto.getAccessToken())
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON))
+            .andDo(print()).andExpect(status().isOk()).andDo(print())
+            .andDo(print()).andDo(document("{class-name}/{method-name}",
+            preprocessRequest(modifyUris().scheme(scheme).host(host).port(port), prettyPrint()),
+            preprocessResponse(prettyPrint()),
+            requestHeaders(
+                headerWithName(HttpHeaders.AUTHORIZATION).description("Bearer Type의 AccessToken 값")
+            ),
+            relaxedResponseFields(
+                fieldWithPath("data.content[].title").type("String").description("나누기의 제목")
+                    .optional(),
+                fieldWithPath("data.content[].people").type(JsonFieldType.NUMBER)
+                    .description("나누기의 모집인원수").optional(),
+                fieldWithPath("data.content[].cost").type(JsonFieldType.NUMBER)
+                    .description("나누기의 비용").optional(),
+                fieldWithPath("data.content[].title").type("String").description("나누기의 제목값")
+                    .optional(),
+                fieldWithPath("data.content[].bio").type("String").description("나누기의 설명글")
+                    .optional(),
+                fieldWithPath("data.content[].local").type("String").description("나누기의 장소")
+                    .optional(),
+                fieldWithPath("data.content[].createdDate").type("LocalDateTime")
+                    .description("나누기의 생성날짜").optional(),
+                fieldWithPath("data.content[].imageUrl1").type("String").description("나누기의 이미지1")
+                    .optional()
+            )
         ));
     }
 /*
@@ -593,26 +624,33 @@ public class PostControllerTest {
         TokenDto tokenDto = getTokenDto();
 
         mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v1/post/search")
-                .param("keyword", "title")
-                .header(HttpHeaders.AUTHORIZATION, tokenDto.getAccessToken())
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON))
-                .andDo(print()).andExpect(status().isOk()).andDo(print())
-                .andDo(print()).andDo(document("{class-name}/{method-name}",
-                preprocessRequest(modifyUris().scheme(scheme).host(host).port(port), prettyPrint()),
-                preprocessResponse(prettyPrint()),
-                requestHeaders(
-                        headerWithName(HttpHeaders.AUTHORIZATION).description("Bearer Type의 AccessToken 값")
-                ),
-                relaxedResponseFields(
-                        fieldWithPath("data.content[].title").type("String").description("나누기의 제목").optional(),
-                        fieldWithPath("data.content[].people").type(JsonFieldType.NUMBER).description("나누기의 모집인원수").optional(),
-                        fieldWithPath("data.content[].cost").type(JsonFieldType.NUMBER).description("나누기의 비용").optional(),
-                        fieldWithPath("data.content[].bio").type("String").description("나누기의 설명글").optional(),
-                        fieldWithPath("data.content[].local").type("String").description("나누기의 장소").optional(),
-                        fieldWithPath("data.content[].createdDate").type("LocalDateTime").description("나누기의 생성날짜").optional(),
-                        fieldWithPath("data.content[].imageUrl1").type("String").description("나누기의 이미지1").optional()
-                )
+            .param("keyword", "title")
+            .header(HttpHeaders.AUTHORIZATION, tokenDto.getAccessToken())
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON))
+            .andDo(print()).andExpect(status().isOk()).andDo(print())
+            .andDo(print()).andDo(document("{class-name}/{method-name}",
+            preprocessRequest(modifyUris().scheme(scheme).host(host).port(port), prettyPrint()),
+            preprocessResponse(prettyPrint()),
+            requestHeaders(
+                headerWithName(HttpHeaders.AUTHORIZATION).description("Bearer Type의 AccessToken 값")
+            ),
+            relaxedResponseFields(
+                fieldWithPath("data.content[].title").type("String").description("나누기의 제목")
+                    .optional(),
+                fieldWithPath("data.content[].people").type(JsonFieldType.NUMBER)
+                    .description("나누기의 모집인원수").optional(),
+                fieldWithPath("data.content[].cost").type(JsonFieldType.NUMBER)
+                    .description("나누기의 비용").optional(),
+                fieldWithPath("data.content[].bio").type("String").description("나누기의 설명글")
+                    .optional(),
+                fieldWithPath("data.content[].local").type("String").description("나누기의 장소")
+                    .optional(),
+                fieldWithPath("data.content[].createdDate").type("LocalDateTime")
+                    .description("나누기의 생성날짜").optional(),
+                fieldWithPath("data.content[].imageUrl1").type("String").description("나누기의 이미지1")
+                    .optional()
+            )
         ));
     }
 

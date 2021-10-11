@@ -36,15 +36,15 @@ public class PostGetResponseDto {
 
     public static PostGetResponseDto from(Post post) {
         return PostGetResponseDto.builder()
-                .id(post.getId())
-                .title(post.getTitle())
-                .people(post.getPeople())
-                .cost(post.getCost())
-                .bio(post.getBio())
-                .local(post.getLocal())
-                .done(post.isDone())
-                .imageUrl1(post.getImageUrl1())
-                .createdDate(post.getCreatedDate())
-                .build();
+            .id(post.getId())
+            .title(post.getTitle())
+            .people(post.getPeople())
+            .cost(post.getCost())
+            .bio(post.getBio())
+            .local(post.getLocal())
+            .done(post.isDone())
+            .imageUrl1(post.getImageUrl1())
+            .createdDate(post.getCreatedDate())
+            .build();
     }
 }

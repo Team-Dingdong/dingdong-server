@@ -9,4 +9,5 @@ import java.lang.annotation.*;
 @Documented
 @AuthenticationPrincipal(expression = "@authService.getUserInfo()")
 public @interface CurrentUser {
+
 }

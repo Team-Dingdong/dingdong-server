@@ -25,10 +25,13 @@ public class ChatSubscriber {
     public void sendMessage(RedisChatMessage redisChatMessage) {
         try {
             // 메시지로부터 채팅방 DB 찾기
-            ChatRoom chatRoom = chatRoomRepository.findByPostId(Long.parseLong(redisChatMessage.getRoomId())).orElseThrow(() -> new ResourceNotFoundException(ResultCode.CHAT_ROOM_NOT_FOUND));
+            ChatRoom chatRoom = chatRoomRepository
+                .findByPostId(Long.parseLong(redisChatMessage.getRoomId()))
+                .orElseThrow(() -> new ResourceNotFoundException(ResultCode.CHAT_ROOM_NOT_FOUND));
 
             // 메시지로부터 회원 DB 찾기
-            User user = userRepository.findById(Long.parseLong(redisChatMessage.getSender())).orElseThrow(() -> new ResourceNotFoundException(ResultCode.USER_NOT_FOUND));
+            User user = userRepository.findById(Long.parseLong(redisChatMessage.getSender()))
+                .orElseThrow(() -> new ResourceNotFoundException(ResultCode.USER_NOT_FOUND));
             String nickname = user.getProfile().getNickname();
             String profileImageUrl = user.getProfile().getProfileImageUrl();
 
@@ -36,7 +39,8 @@ public class ChatSubscriber {
             redisChatMessage.setProfileImageUrl(profileImageUrl);
 
             // 채팅방을 구독한 클라이언트에게 메시지 발송
-            messagingTemplate.convertAndSend("/topic/chat/room/" + redisChatMessage.getRoomId(), redisChatMessage);
+            messagingTemplate.convertAndSend("/topic/chat/room/" + redisChatMessage.getRoomId(),
+                redisChatMessage);
 
         } catch (Exception e) {
             log.error("Exception {}", e);

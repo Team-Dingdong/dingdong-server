@@ -23,10 +23,10 @@ public class ChatRoomUserResponseDto {
 
     public static ChatRoomUserResponseDto from(ChatRoom chatRoom, User user) {
         return ChatRoomUserResponseDto.builder()
-                .userId(user.getId())
-                .nickname(user.getProfile().getNickname())
-                .profileImageUrl(user.getProfile().getProfileImageUrl())
-                .isOwner(chatRoom.getPost().getUser().getId() == user.getId() ? true : false)
-                .build();
+            .userId(user.getId())
+            .nickname(user.getProfile().getNickname())
+            .profileImageUrl(user.getProfile().getProfileImageUrl())
+            .isOwner(chatRoom.getPost().getUser().getId() == user.getId() ? true : false)
+            .build();
     }
 }

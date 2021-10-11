@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 @Builder
 @AllArgsConstructor
 public class Result<T> {
+
     private final LocalDateTime timestamp = LocalDateTime.now();
     private final int status;
     private final String result;
@@ -20,27 +21,27 @@ public class Result<T> {
 
     public static ResponseEntity<Result> toResult(ResultCode resultCode) {
         return ResponseEntity
-                .status(resultCode.getHttpStatus())
-                .body(Result.builder()
-                        .status(resultCode.getHttpStatus().value())
-                        .result(resultCode.getHttpStatus().name())
-                        .code(resultCode.name())
-                        .message(resultCode.getDetail())
-                        .build()
-                );
+            .status(resultCode.getHttpStatus())
+            .body(Result.builder()
+                .status(resultCode.getHttpStatus().value())
+                .result(resultCode.getHttpStatus().name())
+                .code(resultCode.name())
+                .message(resultCode.getDetail())
+                .build()
+            );
     }
 
-    public static<T> ResponseEntity<Result<T>> toResult(ResultCode resultCode, T data) {
+    public static <T> ResponseEntity<Result<T>> toResult(ResultCode resultCode, T data) {
         return ResponseEntity
-                .status(resultCode.getHttpStatus())
-                .body(Result.<T>builder()
-                        .status(resultCode.getHttpStatus().value())
-                        .result(resultCode.getHttpStatus().name())
-                        .code(resultCode.name())
-                        .message(resultCode.getDetail())
-                        .data(data)
-                        .build()
-                );
+            .status(resultCode.getHttpStatus())
+            .body(Result.<T>builder()
+                .status(resultCode.getHttpStatus().value())
+                .result(resultCode.getHttpStatus().name())
+                .code(resultCode.name())
+                .message(resultCode.getDetail())
+                .data(data)
+                .build()
+            );
     }
 
 }

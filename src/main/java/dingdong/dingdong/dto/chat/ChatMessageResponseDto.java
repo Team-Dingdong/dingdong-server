@@ -31,13 +31,15 @@ public class ChatMessageResponseDto {
 
     public static ChatMessageResponseDto from(ChatMessage chatMessage) {
         return ChatMessageResponseDto.builder()
-                .userId(chatMessage.getSender().getId())
-                .nickname(chatMessage.getSender().getProfile().getNickname())
-                .profileImageUrl(chatMessage.getSender().getProfile().getProfileImageUrl())
-                .isOwner(chatMessage.getChatRoom().getPost().getUser().getId() == chatMessage.getSender().getId() ? true : false)
-                .type(chatMessage.getType())
-                .message(chatMessage.getMessage())
-                .sendTime(chatMessage.getSendTime())
-                .build();
+            .userId(chatMessage.getSender().getId())
+            .nickname(chatMessage.getSender().getProfile().getNickname())
+            .profileImageUrl(chatMessage.getSender().getProfile().getProfileImageUrl())
+            .isOwner(
+                chatMessage.getChatRoom().getPost().getUser().getId() == chatMessage.getSender()
+                    .getId() ? true : false)
+            .type(chatMessage.getType())
+            .message(chatMessage.getMessage())
+            .sendTime(chatMessage.getSendTime())
+            .build();
     }
 }

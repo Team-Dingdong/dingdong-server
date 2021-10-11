@@ -22,7 +22,8 @@ import java.util.List;
 @DynamicUpdate
 public class Post extends BaseTimeEntity {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "post_id", nullable = false)
     private Long id;
 
@@ -69,7 +70,7 @@ public class Post extends BaseTimeEntity {
     public void setCategory(Category category) {
         this.category = category;
 
-        if(!category.getPosts().contains(this)) {
+        if (!category.getPosts().contains(this)) {
             category.getPosts().add(this);
         }
     }
@@ -82,7 +83,7 @@ public class Post extends BaseTimeEntity {
     public void setUser(User user) {
         this.user = user;
 
-        if(!user.getPosts().contains(this)) {
+        if (!user.getPosts().contains(this)) {
             user.getPosts().add(this);
         }
     }
@@ -104,7 +105,8 @@ public class Post extends BaseTimeEntity {
     }
 
     public void plusUserCount() {
-        this.gatheredPeople = this.gatheredPeople == this.people ? this.gatheredPeople : this.gatheredPeople + 1;
+        this.gatheredPeople =
+            this.gatheredPeople == this.people ? this.gatheredPeople : this.gatheredPeople + 1;
     }
 
     public void minusUserCount() {

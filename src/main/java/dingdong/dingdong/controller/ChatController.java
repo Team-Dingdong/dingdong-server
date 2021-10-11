@@ -35,12 +35,12 @@ public class ChatController {
     public void message(RedisChatMessage message, @Header("Authorization") String token) {
         User user = null;
         String jwt = token.substring(7);
-        if(StringUtils.hasText(jwt) &&tokenProvider.validateToken(jwt)) {
+        if (StringUtils.hasText(jwt) && tokenProvider.validateToken(jwt)) {
             log.info("authentication : {}", tokenProvider.getAuthentication(jwt));
             Authentication authentication = tokenProvider.getAuthentication(jwt);
             SecurityContextHolder.getContext().setAuthentication(authentication);
             user = authService.getUserInfo();
-            if(user == null) {
+            if (user == null) {
                 throw new ResourceNotFoundException(ResultCode.USER_NOT_FOUND);
             }
         }
