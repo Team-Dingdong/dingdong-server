@@ -18,7 +18,6 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.io.IOException;
 
 @Slf4j
@@ -135,9 +134,9 @@ public class PostController {
 
     // 특정 나누기 상세보기 불러오기
     @GetMapping("/{post_id}")
-    public ResponseEntity<Result<PostDetailResponseDto>> findPostById(@PathVariable Long post_id) {
+    public ResponseEntity<Result<PostDetailResponseDto>> findPostById(@PathVariable Long postId) {
 
-        PostDetailResponseDto data = postService.findPostById(post_id);
+        PostDetailResponseDto data = postService.findPostById(postId);
         ResultCode message = ResultCode.POST_READ_SUCCESS;
         return Result.toResult(message, data);
     }

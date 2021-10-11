@@ -60,9 +60,7 @@ public class PostService {
         Pageable pageable) {
         Page<Post> posts = postRepository.findAllByCreateDate(local1, local2, pageable);
 
-        Page<PostGetResponseDto> data = posts.map(PostGetResponseDto::from);
-
-        return data;
+        return posts.map(PostGetResponseDto::from);
     }
 
     // 유저의 LOCAL 정보에 기반하여 나누기 불러오기 (정렬 기준: 마감임박순)(홈화면)
@@ -71,9 +69,7 @@ public class PostService {
         Pageable pageable) {
         Page<Post> posts = postRepository.findAllByEndDate(local1, local2, pageable);
 
-        Page<PostGetResponseDto> data = posts.map(PostGetResponseDto::from);
-
-        return data;
+        return posts.map(PostGetResponseDto::from);
     }
 
     // 원하는 나누기 피드 상세보기
@@ -95,9 +91,7 @@ public class PostService {
         Page<Post> posts = postRepository
             .findByCategoryId(local1, local2, category.getId(), pageable);
 
-        Page<PostGetResponseDto> data = posts.map(PostGetResponseDto::from);
-
-        return data;
+        return posts.map(PostGetResponseDto::from);
     }
 
     // 유저의 판매내역 리스트 (GET: 유저별로 출력되는 나누기 피드)
@@ -105,9 +99,7 @@ public class PostService {
     public Page<PostGetResponseDto> findPostByUser(User user, Pageable pageable) {
         Page<Post> posts = postRepository.findByUserId(user.getId(), pageable);
 
-        Page<PostGetResponseDto> data = posts.map(PostGetResponseDto::from);
-
-        return data;
+        return posts.map(PostGetResponseDto::from);
     }
 
     // 특정 유저(본인 제외)가 생성한 나누기 피드들 불러오기
@@ -117,9 +109,7 @@ public class PostService {
             .orElseThrow(() -> new ResourceNotFoundException(USER_NOT_FOUND));
         Page<Post> posts = postRepository.findByUserId(id, pageable);
 
-        Page<PostGetResponseDto> data = posts.map(PostGetResponseDto::from);
-
-        return data;
+        return posts.map(PostGetResponseDto::from);
     }
 
     // 유저의 구매내역 리스트 (GET: 유저별로 출력되는 나누기 피드)
@@ -127,9 +117,7 @@ public class PostService {
     public Page<PostGetResponseDto> findPostByUserIdOnChatJoin(User user, Pageable pageable) {
         Page<Post> posts = postRepository.findPostByUserIdOnChatJoin(user.getId(), pageable);
 
-        Page<PostGetResponseDto> data = posts.map(PostGetResponseDto::from);
-
-        return data;
+        return posts.map(PostGetResponseDto::from);
     }
 
     // 유저의 LOCAL 정보에 기반하지 않고 전체 나누기 불러오기 (정렬 기준: 최신순)(홈화면)(유저의 local 정보가 기입되지 않은 경우)
@@ -137,9 +125,7 @@ public class PostService {
     public Page<PostGetResponseDto> findAllByCreateDate(Pageable pageable) {
         Page<Post> postList = postRepository.findAllByCreateDateNotLocal(pageable);
 
-        Page<PostGetResponseDto> data = postList.map(PostGetResponseDto::from);
-
-        return data;
+        return postList.map(PostGetResponseDto::from);
     }
 
     // 유저의 LOCAL 정보에 기반하지 않고 전체 나누기 불러오기 (정렬 기준: 마감임박순)(홈화면)(유저의 local 정보가 기입되지 않은 경우)
@@ -147,9 +133,7 @@ public class PostService {
     public Page<PostGetResponseDto> findAllByEndDate(Pageable pageable) {
         Page<Post> posts = postRepository.findAllByEndDateNotLocal(pageable);
 
-        Page<PostGetResponseDto> data = posts.map(PostGetResponseDto::from);
-
-        return data;
+        return posts.map(PostGetResponseDto::from);
     }
 
     // 유저의 LOCAL 정보에 기반하여 카테고리별 나누기 불러오기 (정렬 기준: 최신순)(카테고리 화면)(유저의 local 정보가 기입된 경우)
@@ -159,9 +143,7 @@ public class PostService {
             .orElseThrow(() -> new ResourceNotFoundException(CATEGORY_NOT_FOUND));
         Page<Post> posts = postRepository.findPostByCategoryIdNotLocal(category.getId(), pageable);
 
-        Page<PostGetResponseDto> data = posts.map(PostGetResponseDto::from);
-
-        return data;
+        return posts.map(PostGetResponseDto::from);
     }
 
     // 유저의 LOCAL 정보에 기반하여 카테고리별 나누기 불러오기 (정렬 기준: 마감임박순)(카테고리 화면)(유저의 local 정보가 기입된 경우)
@@ -173,9 +155,7 @@ public class PostService {
         Page<Post> posts = postRepository
             .findPostByCategoryIdSortByEndDate(local1, local2, category.getId(), pageable);
 
-        Page<PostGetResponseDto> data = posts.map(PostGetResponseDto::from);
-
-        return data;
+        return posts.map(PostGetResponseDto::from);
     }
 
     // 유저의 LOCAL 정보에 기반하지 않고 카테고리별 나누기 불러오기 (정렬 기준: 마감임박순)(카테고리 화면)(유저의 local 정보가 기입되지 않은 경우)
@@ -187,9 +167,7 @@ public class PostService {
         Page<Post> posts = postRepository
             .findPostByCategoryIdNotLocalSortByEndDate(category.getId(), pageable);
 
-        Page<PostGetResponseDto> data = posts.map(PostGetResponseDto::from);
-
-        return data;
+        return posts.map(PostGetResponseDto::from);
     }
 
     // 나누기 피드(post) 생성
@@ -339,9 +317,7 @@ public class PostService {
             posts = postRepository.findAllSearch(keyword, pageable);
         }
 
-        Page<PostGetResponseDto> data = posts.map(PostGetResponseDto::from);
-
-        return data;
+        return posts.map(PostGetResponseDto::from);
     }
 
     // local 정보에 기반하여 제목, 카테고리 검색 기능(검색 기능)(유저의 LOCAL 정보가 기입된 경우)
@@ -356,8 +332,6 @@ public class PostService {
             posts = postRepository.findAllSearchWithLocal(keyword, local1, local2, pageable);
         }
 
-        Page<PostGetResponseDto> data = posts.map(PostGetResponseDto::from);
-
-        return data;
+        return posts.map(PostGetResponseDto::from);
     }
 }

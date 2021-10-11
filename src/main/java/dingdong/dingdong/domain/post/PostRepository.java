@@ -25,23 +25,23 @@ public interface PostRepository extends JpaRepository<Post, Long> {
         nativeQuery = true)
     Page<Post> findAllByEndDate(Long local1, Long local2, Pageable pageable);
 
-    @Query(value = "select * from post, user where post.user_id = user.user_id and (user.local1 = :local1 or user.local2 = :local2) and post.category_id = :category_id",
+    @Query(value = "select * from post, user where post.user_id = user.user_id and (user.local1 = :local1 or user.local2 = :local2) and post.category_id = :categoryId",
         countQuery = "select count(*) from post",
         nativeQuery = true)
-    Page<Post> findByCategoryId(Long local1, Long local2, Long category_id, Pageable pageable);
+    Page<Post> findByCategoryId(Long local1, Long local2, Long categoryId, Pageable pageable);
 
-    @Query(value = "select * from post, user where post.user_id = user.user_id and (user.local1 = :local1 or user.local2 = :local2) and post.category_id = :category_id order by (post.gathered_people / post.people) desc",
+    @Query(value = "select * from post, user where post.user_id = user.user_id and (user.local1 = :local1 or user.local2 = :local2) and post.category_id = :categoryId order by (post.gathered_people / post.people) desc",
         countQuery = "select count(*) from post",
         nativeQuery = true)
-    Page<Post> findPostByCategoryIdSortByEndDate(Long local1, Long local2, Long category_id,
+    Page<Post> findPostByCategoryIdSortByEndDate(Long local1, Long local2, Long categoryId,
         Pageable pageable);
 
-    Page<Post> findByUserId(Long UserId, Pageable pageable);
+    Page<Post> findByUserId(Long userId, Pageable pageable);
 
-    @Query(value = "select * from post, chat_join where chat_join.user_id = :user_id and chat_join.post_id = post.post_id",
+    @Query(value = "select * from post, chat_join where chat_join.user_id = :userId and chat_join.post_id = post.post_id",
         countQuery = "select count(*) from post",
         nativeQuery = true)
-    Page<Post> findPostByUserIdOnChatJoin(Long user_id, Pageable pageable);
+    Page<Post> findPostByUserIdOnChatJoin(Long userId, Pageable pageable);
 
     @Query(value =
         "select * from post, user, post_tag, tag where post.user_id = user.user_id AND post.post_id = post_tag.post_id AND post_tag.tag_id = tag.tag_id AND"
@@ -82,15 +82,15 @@ public interface PostRepository extends JpaRepository<Post, Long> {
         nativeQuery = true)
     Page<Post> findAllByEndDateNotLocal(Pageable pageable);
 
-    @Query(value = "select * from post WHERE post.category_id = :category_id",
+    @Query(value = "select * from post WHERE post.category_id = :categoryId",
         countQuery = "select count(*) from post",
         nativeQuery = true)
-    Page<Post> findPostByCategoryIdNotLocal(Long category_id, Pageable pageable);
+    Page<Post> findPostByCategoryIdNotLocal(Long categoryId, Pageable pageable);
 
-    @Query(value = "select * from post WHERE post.category_id = :category_id order by (post.gathered_people / post.people) desc",
+    @Query(value = "select * from post WHERE post.category_id = :categoryId order by (post.gathered_people / post.people) desc",
         countQuery = "select count(*) from post",
         nativeQuery = true)
-    Page<Post> findPostByCategoryIdNotLocalSortByEndDate(Long category_id, Pageable pageable);
+    Page<Post> findPostByCategoryIdNotLocalSortByEndDate(Long categoryId, Pageable pageable);
 
     @Modifying
     @Query(value = "delete from post where post.post_id = :id", nativeQuery = true)

@@ -1,7 +1,6 @@
 package dingdong.dingdong.controller;
 
 import dingdong.dingdong.config.TokenProvider;
-import dingdong.dingdong.domain.chat.MessageType;
 import dingdong.dingdong.domain.user.User;
 import dingdong.dingdong.dto.chat.RedisChatMessage;
 import dingdong.dingdong.service.auth.AuthService;
@@ -45,14 +44,8 @@ public class ChatController {
             }
         }
 
-        log.info("nickname : {}", user.getProfile().getNickname());
-        log.info("/pub/chat/message : {}", message);
-        log.info("pub/chat/message-type : {}", message.getType());
-        log.info("message type equals : {}", MessageType.ENTER.equals(message.getType()));
-
         message.setSender(user.getId().toString());
 
-        log.info("channelTopic : {}", channelTopic.getTopic());
         // Websocket에 발행된 메시지를 redis로 발행(publish)
         redisTemplate.convertAndSend(channelTopic.getTopic(), message);
     }

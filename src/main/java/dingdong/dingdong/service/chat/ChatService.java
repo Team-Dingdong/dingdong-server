@@ -53,10 +53,8 @@ public class ChatService {
         List<ChatRoom> chatRooms = chatJoins.stream().map(ChatJoin::getChatRoom)
             .collect(Collectors.toList());
 
-        List<ChatRoomResponseDto> data = chatRooms.stream()
-            .map(chatRoom -> ChatRoomResponseDto.from(chatRoom, user)).collect(Collectors.toList());
-
-        return data;
+        return chatRooms.stream().map(chatRoom -> ChatRoomResponseDto.from(chatRoom, user))
+            .collect(Collectors.toList());
     }
 
     // 채팅방 정보 조회
@@ -173,10 +171,9 @@ public class ChatService {
 
         List<ChatJoin> chatJoins = chatJoinRepository.findAllByChatRoom(chatRoom);
         List<User> users = chatJoins.stream().map(ChatJoin::getUser).collect(Collectors.toList());
-        List<ChatRoomUserResponseDto> data = users.stream()
-            .map(u -> ChatRoomUserResponseDto.from(chatRoom, u)).collect(Collectors.toList());
 
-        return data;
+        return users.stream().map(u -> ChatRoomUserResponseDto.from(chatRoom, u))
+            .collect(Collectors.toList());
     }
 
     // 채팅 메세지 조회
@@ -192,10 +189,8 @@ public class ChatService {
         }
 
         List<ChatMessage> messages = chatRoom.getMessages();
-        List<ChatMessageResponseDto> data = messages.stream().map(ChatMessageResponseDto::from)
-            .collect(Collectors.toList());
 
-        return data;
+        return messages.stream().map(ChatMessageResponseDto::from).collect(Collectors.toList());
     }
 
     // 채팅 약속 조회

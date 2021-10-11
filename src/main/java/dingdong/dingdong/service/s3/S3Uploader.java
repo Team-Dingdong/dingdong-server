@@ -18,7 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Component
 public class S3Uploader {
 
-    private final static String TEMP_FILE_PATH = "src/main/resources/static/"; // local에서의 path
+    private static final String TEMP_FILE_PATH = "src/main/resources/static/"; // local에서의 path
     //private final static String TEMP_FILE_PATH = "/home/ec2-user/app/static"; // ec2 서버 path
     private final AmazonS3Client amazonS3Client;
 
@@ -69,7 +69,7 @@ public class S3Uploader {
     public void deleteObject(String filePath) {
         boolean isExistObject = amazonS3Client.doesObjectExist(bucket, filePath);
 
-        if (isExistObject == true) {
+        if (isExistObject) {
             amazonS3Client.deleteObject(bucket, filePath);
         }
     }

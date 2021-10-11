@@ -3,14 +3,50 @@ package dingdong.dingdong.service.auth;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dingdong.dingdong.config.TokenProvider;
-import dingdong.dingdong.domain.user.*;
-import dingdong.dingdong.dto.auth.*;
+import dingdong.dingdong.domain.user.Auth;
+import dingdong.dingdong.domain.user.AuthRepository;
+import dingdong.dingdong.domain.user.Local;
+import dingdong.dingdong.domain.user.LocalRepository;
+import dingdong.dingdong.domain.user.Profile;
+import dingdong.dingdong.domain.user.ProfileRepository;
+import dingdong.dingdong.domain.user.RefreshToken;
+import dingdong.dingdong.domain.user.RefreshTokenRepository;
+import dingdong.dingdong.domain.user.User;
+import dingdong.dingdong.domain.user.UserAccount;
+import dingdong.dingdong.domain.user.UserRepository;
+import dingdong.dingdong.dto.auth.ApplicationNaverSENS;
+import dingdong.dingdong.dto.auth.AuthRequestDto;
+import dingdong.dingdong.dto.auth.LocalRequestDto;
+import dingdong.dingdong.dto.auth.LocalResponseDto;
+import dingdong.dingdong.dto.auth.MessageRequestDto;
+import dingdong.dingdong.dto.auth.MessageResponseDto;
+import dingdong.dingdong.dto.auth.NicknameRequestDto;
+import dingdong.dingdong.dto.auth.SendSmsMessage;
+import dingdong.dingdong.dto.auth.SendSmsRequestDto;
+import dingdong.dingdong.dto.auth.SendSmsResponseDto;
+import dingdong.dingdong.dto.auth.TokenDto;
+import dingdong.dingdong.dto.auth.TokenRequestDto;
 import dingdong.dingdong.util.SecurityUtil;
 import dingdong.dingdong.util.exception.DuplicateException;
 import dingdong.dingdong.util.exception.JwtAuthException;
 import dingdong.dingdong.util.exception.ResourceNotFoundException;
 import dingdong.dingdong.util.exception.ResultCode;
+import java.io.UnsupportedEncodingException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
 import java.util.stream.Collectors;
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tomcat.util.codec.binary.Base64;
@@ -28,20 +64,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
-
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
-import java.io.UnsupportedEncodingException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -165,9 +187,7 @@ public class AuthService implements UserDetailsService {
     @Transactional
     public List<LocalResponseDto> getLocalList(String city, String district) {
         List<Local> localList = localRepository.findByCityAndDistrict(city, district);
-        List<LocalResponseDto> data = localList.stream().map(LocalResponseDto::from).collect(
-            Collectors.toList());
-        return data;
+        return localList.stream().map(LocalResponseDto::from).collect(Collectors.toList());
     }
 
     // 동네 인증
@@ -249,7 +269,6 @@ public class AuthService implements UserDetailsService {
         SendSmsResponseDto sendSmsResponseDto = restTemplate.postForObject(new URI(
             "https://sens.apigw.ntruss.com/sms/v2/services/" + applicationNaverSENS.getServiceId()
                 + "/messages"), body, SendSmsResponseDto.class);
-        log.info(sendSmsResponseDto.getStatusCode());
 
         if (sendSmsResponseDto.getStatusCode().equals("202")) {
             if (authRepository.existsByPhone(messageRequestDto.getTo())) {
@@ -268,7 +287,7 @@ public class AuthService implements UserDetailsService {
     }
 
     public String makeSignature(Long time)
-        throws UnsupportedEncodingException, NoSuchAlgorithmException, InvalidKeyException {
+        throws NoSuchAlgorithmException, InvalidKeyException {
         String space = " ";
         String newLine = "\n";
         String method = "POST";
@@ -287,35 +306,31 @@ public class AuthService implements UserDetailsService {
             .append(accessKey)
             .toString();
 
-        SecretKeySpec signingKey = new SecretKeySpec(secretKey.getBytes("UTF-8"), "HmacSHA256");
+        SecretKeySpec signingKey = new SecretKeySpec(secretKey.getBytes(StandardCharsets.UTF_8), "HmacSHA256");
         Mac mac = Mac.getInstance("HmacSHA256");
         mac.init(signingKey);
 
-        byte[] rawHmac = mac.doFinal(message.getBytes("UTF-8"));
-        String encodeBase64String = Base64.encodeBase64String(rawHmac);
+        byte[] rawHmac = mac.doFinal(message.getBytes(StandardCharsets.UTF_8));
 
-        return encodeBase64String;
+        return Base64.encodeBase64String(rawHmac);
     }
 
     public String makeRandom() {
-        Random rand = new Random();
-        String numStr = "";
+        try {
+            Random rand = SecureRandom.getInstanceStrong();
+            StringBuilder code = new StringBuilder();
 
-        for (int i = 0; i < 6; i++) {
-
-            // 0~9까지 난수 생성
-            String num = Integer.toString(rand.nextInt(10));
-
-            // 중복된 값이 있는지 검사한다
-            if (!numStr.contains(num)) {
-                // 중복된 값이 없으면 numStr에 append
-                numStr += num;
-            } else {
-                // 생성된 난수가 중복되면 루틴을 다시 실행한다
-                i -= 1;
+            for (int i = 0; i < 6; i++) {
+                // 0~9까지 난수 생성
+                String num = Integer.toString(rand.nextInt(10));
+                code.append(num);
             }
+
+            return code.toString();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+            return null;
         }
-        return numStr;
     }
 
     // 회원 탈퇴

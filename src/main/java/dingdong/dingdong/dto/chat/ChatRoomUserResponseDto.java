@@ -26,7 +26,7 @@ public class ChatRoomUserResponseDto {
             .userId(user.getId())
             .nickname(user.getProfile().getNickname())
             .profileImageUrl(user.getProfile().getProfileImageUrl())
-            .isOwner(chatRoom.getPost().getUser().getId() == user.getId() ? true : false)
+            .isOwner(chatRoom.getPost().getUser().getId() == user.getId())
             .build();
     }
 }

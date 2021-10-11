@@ -36,7 +36,7 @@ public class ChatMessageResponseDto {
             .profileImageUrl(chatMessage.getSender().getProfile().getProfileImageUrl())
             .isOwner(
                 chatMessage.getChatRoom().getPost().getUser().getId() == chatMessage.getSender()
-                    .getId() ? true : false)
+                    .getId())
             .type(chatMessage.getType())
             .message(chatMessage.getMessage())
             .sendTime(chatMessage.getSendTime())

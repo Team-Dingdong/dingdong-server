@@ -80,7 +80,6 @@ public class RedisConfig {
      */
     @Bean
     public DefaultSimpUserRegistry defaultSimpUserRegistry() {
-        DefaultSimpUserRegistry userRegistry = new DefaultSimpUserRegistry();
-        return userRegistry;
+        return new DefaultSimpUserRegistry();
     }
 }
