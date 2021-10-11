@@ -338,6 +338,7 @@ public class ChatService {
         }
 
         chatRoom.getPost().confirmed();
+
     }
 
     // 일정시간마다 Scheduling 작동.

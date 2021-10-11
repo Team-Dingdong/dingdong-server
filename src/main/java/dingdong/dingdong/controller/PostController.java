@@ -17,8 +17,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import javax.validation.Valid;
 import java.io.IOException;
 
 @Slf4j
@@ -32,18 +30,15 @@ public class PostController {
 
     // 홈화면, 모든 나누기 불러오기(정렬방식: 최신순)
     @GetMapping("/sorted_by=desc(createdDate)")
-    public ResponseEntity<Result<Page<PostGetResponseDto>>> findPostsSortByCreatedDate(@CurrentUser User user, @PageableDefault(size = 5, direction = Sort.Direction.DESC) Pageable pageable) {
+    public ResponseEntity<Result<Page<PostGetResponseDto>>> findPostsSortByCreatedDate(@CurrentUser User user , @PageableDefault(size = 5, direction = Sort.Direction.DESC) Pageable pageable) {
 
         Page<PostGetResponseDto> data;
-
         if(user.getLocal1() == null && user.getLocal2() == null){
             // 유저의 local 정보가 없는 경우
             data = postService.findAllByCreateDate(pageable);
         } else {
             // 유저의 local 정보가 없는 경우(유저의 local 정보에 기반하여 나누기 GET)
-            Long local1 = user.getLocal1().getId();
-            Long local2 = user.getLocal2().getId();
-            data = postService.findAllByCreateDateWithLocal(local1, local2, pageable);
+            data = postService.findAllByCreateDateWithLocal(user.getLocal1().getId(), user.getLocal2().getId(), pageable);
         }
         return Result.toResult(ResultCode.POST_READ_SUCCESS, data);
     }
@@ -122,9 +117,9 @@ public class PostController {
 
     // 특정 나누기 상세보기 불러오기
     @GetMapping("/{post_id}")
-    public ResponseEntity<Result<PostDetailResponseDto>> findPostById(@PathVariable Long post_id) {
+    public ResponseEntity<Result<PostDetailResponseDto>> findPostById(@PathVariable Long postId) {
 
-        PostDetailResponseDto data = postService.findPostById(post_id);
+        PostDetailResponseDto data = postService.findPostById(postId);
         ResultCode message = ResultCode.POST_READ_SUCCESS;
         return Result.toResult(message, data);
     }
@@ -138,23 +133,23 @@ public class PostController {
 
     // 나누기 수정
     @PatchMapping("/{id}")
-    public ResponseEntity<Result> updatePost(@ModelAttribute PostRequestDto request, @PathVariable Long id) throws IOException{
+    public ResponseEntity<Result<String>> updatePost(@ModelAttribute PostRequestDto request, @PathVariable Long id) throws IOException{
         postService.updatePost(id, request);
-        return Result.toResult(ResultCode.POST_UPDATE_SUCCESS);
+        return Result.toResult(ResultCode.POST_UPDATE_SUCCESS, null);
     }
 
     // 나누기 삭제
     @DeleteMapping("/{id}")
-    public ResponseEntity<Result> deletePost(@PathVariable Long id){
+    public ResponseEntity<Result<String>> deletePost(@PathVariable Long id){
        postService.deletePost(id);
-       return Result.toResult(ResultCode.POST_DELETE_SUCCESS);
+       return Result.toResult(ResultCode.POST_DELETE_SUCCESS, null);
     }
 
     // 나누기 거래 확정 하기
     @PostMapping("/confirmed/{postId}")
-    public ResponseEntity<Result> confirmed(@CurrentUser User user, @PathVariable String postId) {
+    public ResponseEntity<Result<String>> confirmed(@CurrentUser User user, @PathVariable String postId) {
         chatService.confirmedPost(user, postId);
-        return Result.toResult(ResultCode.POST_CONFIRMED_SUCCESS);
+        return Result.toResult(ResultCode.POST_CONFIRMED_SUCCESS, null);
     }
 
     // 검색 기능 구현

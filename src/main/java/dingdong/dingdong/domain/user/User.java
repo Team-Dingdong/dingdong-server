@@ -56,4 +56,5 @@ public class User extends BaseTimeEntity {
         this.local2 = local2;
         this.localDate = LocalDateTime.now();
     }
+
 }

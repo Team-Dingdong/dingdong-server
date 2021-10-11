@@ -3,6 +3,7 @@ package dingdong.dingdong.domain.post;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import dingdong.dingdong.domain.BaseTimeEntity;
+import dingdong.dingdong.domain.chat.ChatRoom;
 import dingdong.dingdong.domain.user.User;
 import dingdong.dingdong.dto.post.PostRequestDto;
 import lombok.*;
@@ -87,7 +88,7 @@ public class Post extends BaseTimeEntity {
         }
     }
 
-    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonBackReference
     private List<PostTag> postTags = new ArrayList<>();
 

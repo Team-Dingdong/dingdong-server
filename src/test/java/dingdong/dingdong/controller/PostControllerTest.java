@@ -10,10 +10,9 @@ import dingdong.dingdong.dto.post.PostRequestDto;
 import dingdong.dingdong.service.auth.AuthService;
 import dingdong.dingdong.service.auth.AuthType;
 import dingdong.dingdong.service.post.PostService;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
@@ -24,46 +23,44 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.restdocs.payload.JsonFieldType;
-import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-import static dingdong.dingdong.domain.chat.MessageType.TALK;
 import static dingdong.dingdong.domain.chat.PromiseType.END;
+import static dingdong.dingdong.domain.chat.PromiseType.PROGRESS;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.fileUpload;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@RunWith(SpringRunner.class)
+
 @SpringBootTest
 @AutoConfigureMockMvc
 @AutoConfigureRestDocs
 @Transactional
-public class PostControllerTest {
+class PostControllerTest {
 
     @Autowired
     MockMvc mockMvc;
 
     @Autowired
     ObjectMapper objectMapper;
-
-    @Autowired
-    PostService postService;
 
     @Autowired
     PostRepository postRepository;
@@ -101,9 +98,6 @@ public class PostControllerTest {
     @Autowired
     ChatPromiseVoteRepository chatPromiseVoteRepository;
 
-    @Autowired
-    ChatMessageRepository chatMessageRepository;
-
     @Value("${test.server.http.scheme}")
     String scheme;
     @Value("${test.server.http.host}")
@@ -112,7 +106,7 @@ public class PostControllerTest {
     int port;
 
     @BeforeEach
-    public void setUp(){
+    void setUp(){
         // user 설정
         Long id = 1L;
         String phone = "01012345678";
@@ -126,7 +120,6 @@ public class PostControllerTest {
                 .requestId(requestId)
                 .requestTime(requestTime)
                 .build();
-
         authRepository.save(auth);
 
         //profile 설정
@@ -213,10 +206,10 @@ public class PostControllerTest {
                 .id(1L)
                 .chatRoom(chatRoom)
                 .promiseDate(LocalDate.now())
-                .promiseTime(LocalTime.now())
-                .promiseEndTime(LocalDateTime.now().plusHours(3))
+                .promiseTime(LocalTime.now().minusHours(5))
+                .promiseEndTime(LocalDateTime.now())
                 .promiseLocal("test")
-                .type(END)
+                .type(PROGRESS)
                 .build();
         chatPromiseRepository.save(chatPromise);
         
@@ -240,13 +233,20 @@ public class PostControllerTest {
         return data.get(AuthType.LOGIN);
     }
 
-    /*
     @Test
     @DisplayName("나누기 생성")
-    public void createPost() throws Exception{
+    void createPost() throws Exception {
         TokenDto tokenDto = getTokenDto();
 
         Post post = postRepository.findById(1L).get();
+
+        //MultipartFile postImage = new MockMultipartFile("file", "postImage.jpeg", "image/jpeg", "<<jpeg data>>".getBytes());
+        MockMultipartFile postImage1 = new MockMultipartFile("file", "postImage.jpeg", "image/jpeg", "<<jpeg data>>".getBytes());
+        MultipartFile postImage2 = new MockMultipartFile("file", "postImage1.jpeg", "image/jpeg", "<<jpeg data>>".getBytes());
+        MultipartFile postImage3 = new MockMultipartFile("file", "postImage2.jpeg", "image/jpeg", "<<jpeg data>>".getBytes());
+        List<MultipartFile> postImages = new ArrayList<>();
+        postImages.add(postImage1);
+
         PostRequestDto postRequestDto = PostRequestDto.builder()
                 .title(post.getTitle())
                 .people(post.getPeople())
@@ -255,12 +255,20 @@ public class PostControllerTest {
                 .local(post.getLocal())
                 .categoryId(post.getCategory().getId())
                 .postTag("#test")
+                .postImages(postImages)
                 .build();
 
-        mockMvc.perform(RestDocumentationRequestBuilders.post("/api/v1/post")
+        mockMvc.perform(post("/api/v1/post")
+                .param("title","test")
+                .param("people", "10")
+                .param("cost", "1000")
+                .param("bio", "test_bio")
+                .param("local", "test_local")
+                .param("categoryId", "1")
+                .param("postTag","#test")
                 .header(HttpHeaders.AUTHORIZATION, tokenDto.getAccessToken())
+                .contentType(MediaType.MULTIPART_FORM_DATA)
                 .content(objectMapper.writeValueAsString(postRequestDto))
-                .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
                 .andDo(print()).andExpect(status().is2xxSuccessful()).andDo(print())
                 .andDo(print()).andDo(document("{class-name}/{method-name}",
@@ -271,10 +279,10 @@ public class PostControllerTest {
                 )
         ));
     }
-     */
+
     @Test
     @DisplayName("홈화면, 모든 나누기 불러오기(정렬방식: 최신순)")
-    public void findPostsSortByCreatedDate() throws Exception {
+    void findPostsSortByCreatedDate() throws Exception {
         TokenDto tokenDto = getTokenDto();
 
         mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v1/post/sorted_by=desc(createdDate)")
@@ -297,15 +305,18 @@ public class PostControllerTest {
                         fieldWithPath("data.content[].title").type("String").description("나누기의 제목값"),
                         fieldWithPath("data.content[].bio").type("String").description("나누기의 설명글"),
                         fieldWithPath("data.content[].local").type("String").description("나누기의 장소"),
+                        fieldWithPath("data.content[].done").type(JsonFieldType.BOOLEAN).description("나누기의 종료 여부"),
                         fieldWithPath("data.content[].createdDate").type("LocalDateTime").description("나누기의 생성날짜"),
-                        fieldWithPath("data.content[].imageUrl1").type("String").description("나누기의 이미지1")
+                        fieldWithPath("data.content[].imageUrl1").type("String").description("나누기의 이미지1"),
+                        fieldWithPath("data.content[].tag").type("String").description("나누기의 태그")
                 )
         ));
     }
 
+
     @Test
     @DisplayName("홈화면, 모든 나누기 불러오기(정렬방식: 마감임박순)")
-    public void findPostsSortByEndDate() throws Exception{
+    void findPostsSortByEndDate() throws Exception{
         TokenDto tokenDto = getTokenDto();
 
         mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v1/post/sorted_by=desc(endDate)")
@@ -314,7 +325,7 @@ public class PostControllerTest {
                 .header(HttpHeaders.AUTHORIZATION, tokenDto.getAccessToken())
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
-                .andDo(print()).andExpect(status().isOk()).andDo(print())
+                .andDo(print()).andExpect(status().is2xxSuccessful()).andDo(print())
                 .andDo(print()).andDo(document("{class-name}/{method-name}",
                 preprocessRequest(modifyUris().scheme(scheme).host(host).port(port), prettyPrint()),
                 preprocessResponse(prettyPrint()),
@@ -328,15 +339,19 @@ public class PostControllerTest {
                         fieldWithPath("data.content[].title").type("String").description("나누기의 제목값"),
                         fieldWithPath("data.content[].bio").type("String").description("나누기의 설명글"),
                         fieldWithPath("data.content[].local").type("String").description("나누기의 장소"),
-                        fieldWithPath("data.content[].createdDate").type("LocalDateTime").description("나누기의 생성날짜"),
-                        fieldWithPath("data.content[].imageUrl1").type("String").description("나누기의 이미지1")
+                        fieldWithPath("data.content[].done").type(JsonFieldType.BOOLEAN).description("나누기의 종료 여부"),
+                        fieldWithPath("data.content[].createdDate").type("LocalDateTime").description("나누기의 생성날짜").optional(),
+                        fieldWithPath("data.content[].imageUrl1").type("String").description("나누기의 이미지1"),
+                        fieldWithPath("data.content[].tag").type("String").description("나누기의 태그")
                 )
         ));
     }
 
+
+
     @Test
     @DisplayName("카테고리별 나누기 피드들 불러오기(카테고리 화면)(정렬 방식: 최신순)")
-    public void findPostByCategoryIdSortByCreatedDate() throws Exception{
+    void findPostByCategoryIdSortByCreatedDate() throws Exception{
         TokenDto tokenDto = getTokenDto();
 
         mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v1/post/category/sorted_by=desc(createdDate)/{categoryId}", 1L)
@@ -363,14 +378,15 @@ public class PostControllerTest {
                         fieldWithPath("data.content[].bio").type("String").description("나누기의 설명글"),
                         fieldWithPath("data.content[].local").type("String").description("나누기의 장소"),
                         fieldWithPath("data.content[].createdDate").type("LocalDateTime").description("나누기의 생성날짜"),
-                        fieldWithPath("data.content[].imageUrl1").type("String").description("나누기의 이미지1")
+                        fieldWithPath("data.content[].imageUrl1").type("String").description("나누기의 이미지1"),
+                        fieldWithPath("data.content[].tag").type("String").description("나누기의 태그")
                 )
         ));
     }
 
     @Test
     @DisplayName("카테고리별 나누기 피드들 불러오기(카테고리 화면)(정렬 방식: 마감임박순)")
-    public void findPostByCategoryIdSortByEndDate() throws Exception{
+    void findPostByCategoryIdSortByEndDate() throws Exception{
         TokenDto tokenDto = getTokenDto();
 
         mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v1/post/category/sorted_by=desc(endDate)/{categoryId}", 1L)
@@ -379,7 +395,7 @@ public class PostControllerTest {
                 .header(HttpHeaders.AUTHORIZATION, tokenDto.getAccessToken())
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
-                .andDo(print()).andExpect(status().isOk()).andDo(print())
+                .andDo(print()).andExpect(status().is2xxSuccessful()).andDo(print())
                 .andDo(print()).andDo(document("{class-name}/{method-name}",
                 preprocessRequest(modifyUris().scheme(scheme).host(host).port(port), prettyPrint()),
                 preprocessResponse(prettyPrint()),
@@ -396,16 +412,16 @@ public class PostControllerTest {
                         fieldWithPath("data.content[].title").type("String").description("나누기의 제목값"),
                         fieldWithPath("data.content[].bio").type("String").description("나누기의 설명글"),
                         fieldWithPath("data.content[].local").type("String").description("나누기의 장소"),
-                        fieldWithPath("data.content[].createdDate").type("LocalDateTime").description("나누기의 생성날짜"),
-                        fieldWithPath("data.content[].imageUrl1").type("String").description("나누기의 이미지1")
+                        fieldWithPath("data.content[].createdDate").type("LocalDateTime").description("나누기의 생성날짜").optional(),
+                        fieldWithPath("data.content[].imageUrl1").type("String").description("나누기의 이미지1"),
+                        fieldWithPath("data.content[].tag").type("String").description("나누기의 태그")
                 )
         ));
     }
 
-
     @Test
     @DisplayName("나누기 상세 보기")
-    public void findPostById() throws Exception{
+    void findPostById() throws Exception{
         TokenDto tokenDto = getTokenDto();
 
         mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v1/post/{id}", 1L)
@@ -444,10 +460,9 @@ public class PostControllerTest {
         ));
     }
 
-    /*
     @Test
     @DisplayName("나누기 삭제")
-    public void deletePost() throws Exception {
+    void deletePost() throws Exception {
         TokenDto tokenDto = getTokenDto();
 
         mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/v1/post/{postId}", 1L)
@@ -469,7 +484,7 @@ public class PostControllerTest {
 
     @Test
     @DisplayName("나누기 수정")
-    public void updatePost() throws Exception {
+    void updatePost() throws Exception {
         TokenDto tokenDto = getTokenDto();
 
         Post post = postRepository.findById(1L).get();
@@ -500,10 +515,10 @@ public class PostControllerTest {
                 )
         ));
     }
-     */
+
     @Test
     @DisplayName("현재 유저가 올린 나누기 목록 보기(프로필 판매내역 보기 화면)")
-    public void findPostByUser() throws Exception{
+    void findPostByUser() throws Exception{
         TokenDto tokenDto = getTokenDto();
 
         mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v1/post/user/sell")
@@ -533,8 +548,39 @@ public class PostControllerTest {
     }
 
     @Test
+    @DisplayName("특정 유저(본인 제외)가 생성한 나누기 피드들 불러오기")
+    void findPostByUserId() throws Exception{
+        TokenDto tokenDto = getTokenDto();
+
+        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v1/post/user/{:id}", 1L)
+                .param("page", "1")
+                .param("size", "5")
+                .header(HttpHeaders.AUTHORIZATION, tokenDto.getAccessToken())
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
+                .andDo(print()).andExpect(status().isOk()).andDo(print())
+                .andDo(print()).andDo(document("{class-name}/{method-name}",
+                preprocessRequest(modifyUris().scheme(scheme).host(host).port(port), prettyPrint()),
+                preprocessResponse(prettyPrint()),
+                requestHeaders(
+                        headerWithName(HttpHeaders.AUTHORIZATION).description("Bearer Type의 AccessToken 값")
+                ),
+                relaxedResponseFields(
+                        fieldWithPath("data.content[].title").type("String").description("나누기의 제목"),
+                        fieldWithPath("data.content[].people").type(JsonFieldType.NUMBER).description("나누기의 모집인원수"),
+                        fieldWithPath("data.content[].cost").type(JsonFieldType.NUMBER).description("나누기의 비용"),
+                        fieldWithPath("data.content[].title").type("String").description("나누기의 제목값"),
+                        fieldWithPath("data.content[].bio").type("String").description("나누기의 설명글"),
+                        fieldWithPath("data.content[].local").type("String").description("나누기의 장소"),
+                        fieldWithPath("data.content[].createdDate").type("LocalDateTime").description("나누기의 생성날짜"),
+                        fieldWithPath("data.content[].imageUrl1").type("String").description("나누기의 이미지1")
+                )
+        ));
+    }
+
+    @Test
     @DisplayName("현재 유저가 올린 나누기 목록 보기(프로필 구매내역 보기 화면)")
-    public void findPostByUserIdOnChatJoin() throws Exception{
+    void findPostByUserIdOnChatJoin() throws Exception{
         TokenDto tokenDto = getTokenDto();
 
         mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v1/post/user/buy")
@@ -562,17 +608,17 @@ public class PostControllerTest {
                 )
         ));
     }
-/*
+
     @Test
     @DisplayName("나누기 거래 확정")
-    public void confirmed() throws Exception {
+    void confirmed() throws Exception {
         TokenDto tokenDto = getTokenDto();
 
-        mockMvc.perform(RestDocumentationRequestBuilders.post("/api/v1/post/confirmed/{:postId}", 1L)
+        mockMvc.perform(RestDocumentationRequestBuilders.post("/api/v1/post/confirmed/{:id}", '1')
                 .header(HttpHeaders.AUTHORIZATION, tokenDto.getAccessToken())
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
-                .andDo(print()).andExpect(status().is2xxSuccessful()).andDo(print())
+                .andDo(print()).andExpect(status().is4xxClientError()).andDo(print())
                 .andDo(print()).andDo(document("{class-name}/{method-name}",
                 preprocessRequest(modifyUris().scheme(scheme).host(host).port(port), prettyPrint()),
                 preprocessResponse(prettyPrint()),
@@ -580,16 +626,14 @@ public class PostControllerTest {
                         headerWithName(HttpHeaders.AUTHORIZATION).description("Bearer Type의 AccessToken 값")
                 ),
                 pathParameters(
-                        parameterWithName("postId").description("조회하고자 하는 나누기의 고유값")
+                        parameterWithName("id").description("조회하고자 하는 나누기의 고유값")
                 )
         ));
     }
 
- */
-
     @Test
     @DisplayName("나누기 검색")
-    public void search() throws Exception {
+    void search() throws Exception {
         TokenDto tokenDto = getTokenDto();
 
         mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v1/post/search")
