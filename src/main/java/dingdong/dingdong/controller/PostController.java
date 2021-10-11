@@ -35,9 +35,7 @@ public class PostController {
     public ResponseEntity<Result<Page<PostGetResponseDto>>> findPostsSortByCreatedDate(
         @CurrentUser User user,
         @PageableDefault(size = 5, direction = Sort.Direction.DESC) Pageable pageable) {
-
         Page<PostGetResponseDto> data;
-
         if (user.getLocal1() == null && user.getLocal2() == null) {
             // 유저의 local 정보가 없는 경우
             data = postService.findAllByCreateDate(pageable);
@@ -53,7 +51,6 @@ public class PostController {
     public ResponseEntity<Result<Page<PostGetResponseDto>>> findPostsSortByEndDate(
         @CurrentUser User user,
         @PageableDefault(size = 5, direction = Sort.Direction.DESC) Pageable pageable) {
-
         Page<PostGetResponseDto> data;
         if (user.getLocal1() == null && user.getLocal2() == null) {
             // 유저의 local 정보가 없는 경우
@@ -72,7 +69,6 @@ public class PostController {
     public ResponseEntity<Result<Page<PostGetResponseDto>>> findPostByCategoryIdSortByCreatedDate(
         @CurrentUser User user, @PathVariable Long categoryId,
         @PageableDefault(size = 5, direction = Sort.Direction.DESC) Pageable pageable) {
-
         Page<PostGetResponseDto> data;
         if (user.getLocal1() == null && user.getLocal2() == null) {
             // user가 local 정보를 설정 안 한 경우
@@ -91,7 +87,6 @@ public class PostController {
     public ResponseEntity<Result<Page<PostGetResponseDto>>> findPostByCategoryIdSortByEndDate(
         @CurrentUser User user, @PathVariable Long categoryId,
         @PageableDefault(size = 5, direction = Sort.Direction.DESC) Pageable pageable) {
-
         Page<PostGetResponseDto> data;
         if (user.getLocal1() == null && user.getLocal2() == null) {
             // user가 local 정보를 설정 안 한 경우
@@ -175,9 +170,7 @@ public class PostController {
     public ResponseEntity<Result<Page<PostGetResponseDto>>> search(
         @RequestParam(value = "keyword") String keyword, @CurrentUser User user,
         @PageableDefault(size = 5, direction = Sort.Direction.DESC) Pageable pageable) {
-
         Page<PostGetResponseDto> data;
-
         if (user.getLocal1() == null && user.getLocal2() == null) {
             // user가 local 정보를 설정 안 한 경우
             data = postService.searchPosts(keyword, pageable);
@@ -187,7 +180,6 @@ public class PostController {
             Long local2 = user.getLocal2().getId();
             data = postService.searchPostsWithLocal(keyword, local1, local2, pageable);
         }
-
         return Result.toResult(ResultCode.SEARCH_SUCCESS, data);
     }
 }
