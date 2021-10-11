@@ -8,5 +8,6 @@ import java.util.Optional;
 public interface RatingRepository extends JpaRepository<Rating, Long> {
 
     Optional<Rating> findBySenderAndReceiver(User sender, User receiver);
+
     Long countByReceiverAndType(User receiver, RatingType type);
 }

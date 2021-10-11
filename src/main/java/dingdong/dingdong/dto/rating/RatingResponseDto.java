@@ -20,9 +20,9 @@ public class RatingResponseDto {
 
     public static RatingResponseDto from(Profile profile) {
         return RatingResponseDto.builder()
-                .good(profile.getGood())
-                .bad(profile.getBad())
-                .total(profile.getGood() + profile.getBad())
-                .build();
+            .good(profile.getGood())
+            .bad(profile.getBad())
+            .total(profile.getGood() + profile.getBad())
+            .build();
     }
 }

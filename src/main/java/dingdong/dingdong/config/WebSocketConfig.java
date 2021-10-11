@@ -30,7 +30,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/ws-stomp")
-                .withSockJS();
+            .withSockJS();
         // .setAllowedOrigins("*") 이거 때문에 오류나는데.. 알 수가 없다..
     }
 

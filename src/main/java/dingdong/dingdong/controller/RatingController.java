@@ -37,7 +37,8 @@ public class RatingController {
 
     // 평가 생성
     @PostMapping("/{userId}")
-    public ResponseEntity<Result> createRating(@CurrentUser User user, @PathVariable Long userId, @RequestBody RatingRequestDto ratingRequestDto) {
+    public ResponseEntity<Result> createRating(@CurrentUser User user, @PathVariable Long userId,
+        @RequestBody RatingRequestDto ratingRequestDto) {
         ratingService.createRating(user, userId, ratingRequestDto);
         return Result.toResult(ResultCode.RATING_CREATE_SUCCESS);
     }

@@ -20,9 +20,9 @@ public class ProfileResponseDto {
 
     public static ProfileResponseDto from(Profile profile) {
         return ProfileResponseDto.builder()
-                .userId(profile.getId())
-                .nickname(profile.getNickname())
-                .profileImageUrl(profile.getProfileImageUrl())
-                .build();
+            .userId(profile.getId())
+            .nickname(profile.getNickname())
+            .profileImageUrl(profile.getProfileImageUrl())
+            .build();
     }
 }

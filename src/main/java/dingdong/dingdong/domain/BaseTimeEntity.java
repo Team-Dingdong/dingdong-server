@@ -22,7 +22,7 @@ public abstract class BaseTimeEntity {
     private LocalDateTime modifiedDate;
 
     @PreUpdate
-    public void preUpdate(){
+    public void preUpdate() {
         modifiedDate = LocalDateTime.now();
     }
 

@@ -41,13 +41,13 @@ public class ChatPromiseResponseDto {
 
     public static ChatPromiseResponseDto from(ChatPromise chatPromise) {
         return ChatPromiseResponseDto.builder()
-                .promiseDate(chatPromise.getPromiseDate())
-                .promiseTime(chatPromise.getPromiseTime())
-                .promiseLocal(chatPromise.getPromiseLocal())
-                .totalPeople(chatPromise.getTotalPeople())
-                .votingPeople(chatPromise.getVotingPeople())
-                .promiseEndTime(chatPromise.getPromiseEndTime())
-                .type(chatPromise.getType())
-                .build();
+            .promiseDate(chatPromise.getPromiseDate())
+            .promiseTime(chatPromise.getPromiseTime())
+            .promiseLocal(chatPromise.getPromiseLocal())
+            .totalPeople(chatPromise.getTotalPeople())
+            .votingPeople(chatPromise.getVotingPeople())
+            .promiseEndTime(chatPromise.getPromiseEndTime())
+            .type(chatPromise.getType())
+            .build();
     }
 }

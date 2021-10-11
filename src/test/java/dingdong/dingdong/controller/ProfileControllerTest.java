@@ -142,12 +142,15 @@ class ProfileControllerTest {
                 preprocessRequest(modifyUris().scheme(scheme).host(host).port(port), prettyPrint()),
                 preprocessResponse(prettyPrint()),
                 requestHeaders(
-                    headerWithName(HttpHeaders.AUTHORIZATION).description("Bearer Type의 AccessToken 값")
+                    headerWithName(HttpHeaders.AUTHORIZATION)
+                        .description("Bearer Type의 AccessToken 값")
                 ),
                 relaxedResponseFields(
-                    fieldWithPath("data.userId").type(JsonFieldType.NUMBER).description("사용자의 고유한 아이디 값"),
+                    fieldWithPath("data.userId").type(JsonFieldType.NUMBER)
+                        .description("사용자의 고유한 아이디 값"),
                     fieldWithPath("data.nickname").type("String").description("사용자의 닉네임"),
-                    fieldWithPath("data.profileImageUrl").type("String").description("사용자의 프로필 이미지 URL")
+                    fieldWithPath("data.profileImageUrl").type("String")
+                        .description("사용자의 프로필 이미지 URL")
                 )
             ));
     }
@@ -166,15 +169,18 @@ class ProfileControllerTest {
                 preprocessRequest(modifyUris().scheme(scheme).host(host).port(port), prettyPrint()),
                 preprocessResponse(prettyPrint()),
                 requestHeaders(
-                    headerWithName(HttpHeaders.AUTHORIZATION).description("Bearer Type의 AccessToken 값")
+                    headerWithName(HttpHeaders.AUTHORIZATION)
+                        .description("Bearer Type의 AccessToken 값")
                 ),
                 pathParameters(
                     parameterWithName("userId").description("조회하고자 하는 사용자의 고유 아이디 값")
                 ),
                 relaxedResponseFields(
-                    fieldWithPath("data.userId").type(JsonFieldType.NUMBER).description("사용자의 고유한 아이디 값"),
+                    fieldWithPath("data.userId").type(JsonFieldType.NUMBER)
+                        .description("사용자의 고유한 아이디 값"),
                     fieldWithPath("data.nickname").type("String").description("사용자의 닉네임"),
-                    fieldWithPath("data.profileImageUrl").type("String").description("사용자의 프로필 이미지 URL")
+                    fieldWithPath("data.profileImageUrl").type("String")
+                        .description("사용자의 프로필 이미지 URL")
                 )
             ));
     }
@@ -184,7 +190,8 @@ class ProfileControllerTest {
     void updateProfile() throws Exception {
         TokenDto tokenDto = getTokenDto();
 
-        MultipartFile profileImage = new MockMultipartFile("file", "profileImage.jpeg", "image/jpeg", "<<jpeg data>>".getBytes());
+        MultipartFile profileImage = new MockMultipartFile("file", "profileImage.jpeg",
+            "image/jpeg", "<<jpeg data>>".getBytes());
         ProfileUpdateRequestDto profileUpdateRequestDto = ProfileUpdateRequestDto.builder()
             .profileImage(profileImage)
             .nickname("testNickname2")

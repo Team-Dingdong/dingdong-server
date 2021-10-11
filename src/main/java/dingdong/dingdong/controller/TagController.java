@@ -18,9 +18,11 @@ public class TagController {
     private final TagService tagService;
 
     @PostMapping("/{id}")
-    public ResponseEntity<Result<String>> setTag(@PathVariable Long id, @RequestBody TagRequestDto request){
+
+    public ResponseEntity<Result> setTag(@PathVariable Long id,
+        @RequestBody TagRequestDto request) {
         tagService.addTags(id, request);
-        return Result.toResult(ResultCode.TAG_UPDATE_SUCCESS, null);
+        return Result.toResult(ResultCode.TAG_UPDATE_SUCCESS);
     }
 
 }

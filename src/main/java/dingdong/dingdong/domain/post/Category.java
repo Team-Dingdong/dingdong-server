@@ -25,10 +25,10 @@ public class Category {
     @JsonManagedReference
     private List<Post> posts = new ArrayList<>();
 
-    public void addPost(Post post){
+    public void addPost(Post post) {
         this.posts.add(post);
 
-        if(post.getCategory() != this){
+        if (post.getCategory() != this) {
             post.setCategory(this);
         }
     }

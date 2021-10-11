@@ -29,6 +29,7 @@ public class PostRequestDto {
 
     private Long categoryId;
 
+    @JsonIgnore
     private List<MultipartFile> postImages;
 
 }

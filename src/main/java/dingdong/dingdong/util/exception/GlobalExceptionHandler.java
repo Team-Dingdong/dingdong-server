@@ -31,7 +31,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(value = {ResourceNotFoundException.class})
-    protected ResponseEntity<Result> handleResourceNotFoundException(ResourceNotFoundException e){
+    protected ResponseEntity<Result> handleResourceNotFoundException(ResourceNotFoundException e) {
         log.error("handleResourceNotFoundException : {}", e.getResultCode());
         return Result.toResult(e.getResultCode());
     }
@@ -57,21 +57,22 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(AuthenticationException.class)
     protected ResponseEntity<Result> handleAuthenticationException(AuthenticationException e) {
         log.error("handleAuthenticationException : {}", e.getMessage());
-        if(e instanceof BadCredentialsException) {
+        if (e instanceof BadCredentialsException) {
             return Result.toResult(ResultCode.AUTH_FAIL);
-        } else if(e instanceof InternalAuthenticationServiceException) {
+        } else if (e instanceof InternalAuthenticationServiceException) {
             return Result.toResult(ResultCode.AUTH_NOT_FOUND);
-        } else if(e instanceof UsernameNotFoundException) {
+        } else if (e instanceof UsernameNotFoundException) {
             return Result.toResult(ResultCode.AUTH_NOT_FOUND);
         }
         return Result.toResult(ResultCode.AUTH_ERROR);
     }
 
     @Override
-    protected ResponseEntity handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+    protected ResponseEntity handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
+        HttpHeaders headers, HttpStatus status, WebRequest request) {
         List<FieldError> allFieldErrors = ex.getBindingResult().getFieldErrors();
         List<Map<String, String>> data = new ArrayList<>();
-        for(FieldError fieldError : allFieldErrors) {
+        for (FieldError fieldError : allFieldErrors) {
             Map<String, String> item = new HashMap<>();
             item.put(fieldError.getField(), fieldError.getDefaultMessage());
             data.add(item);
