@@ -42,7 +42,8 @@ public class Auth {
         this.requestTime = requestTime;
     }
 
-    public void reauth(String authNumber, String requestId, LocalDateTime requestTime, boolean done) {
+    public void reauth(String authNumber, String requestId, LocalDateTime requestTime,
+        boolean done) {
         this.authNumber = authNumber;
         this.requestId = requestId;
         this.requestTime = requestTime;

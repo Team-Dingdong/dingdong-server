@@ -18,8 +18,8 @@ public class MessageResponseDto {
 
     public static MessageResponseDto from(SendSmsResponseDto sendSmsResponseDto) {
         return MessageResponseDto.builder()
-                .requestId(sendSmsResponseDto.getRequestId())
-                .requestTime(sendSmsResponseDto.getRequestTime())
-                .build();
+            .requestId(sendSmsResponseDto.getRequestId())
+            .requestTime(sendSmsResponseDto.getRequestTime())
+            .build();
     }
 }

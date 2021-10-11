@@ -39,7 +39,8 @@ public class ProfileController {
 
     // 프로필 수정
     @PatchMapping("")
-    public ResponseEntity<Result> updateProfile(@CurrentUser User user, @ModelAttribute ProfileUpdateRequestDto profileUpdateRequestDto) throws IOException {
+    public ResponseEntity<Result> updateProfile(@CurrentUser User user,
+        @ModelAttribute ProfileUpdateRequestDto profileUpdateRequestDto) throws IOException {
         profileService.updateProfile(user, profileUpdateRequestDto);
         return Result.toResult(ResultCode.PROFILE_UPDATE_SUCCESS);
     }

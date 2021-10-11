@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class DuplicateException extends RuntimeException{
+public class DuplicateException extends RuntimeException {
 
     private final ResultCode resultCode;
 }

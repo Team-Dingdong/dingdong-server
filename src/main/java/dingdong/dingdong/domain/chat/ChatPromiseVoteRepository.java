@@ -8,5 +8,6 @@ import java.util.List;
 public interface ChatPromiseVoteRepository extends JpaRepository<ChatPromiseVote, Long> {
 
     List<ChatPromiseVote> findAllByChatRoom(ChatRoom chatRoom);
+
     boolean existsByChatRoomAndUser(ChatRoom chatRoom, User user);
 }

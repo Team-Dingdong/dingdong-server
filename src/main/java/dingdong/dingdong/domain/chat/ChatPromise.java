@@ -60,8 +60,9 @@ public class ChatPromise extends BaseTimeEntity {
     }
 
     public void plusVotingPeople() {
-        this.votingPeople = this.votingPeople == this.totalPeople ? this.votingPeople : this.votingPeople + 1;
-        if(this.votingPeople == this.totalPeople) {
+        this.votingPeople =
+            this.votingPeople == this.totalPeople ? this.votingPeople : this.votingPeople + 1;
+        if (this.votingPeople == this.totalPeople) {
             this.type = PromiseType.CONFIRMED;
         }
     }
