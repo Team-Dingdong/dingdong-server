@@ -29,16 +29,13 @@ public class RedisSubscriber {
      */
     public void sendMessage(String publishMessage) {
         try {
-            log.info("publishMessage : {}", publishMessage);
-
             // RedisChatMessage 객채로 맵핑
             RedisChatMessage redisChatMessage = objectMapper
                 .readValue(publishMessage, RedisChatMessage.class);
-            log.info("redisChatMessage : {}", redisChatMessage);
 
             // 메시지로부터 채팅방 DB 찾기
             ChatRoom chatRoom = chatRoomRepository
-                .findByPostId(Long.parseLong(redisChatMessage.getRoomId()))
+                .findByPostId(redisChatMessage.getRoomId())
                 .orElseThrow(() -> new ResourceNotFoundException(ResultCode.CHAT_ROOM_NOT_FOUND));
 
             // 메시지로부터 회원 DB 찾기
@@ -52,12 +49,12 @@ public class RedisSubscriber {
                 redisChatMessage.setSender("띵-동");
                 redisChatMessage.setMessage(nickname + "님이 입장하였습니다");
 
-                user = userRepository.getById(Long.parseLong("1"));
+                user = userRepository.getById(1L);
             } else if (MessageType.QUIT.equals(redisChatMessage.getType())) {
                 redisChatMessage.setSender("띵-동");
                 redisChatMessage.setMessage(nickname + "님이 퇴장하였습니다");
 
-                user = userRepository.getById(Long.parseLong("1"));
+                user = userRepository.getById(1L);
             } else {
                 redisChatMessage.setSender(nickname);
                 redisChatMessage.setProfileImageUrl(profileImageUrl);
@@ -72,8 +69,6 @@ public class RedisSubscriber {
             chatMessageRepository.save(chatMessage);
 
             chatRoom.setInfo(chatMessage);
-            log.info("chatMessage -> {}", chatRoom.getLastChatMessage());
-            log.info("chatTime -> {}", chatRoom.getLastChatTime());
             chatRoomRepository.save(chatRoom);
 
         } catch (Exception e) {

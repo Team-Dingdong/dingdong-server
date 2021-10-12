@@ -16,14 +16,14 @@ import java.io.Serializable;
 @NoArgsConstructor
 public class RedisChatMessage implements Serializable {
 
-    private String roomId;
+    private Long roomId;
     private String sender;
     private String profileImageUrl;
     private MessageType type;
     private String message;
 
     public RedisChatMessage(ChatRoom chatRoom, User user, MessageType type, String message) {
-        this.roomId = chatRoom.getId().toString();
+        this.roomId = chatRoom.getId();
         this.sender = user.getId().toString();
         this.profileImageUrl = user.getProfile().getProfileImageUrl();
         this.type = type;

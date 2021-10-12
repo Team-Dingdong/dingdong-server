@@ -26,22 +26,19 @@ public class ChatService {
     private final ChatPromiseRepository chatPromiseRepository;
     private final ChatPromiseVoteRepository chatPromiseVoteRepository;
     private final ChatMessageRepository chatMessageRepository;
-    private final RedisChatRoomRepository redisChatRoomRepository;
     private final ChatSubscriber chatSubscriber;
 
     private final UserRepository userRepository;
-    private Long adminId = Long.parseLong("1");
+    private final Long adminId = 1L;
 
     // 채팅방 생성
     @Transactional
     public void createChatRoom(Post post) {
         ChatRoom chatRoom = new ChatRoom(post);
         ChatJoin chatJoin = new ChatJoin(chatRoom, post.getUser());
-        RedisChatRoom redisChatRoom = new RedisChatRoom(chatRoom);
 
         chatRoomRepository.save(chatRoom);
         chatJoinRepository.save(chatJoin);
-        redisChatRoomRepository.save(redisChatRoom);
 
         chatRoom.getPost().plusUserCount();
     }
@@ -59,10 +56,8 @@ public class ChatService {
 
     // 채팅방 정보 조회
     @Transactional
-    public ChatRoomResponseDto findRoomById(User user, String id) {
-        RedisChatRoom redisChatRoom = redisChatRoomRepository.findById(id);
-        ChatRoom chatRoom = chatRoomRepository
-            .findByPostId(Long.parseLong(redisChatRoom.getRoomId()))
+    public ChatRoomResponseDto findRoomById(User user, Long id) {
+        ChatRoom chatRoom = chatRoomRepository.findByPostId(id)
             .orElseThrow(() -> new ResourceNotFoundException(ResultCode.CHAT_ROOM_NOT_FOUND));
 
         if (!chatJoinRepository.existsByChatRoomAndUser(chatRoom, user)) {
@@ -74,10 +69,8 @@ public class ChatService {
 
     // 채팅방 입장
     @Transactional
-    public void enterChatRoom(User user, String id) {
-        RedisChatRoom redisChatRoom = redisChatRoomRepository.findById(id);
-        ChatRoom chatRoom = chatRoomRepository
-            .findByPostId(Long.parseLong(redisChatRoom.getRoomId()))
+    public void enterChatRoom(User user, Long id) {
+        ChatRoom chatRoom = chatRoomRepository.findByPostId(id)
             .orElseThrow(() -> new ResourceNotFoundException(ResultCode.CHAT_ROOM_NOT_FOUND));
         ChatPromise chatPromise = chatPromiseRepository.findByChatRoomId(chatRoom.getId())
             .orElse(null);
@@ -118,10 +111,8 @@ public class ChatService {
 
     // 채팅방 나가기
     @Transactional
-    public void quitChatRoom(User user, String id) {
-        RedisChatRoom redisChatRoom = redisChatRoomRepository.findById(id);
-        ChatRoom chatRoom = chatRoomRepository
-            .findByPostId(Long.parseLong(redisChatRoom.getRoomId()))
+    public void quitChatRoom(User user, Long id) {
+        ChatRoom chatRoom = chatRoomRepository.findByPostId(id)
             .orElseThrow(() -> new ResourceNotFoundException(ResultCode.CHAT_ROOM_NOT_FOUND));
 
         if (!chatJoinRepository.existsByChatRoomAndUser(chatRoom, user)) {
@@ -159,10 +150,8 @@ public class ChatService {
 
     // 채팅방 사용자 목록 조회
     @Transactional
-    public List<ChatRoomUserResponseDto> findUsers(User user, String id) {
-        RedisChatRoom redisChatRoom = redisChatRoomRepository.findById(id);
-        ChatRoom chatRoom = chatRoomRepository
-            .findByPostId(Long.parseLong(redisChatRoom.getRoomId()))
+    public List<ChatRoomUserResponseDto> findUsers(User user, Long id) {
+        ChatRoom chatRoom = chatRoomRepository.findByPostId(id)
             .orElseThrow(() -> new ResourceNotFoundException(ResultCode.CHAT_ROOM_NOT_FOUND));
 
         if (!chatJoinRepository.existsByChatRoomAndUser(chatRoom, user)) {
@@ -178,10 +167,8 @@ public class ChatService {
 
     // 채팅 메세지 조회
     @Transactional
-    public List<ChatMessageResponseDto> findChatMessages(User user, String id) {
-        RedisChatRoom redisChatRoom = redisChatRoomRepository.findById(id);
-        ChatRoom chatRoom = chatRoomRepository
-            .findByPostId(Long.parseLong(redisChatRoom.getRoomId()))
+    public List<ChatMessageResponseDto> findChatMessages(User user, Long id) {
+        ChatRoom chatRoom = chatRoomRepository.findByPostId(id)
             .orElseThrow(() -> new ResourceNotFoundException(ResultCode.CHAT_ROOM_NOT_FOUND));
 
         if (!chatJoinRepository.existsByChatRoomAndUser(chatRoom, user)) {
@@ -195,10 +182,8 @@ public class ChatService {
 
     // 채팅 약속 조회
     @Transactional
-    public ChatPromiseResponseDto findByPostId(User user, String id) {
-        RedisChatRoom redisChatRoom = redisChatRoomRepository.findById(id);
-        ChatRoom chatRoom = chatRoomRepository
-            .findByPostId(Long.parseLong(redisChatRoom.getRoomId()))
+    public ChatPromiseResponseDto findByPostId(User user, Long id) {
+        ChatRoom chatRoom = chatRoomRepository.findByPostId(id)
             .orElseThrow(() -> new ResourceNotFoundException(ResultCode.CHAT_ROOM_NOT_FOUND));
 
         if (!chatJoinRepository.existsByChatRoomAndUser(chatRoom, user)) {
@@ -213,10 +198,8 @@ public class ChatService {
 
     // 채팅 약속 수정
     @Transactional
-    public void updatePromise(User user, String id, ChatPromiseRequestDto request) {
-        RedisChatRoom redisChatRoom = redisChatRoomRepository.findById(id);
-        ChatRoom chatRoom = chatRoomRepository
-            .findByPostId(Long.parseLong(redisChatRoom.getRoomId()))
+    public void updatePromise(User user, Long id, ChatPromiseRequestDto request) {
+        ChatRoom chatRoom = chatRoomRepository.findByPostId(id)
             .orElseThrow(() -> new ResourceNotFoundException(ResultCode.CHAT_ROOM_NOT_FOUND));
         ChatPromise chatPromise = chatPromiseRepository.findByChatRoomId(chatRoom.getId())
             .orElseThrow(() -> new ResourceNotFoundException(ResultCode.CHAT_PROMISE_NOT_FOUND));
@@ -267,10 +250,8 @@ public class ChatService {
 
     // 채팅 약속 생성
     @Transactional
-    public void createChatPromise(User user, String id, ChatPromiseRequestDto request) {
-        RedisChatRoom redisChatRoom = redisChatRoomRepository.findById(id);
-        ChatRoom chatRoom = chatRoomRepository
-            .findByPostId(Long.parseLong(redisChatRoom.getRoomId()))
+    public void createChatPromise(User user, Long id, ChatPromiseRequestDto request) {
+        ChatRoom chatRoom = chatRoomRepository.findByPostId(id)
             .orElseThrow(() -> new ResourceNotFoundException(ResultCode.CHAT_ROOM_NOT_FOUND));
 
         if (chatRoom.getPost().getUser().getId() != user.getId()) {
@@ -309,10 +290,8 @@ public class ChatService {
 
     // 채팅 약속 투표
     @Transactional
-    public void createVotePromise(User user, String id) {
-        RedisChatRoom redisChatRoom = redisChatRoomRepository.findById(id);
-        ChatRoom chatRoom = chatRoomRepository
-            .findByPostId(Long.parseLong(redisChatRoom.getRoomId()))
+    public void createVotePromise(User user, Long id) {
+        ChatRoom chatRoom = chatRoomRepository.findByPostId(id)
             .orElseThrow(() -> new ResourceNotFoundException(ResultCode.CHAT_ROOM_NOT_FOUND));
         ChatPromise chatPromise = chatPromiseRepository.findByChatRoomId(chatRoom.getId())
             .orElseThrow(() -> new ResourceNotFoundException(ResultCode.CHAT_PROMISE_NOT_FOUND));
@@ -355,10 +334,8 @@ public class ChatService {
 
     // 나누기 거래 확정
     @Transactional
-    public void confirmedPost(User user, String id) {
-        RedisChatRoom redisChatRoom = redisChatRoomRepository.findById(id);
-        ChatRoom chatRoom = chatRoomRepository
-            .findByPostId(Long.parseLong(redisChatRoom.getRoomId()))
+    public void confirmedPost(User user, Long id) {
+        ChatRoom chatRoom = chatRoomRepository.findByPostId(id)
             .orElseThrow(() -> new ResourceNotFoundException(ResultCode.CHAT_ROOM_NOT_FOUND));
         ChatPromise chatPromise = chatPromiseRepository.findByChatRoomId(chatRoom.getId())
             .orElseThrow(() -> new ResourceNotFoundException(ResultCode.CHAT_PROMISE_NOT_FOUND));

@@ -9,6 +9,7 @@ import dingdong.dingdong.service.chat.ChatService;
 import dingdong.dingdong.service.post.PostService;
 import dingdong.dingdong.util.exception.Result;
 import dingdong.dingdong.util.exception.ResultCode;
+import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -16,10 +17,15 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.io.IOException;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -159,7 +165,7 @@ public class PostController {
 
     // 나누기 거래 확정 하기
     @PostMapping("/confirmed/{postId}")
-    public ResponseEntity<Result<String>> confirmed(@CurrentUser User user, @PathVariable String postId) {
+    public ResponseEntity<Result<String>> confirmed(@CurrentUser User user, @PathVariable Long postId) {
         chatService.confirmedPost(user, postId);
         return Result.toResult(ResultCode.POST_CONFIRMED_SUCCESS, null);
     }
