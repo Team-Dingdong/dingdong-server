@@ -20,7 +20,8 @@ import java.util.List;
 @DynamicUpdate
 public class User extends BaseTimeEntity {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id", nullable = false)
     private Long id;
 
@@ -56,4 +57,5 @@ public class User extends BaseTimeEntity {
         this.local2 = local2;
         this.localDate = LocalDateTime.now();
     }
+
 }

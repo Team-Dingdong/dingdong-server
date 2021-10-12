@@ -1,7 +1,6 @@
 package dingdong.dingdong.controller;
 
 import dingdong.dingdong.config.TokenProvider;
-import dingdong.dingdong.domain.chat.MessageType;
 import dingdong.dingdong.domain.user.User;
 import dingdong.dingdong.dto.chat.RedisChatMessage;
 import dingdong.dingdong.service.auth.AuthService;
@@ -35,24 +34,18 @@ public class ChatController {
     public void message(RedisChatMessage message, @Header("Authorization") String token) {
         User user = null;
         String jwt = token.substring(7);
-        if(StringUtils.hasText(jwt) &&tokenProvider.validateToken(jwt)) {
+        if (StringUtils.hasText(jwt) && tokenProvider.validateToken(jwt)) {
             log.info("authentication : {}", tokenProvider.getAuthentication(jwt));
             Authentication authentication = tokenProvider.getAuthentication(jwt);
             SecurityContextHolder.getContext().setAuthentication(authentication);
             user = authService.getUserInfo();
-            if(user == null) {
+            if (user == null) {
                 throw new ResourceNotFoundException(ResultCode.USER_NOT_FOUND);
             }
         }
 
-        log.info("nickname : {}", user.getProfile().getNickname());
-        log.info("/pub/chat/message : {}", message);
-        log.info("pub/chat/message-type : {}", message.getType());
-        log.info("message type equals : {}", MessageType.ENTER.equals(message.getType()));
-
         message.setSender(user.getId().toString());
 
-        log.info("channelTopic : {}", channelTopic.getTopic());
         // Websocket에 발행된 메시지를 redis로 발행(publish)
         redisTemplate.convertAndSend(channelTopic.getTopic(), message);
     }

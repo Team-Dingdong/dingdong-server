@@ -1,13 +1,18 @@
 package dingdong.dingdong.service.tag;
 
-import dingdong.dingdong.domain.post.*;
+import static dingdong.dingdong.util.exception.ResultCode.POST_NOT_FOUND;
+
+import dingdong.dingdong.domain.post.Post;
+import dingdong.dingdong.domain.post.PostRepository;
+import dingdong.dingdong.domain.post.PostTag;
+import dingdong.dingdong.domain.post.PostTagRepository;
+import dingdong.dingdong.domain.post.Tag;
+import dingdong.dingdong.domain.post.TagRepository;
 import dingdong.dingdong.dto.tag.TagRequestDto;
 import dingdong.dingdong.util.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import static dingdong.dingdong.util.exception.ResultCode.POST_NOT_FOUND;
 
 @RequiredArgsConstructor
 @Service
@@ -18,11 +23,12 @@ public class TagService {
     private final PostTagRepository postTagRepository;
 
     @Transactional
-    public void addTags(Long id, TagRequestDto tagRequestDto){
+    public void addTags(Long id, TagRequestDto tagRequestDto) {
         PostTag postTag = new PostTag();
-        Post post = postRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(POST_NOT_FOUND));
+        Post post = postRepository.findById(id)
+            .orElseThrow(() -> new ResourceNotFoundException(POST_NOT_FOUND));
 
-        if(!tagRepository.existsByName(tagRequestDto.getName())){
+        if (!tagRepository.existsByName(tagRequestDto.getName())) {
             Tag tag = new Tag();
             tag.setName(tagRequestDto.getName());
             tagRepository.save(tag);

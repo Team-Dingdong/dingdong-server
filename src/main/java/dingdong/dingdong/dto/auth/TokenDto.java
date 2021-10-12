@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class TokenDto {
+
     private String grantType;
     private String accessToken;
     private Long accessTokenExpiresIn;

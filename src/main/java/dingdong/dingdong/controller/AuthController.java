@@ -42,7 +42,9 @@ public class AuthController {
 
     // 휴대폰 인증 번호 전송
     @PostMapping("/send-sms")
-    public ResponseEntity<Result<MessageResponseDto>> sendSms(@RequestBody MessageRequestDto messageRequestDto) throws NoSuchAlgorithmException, URISyntaxException, UnsupportedEncodingException, InvalidKeyException, JsonProcessingException {
+    public ResponseEntity<Result<MessageResponseDto>> sendSms(
+        @RequestBody MessageRequestDto messageRequestDto)
+        throws NoSuchAlgorithmException, URISyntaxException, UnsupportedEncodingException, InvalidKeyException, JsonProcessingException {
         MessageResponseDto data = authService.sendSms(messageRequestDto);
         return Result.toResult(ResultCode.SEND_SMS_SUCCESS, data);
     }
@@ -51,7 +53,7 @@ public class AuthController {
     @PostMapping("")
     public ResponseEntity<Result<TokenDto>> auth(@RequestBody AuthRequestDto authRequestDto) {
         Map<AuthType, TokenDto> data = authService.auth(authRequestDto);
-        if(data.containsKey(AuthType.LOGIN)) {
+        if (data.containsKey(AuthType.LOGIN)) {
             return Result.toResult(ResultCode.LOGIN_SUCCESS, data.get(AuthType.LOGIN));
         } else {
             return Result.toResult(ResultCode.SIGNUP_SUCCESS, data.get(AuthType.SIGNUP));
@@ -67,28 +69,31 @@ public class AuthController {
 
     // 닉네임 설정
     @PostMapping("/nickname")
-    public ResponseEntity<Result> nickname(@CurrentUser User user, @RequestBody NicknameRequestDto nicknameRequestDto) {
+    public ResponseEntity<Result> nickname(@CurrentUser User user,
+        @RequestBody NicknameRequestDto nicknameRequestDto) {
         authService.setNickname(user, nicknameRequestDto);
         return Result.toResult(ResultCode.NICKNAME_CREATE_SUCCESS);
     }
 
     // 동네 목록 조회
     @GetMapping("/local")
-    public ResponseEntity<Result<List<LocalResponseDto>>> getLocalList(@CurrentUser User user, @RequestParam String city, @RequestParam String district) {
+    public ResponseEntity<Result<List<LocalResponseDto>>> getLocalList(@CurrentUser User user,
+        @RequestParam String city, @RequestParam String district) {
         List<LocalResponseDto> data = authService.getLocalList(city, district);
         return Result.toResult(ResultCode.LOCAL_READ_SUCCESS, data);
     }
 
     // 동네 인증
     @PostMapping("/local")
-    public ResponseEntity<Result> local(@CurrentUser User user, @RequestBody LocalRequestDto localRequestDto) {
+    public ResponseEntity<Result> local(@CurrentUser User user,
+        @RequestBody LocalRequestDto localRequestDto) {
         authService.setLocal(user, localRequestDto);
         return Result.toResult(ResultCode.LOCAL_CREATE_SUCCESS);
     }
 
     // 탈퇴하기
     @PatchMapping("/unsubscribe")
-    public ResponseEntity<Result> unsubscribeUser (@CurrentUser User user){
+    public ResponseEntity<Result> unsubscribeUser(@CurrentUser User user) {
         authService.unsubscribeUser(user);
         return Result.toResult(ResultCode.UNSUBSCRIBE_SUCCESS);
     }

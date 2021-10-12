@@ -45,7 +45,9 @@ public class RedisConfig {
      * redis에 발행(publish)된 메시지 처리를 위한 리스너 설정
      */
     @Bean
-    public RedisMessageListenerContainer redisMessageListener(RedisConnectionFactory connectionFactory, MessageListenerAdapter listenerAdapter, ChannelTopic channelTopic) {
+    public RedisMessageListenerContainer redisMessageListener(
+        RedisConnectionFactory connectionFactory, MessageListenerAdapter listenerAdapter,
+        ChannelTopic channelTopic) {
         RedisMessageListenerContainer container = new RedisMessageListenerContainer();
         container.setConnectionFactory(connectionFactory);
         container.addMessageListener(listenerAdapter, channelTopic);
@@ -64,7 +66,8 @@ public class RedisConfig {
      * 어플리케이션에서 사용할 redisTemplate 설정
      */
     @Bean
-    public RedisTemplate<String, RedisChatRoom> redisTemplate(RedisConnectionFactory connectionFactory) {
+    public RedisTemplate<String, RedisChatRoom> redisTemplate(
+        RedisConnectionFactory connectionFactory) {
         RedisTemplate<String, RedisChatRoom> redisTemplate = new RedisTemplate<>();
         redisTemplate.setConnectionFactory(connectionFactory);
         redisTemplate.setKeySerializer(new StringRedisSerializer());
@@ -77,7 +80,6 @@ public class RedisConfig {
      */
     @Bean
     public DefaultSimpUserRegistry defaultSimpUserRegistry() {
-        DefaultSimpUserRegistry userRegistry = new DefaultSimpUserRegistry();
-        return userRegistry;
+        return new DefaultSimpUserRegistry();
     }
 }
