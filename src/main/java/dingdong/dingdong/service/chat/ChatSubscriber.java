@@ -19,15 +19,14 @@ public class ChatSubscriber {
     private final SimpMessageSendingOperations messagingTemplate;
 
     private final ChatRoomRepository chatRoomRepository;
-    private final ChatMessageRepository chatMessageRepository;
     private final UserRepository userRepository;
 
     public void sendMessage(RedisChatMessage redisChatMessage) {
         try {
             // 메시지로부터 채팅방 DB 찾기
-            ChatRoom chatRoom = chatRoomRepository
-                .findByPostId(Long.parseLong(redisChatMessage.getRoomId()))
-                .orElseThrow(() -> new ResourceNotFoundException(ResultCode.CHAT_ROOM_NOT_FOUND));
+            if(!chatRoomRepository.existsById(redisChatMessage.getRoomId())) {
+                throw new ResourceNotFoundException(ResultCode.CHAT_ROOM_NOT_FOUND);
+            }
 
             // 메시지로부터 회원 DB 찾기
             User user = userRepository.findById(Long.parseLong(redisChatMessage.getSender()))

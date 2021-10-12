@@ -26,16 +26,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(WebSecurity web) throws Exception {
         web.ignoring()
-            .antMatchers("/h2-console/**", "/favicon.ico")
-            .mvcMatchers("/node_modules/**")
+            .antMatchers("/h2-console/**", "/favicon.ico", "/api/v1/chat")
+            .mvcMatchers("/node_modules/**", "/api/v1/chat")
             .requestMatchers(PathRequest.toStaticResources().atCommonLocations());
     }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-            .mvcMatchers("/console", "/", "/webjars/**/**", "/ws-stomp/**", "/api/v1/auth",
-                "/api/v1/auth/send-sms", "/docs/**").permitAll()
+            .mvcMatchers("/console", "/webjars/**/**", "/ws-stomp/**", "/api/v1/auth",
+                "/api/v1/auth/send-sms", "/docs/**", "/api/v1/chat").permitAll()
             .anyRequest().hasAuthority("ROLE_USER");
         http.cors()
             .disable();
