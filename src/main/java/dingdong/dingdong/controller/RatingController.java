@@ -25,7 +25,7 @@ public class RatingController {
 
     // 본인 평가 조회
     @GetMapping("")
-    public ResponseEntity<Result<RatingResponseDto>> getRating(@CurrentUser User user) {
+    public ResponseEntity<Result<RatingResponseDto>> getMyRating(@CurrentUser User user) {
         Long id = user.getId();
         RatingResponseDto data = ratingService.getRating(id);
         return Result.toResult(ResultCode.RATING_READ_SUCCESS, data);
