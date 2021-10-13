@@ -3,17 +3,17 @@ package dingdong.dingdong.dto.auth;
 import dingdong.dingdong.domain.user.Local;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Data
+@Getter
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 public class LocalResponseDto {
 
-    Long id;
-    String name;
+    private Long id;
+    private String name;
 
     public static LocalResponseDto from(Local local) {
         return LocalResponseDto.builder()

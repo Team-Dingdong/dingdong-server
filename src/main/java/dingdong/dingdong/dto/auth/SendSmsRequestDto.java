@@ -1,14 +1,15 @@
 package dingdong.dingdong.dto.auth;
 
+import java.util.List;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
-@Data
-@AllArgsConstructor
+@Getter
+@Builder
 @NoArgsConstructor
+@AllArgsConstructor
 public class SendSmsRequestDto {
 
     private String type;

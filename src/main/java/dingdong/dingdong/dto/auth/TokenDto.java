@@ -2,14 +2,15 @@ package dingdong.dingdong.dto.auth;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
+@Getter
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class TokenDto {
+
     private String grantType;
     private String accessToken;
     private Long accessTokenExpiresIn;

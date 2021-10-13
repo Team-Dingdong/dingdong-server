@@ -18,7 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Component
 public class S3Uploader {
 
-    private final static String TEMP_FILE_PATH = "src/main/resources/static/"; // local에서의 path
+    private static final String TEMP_FILE_PATH = "src/main/resources/static/"; // local에서의 path
     //private final static String TEMP_FILE_PATH = "/home/ec2-user/app/static"; // ec2 서버 path
     private final AmazonS3Client amazonS3Client;
 
@@ -26,9 +26,15 @@ public class S3Uploader {
     public String bucket;
 
     // MultiFile을 File로 전환
-    public String upload(MultipartFile multipartFile, String dirName) throws IOException {
-        File uploadFile = convert(multipartFile).orElseThrow(() -> new IllegalArgumentException("MultipartFile -> File로 전환이 실패했습니다."));
-        return upload(uploadFile, dirName);
+    public String upload(MultipartFile multipartFile, String dirName) {
+        try {
+            File uploadFile = convert(multipartFile)
+                .orElseThrow(() -> new IllegalArgumentException("MultipartFile -> File로 전환이 실패했습니다."));
+            return upload(uploadFile, dirName);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     // File 업로드 주소 생성
@@ -41,21 +47,22 @@ public class S3Uploader {
 
     // 이미지 S3에 업로드
     private String putS3(File uploadFile, String fileName) {
-        amazonS3Client.putObject(new PutObjectRequest(bucket, fileName, uploadFile).withCannedAcl(CannedAccessControlList.PublicRead));
+        amazonS3Client.putObject(new PutObjectRequest(bucket, fileName, uploadFile)
+            .withCannedAcl(CannedAccessControlList.PublicRead));
         return amazonS3Client.getUrl(bucket, fileName).toString();
     }
 
     private void removeNewFile(File targetFile) {
-        if (targetFile.delete()) {
-            log.info("파일이 삭제되었습니다.");
+        if(targetFile.delete()) {
+            log.error("파일 삭제 성공");
         } else {
-            log.info("파일이 삭제되지 못했습니다.");
+            log.error("파일 삭제 실패");
         }
     }
 
     private Optional<File> convert(MultipartFile file) throws IOException {
         File convertFile = new File(TEMP_FILE_PATH + file.getOriginalFilename());
-        if(convertFile.createNewFile()) {
+        if (convertFile.createNewFile()) {
             try (FileOutputStream fos = new FileOutputStream(convertFile)) {
                 fos.write(file.getBytes());
             }
@@ -67,7 +74,7 @@ public class S3Uploader {
     public void deleteObject(String filePath) {
         boolean isExistObject = amazonS3Client.doesObjectExist(bucket, filePath);
 
-        if (isExistObject == true) {
+        if (isExistObject) {
             amazonS3Client.deleteObject(bucket, filePath);
         }
     }
