@@ -29,46 +29,46 @@ public class RedisSubscriber {
      */
     public void sendMessage(String publishMessage) {
         try {
-            log.info("publishMessage : {}", publishMessage);
-
             // RedisChatMessage 객채로 맵핑
-            RedisChatMessage redisChatMessage = objectMapper.readValue(publishMessage, RedisChatMessage.class);
-            log.info("redisChatMessage : {}", redisChatMessage);
+            RedisChatMessage redisChatMessage = objectMapper
+                .readValue(publishMessage, RedisChatMessage.class);
 
             // 메시지로부터 채팅방 DB 찾기
-            ChatRoom chatRoom = chatRoomRepository.findByPostId(Long.parseLong(redisChatMessage.getRoomId())).orElseThrow(() -> new ResourceNotFoundException(ResultCode.CHAT_ROOM_NOT_FOUND));
+            ChatRoom chatRoom = chatRoomRepository
+                .findByPostId(redisChatMessage.getRoomId())
+                .orElseThrow(() -> new ResourceNotFoundException(ResultCode.CHAT_ROOM_NOT_FOUND));
 
             // 메시지로부터 회원 DB 찾기
-            User user = userRepository.findById(Long.parseLong(redisChatMessage.getSender())).orElseThrow(() -> new ResourceNotFoundException(ResultCode.USER_NOT_FOUND));
+            User user = userRepository.findById(Long.parseLong(redisChatMessage.getSender()))
+                .orElseThrow(() -> new ResourceNotFoundException(ResultCode.USER_NOT_FOUND));
             String nickname = user.getProfile().getNickname();
             String profileImageUrl = user.getProfile().getProfileImageUrl();
 
             // MessageType에 따라 처리
-            if(MessageType.ENTER.equals(redisChatMessage.getType())) {
+            if (MessageType.ENTER.equals(redisChatMessage.getType())) {
                 redisChatMessage.setSender("띵-동");
                 redisChatMessage.setMessage(nickname + "님이 입장하였습니다");
 
-                user = userRepository.getById(Long.parseLong("1"));
-            } else if(MessageType.QUIT.equals(redisChatMessage.getType())) {
+                user = userRepository.getById(1L);
+            } else if (MessageType.QUIT.equals(redisChatMessage.getType())) {
                 redisChatMessage.setSender("띵-동");
                 redisChatMessage.setMessage(nickname + "님이 퇴장하였습니다");
 
-                user = userRepository.getById(Long.parseLong("1"));
+                user = userRepository.getById(1L);
             } else {
                 redisChatMessage.setSender(nickname);
                 redisChatMessage.setProfileImageUrl(profileImageUrl);
             }
 
             // 채팅방을 구독한 클라이언트에게 메시지 발송
-            messagingTemplate.convertAndSend("/topic/chat/room/" + redisChatMessage.getRoomId(), redisChatMessage);
+            messagingTemplate.convertAndSend("/topic/chat/room/" + redisChatMessage.getRoomId(),
+                redisChatMessage);
 
             // 메시지 DB에 저장하기 위해 객체 생성
             ChatMessage chatMessage = new ChatMessage(chatRoom, user, redisChatMessage);
             chatMessageRepository.save(chatMessage);
 
             chatRoom.setInfo(chatMessage);
-            log.info("chatMessage -> {}", chatRoom.getLastChatMessage());
-            log.info("chatTime -> {}", chatRoom.getLastChatTime());
             chatRoomRepository.save(chatRoom);
 
         } catch (Exception e) {

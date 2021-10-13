@@ -13,8 +13,11 @@ import java.util.Optional;
 public interface ChatJoinRepository extends JpaRepository<ChatJoin, Long> {
 
     List<ChatJoin> findAllByUser(User user);
+
     List<ChatJoin> findAllByChatRoom(ChatRoom chat);
+
     Optional<ChatJoin> findByChatRoomAndUser(ChatRoom chatRoom, User user);
+
     boolean existsByChatRoomAndUser(ChatRoom chatRoom, User user);
 
     @Modifying

@@ -31,13 +31,13 @@ public class ChatRoomResponseDto {
 
     public static ChatRoomResponseDto from(ChatRoom chatRoom, User user) {
         return ChatRoomResponseDto.builder()
-                .id(chatRoom.getId())
-                .title(chatRoom.getPost().getTitle())
-                .lastChatMessage(chatRoom.getLastChatMessage())
-                .lastChatTime(chatRoom.getLastChatTime())
-                .imageUrl(chatRoom.getPost().getImageUrl1())
-                .userCount(chatRoom.getPost().getGatheredPeople())
-                .isOwner(chatRoom.getPost().getUser().getId() == user.getId())
-                .build();
+            .id(chatRoom.getId())
+            .title(chatRoom.getPost().getTitle())
+            .lastChatMessage(chatRoom.getLastChatMessage())
+            .lastChatTime(chatRoom.getLastChatTime())
+            .imageUrl(chatRoom.getPost().getImageUrl1())
+            .userCount(chatRoom.getPost().getGatheredPeople())
+            .isOwner(chatRoom.getPost().getUser().getId() == user.getId())
+            .build();
     }
 }
