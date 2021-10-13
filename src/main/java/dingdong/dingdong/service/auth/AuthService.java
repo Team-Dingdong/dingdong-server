@@ -89,6 +89,7 @@ public class AuthService implements UserDetailsService {
     public UserDetails loadUserByUsername(String phone) throws UsernameNotFoundException {
         Auth auth = authRepository.findByPhone(phone);
         User user = userRepository.findByPhone(phone);
+
         if (auth == null || user == null) {
             throw new UsernameNotFoundException(phone);
         }
@@ -127,6 +128,8 @@ public class AuthService implements UserDetailsService {
     // 회원 가입
     @Transactional
     public TokenDto signup(AuthRequestDto authRequestDto) {
+        TokenDto tokenDto = login(authRequestDto);
+
         User user = User.builder()
             .phone(authRequestDto.getPhone())
             .authority("ROLE_USER")
@@ -138,7 +141,7 @@ public class AuthService implements UserDetailsService {
         userRepository.save(user);
         profileRepository.save(profile);
 
-        return login(authRequestDto);
+        return tokenDto;
     }
 
     // 토큰 재발급
