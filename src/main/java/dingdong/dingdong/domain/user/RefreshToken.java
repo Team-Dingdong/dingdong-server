@@ -1,5 +1,6 @@
 package dingdong.dingdong.domain.user;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,6 +12,7 @@ import javax.persistence.Id;
 @Getter
 @Builder
 @NoArgsConstructor
+@AllArgsConstructor
 public class RefreshToken {
 
     @Id
@@ -20,10 +22,5 @@ public class RefreshToken {
     public RefreshToken updateValue(String token) {
         this.value = token;
         return this;
-    }
-
-    public RefreshToken(String phone, String value) {
-        this.phone = phone;
-        this.value = value;
     }
 }

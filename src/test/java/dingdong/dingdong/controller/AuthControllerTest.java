@@ -96,24 +96,25 @@ class AuthControllerTest {
             .authNumber(authNumber)
             .requestId(requestId)
             .requestTime(requestTime)
+            .done(false)
             .build();
 
         authRepository.save(auth);
-
-        Profile profile = Profile.builder()
-            .id(id)
-            .build();
 
         String authority = "ROLE_USER";
         User user = User.builder()
             .id(id)
             .phone(phone)
-            .profile(profile)
             .authority(authority)
             .build();
 
-        profileRepository.save(profile);
+        Profile profile = Profile.builder()
+            .id(id)
+            .user(user)
+            .build();
+
         userRepository.save(user);
+        profileRepository.save(profile);
     }
 
     TokenDto getTokenDto() {
@@ -227,12 +228,13 @@ class AuthControllerTest {
     @DisplayName("닉네임 설정 테스트")
     void nickname() throws Exception {
         TokenDto tokenDto = getTokenDto();
+        String token = "Bearer " + tokenDto.getAccessToken();
         NicknameRequestDto nicknameRequestDto = NicknameRequestDto.builder()
-            .nickname("testNickname2")
+            .nickname("testNickname")
             .build();
 
-        mockMvc.perform(RestDocumentationRequestBuilders.post("/api/v1/auth/nickname")
-            .header(HttpHeaders.AUTHORIZATION, tokenDto.getAccessToken())
+        mockMvc.perform(RestDocumentationRequestBuilders.patch("/api/v1/auth/nickname")
+            .header(HttpHeaders.AUTHORIZATION, token)
             .content(objectMapper.writeValueAsString(nicknameRequestDto))
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON))
@@ -252,7 +254,7 @@ class AuthControllerTest {
 
     @Test
     @DisplayName("동네 목록 조회 테스트")
-    void getLocalList() throws Exception {
+    void getLocals() throws Exception {
         TokenDto tokenDto = getTokenDto();
 
         mockMvc.perform(

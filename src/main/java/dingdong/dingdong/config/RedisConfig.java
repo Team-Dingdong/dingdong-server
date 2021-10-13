@@ -18,8 +18,8 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.web.socket.messaging.DefaultSimpUserRegistry;
 
 @RequiredArgsConstructor
-@Configuration
 @EnableRedisRepositories
+@Configuration
 public class RedisConfig {
 
     @Value("${spring.redis.host}")

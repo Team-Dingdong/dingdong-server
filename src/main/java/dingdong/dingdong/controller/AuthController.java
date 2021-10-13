@@ -1,6 +1,5 @@
 package dingdong.dingdong.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import dingdong.dingdong.domain.user.CurrentUser;
 import dingdong.dingdong.domain.user.User;
 import dingdong.dingdong.dto.auth.AuthRequestDto;
@@ -15,14 +14,9 @@ import dingdong.dingdong.service.auth.AuthService;
 import dingdong.dingdong.service.auth.AuthType;
 import dingdong.dingdong.util.exception.Result;
 import dingdong.dingdong.util.exception.ResultCode;
-import java.io.UnsupportedEncodingException;
-import java.net.URISyntaxException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -32,7 +26,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-@Slf4j
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -42,9 +35,7 @@ public class AuthController {
 
     // 휴대폰 인증 번호 전송
     @PostMapping("/send-sms")
-    public ResponseEntity<Result<MessageResponseDto>> sendSms(
-        @RequestBody MessageRequestDto messageRequestDto)
-        throws NoSuchAlgorithmException, URISyntaxException, UnsupportedEncodingException, InvalidKeyException, JsonProcessingException {
+    public ResponseEntity<Result<MessageResponseDto>> sendSms(@RequestBody MessageRequestDto messageRequestDto) {
         MessageResponseDto data = authService.sendSms(messageRequestDto);
         return Result.toResult(ResultCode.SEND_SMS_SUCCESS, data);
     }
@@ -68,18 +59,16 @@ public class AuthController {
     }
 
     // 닉네임 설정
-    @PostMapping("/nickname")
-    public ResponseEntity<Result> nickname(@CurrentUser User user,
-        @RequestBody NicknameRequestDto nicknameRequestDto) {
+    @PatchMapping("/nickname")
+    public ResponseEntity<Result> nickname(@CurrentUser User user, @RequestBody NicknameRequestDto nicknameRequestDto) {
         authService.setNickname(user, nicknameRequestDto);
         return Result.toResult(ResultCode.NICKNAME_CREATE_SUCCESS);
     }
 
     // 동네 목록 조회
     @GetMapping("/local")
-    public ResponseEntity<Result<List<LocalResponseDto>>> getLocalList(@CurrentUser User user,
-        @RequestParam String city, @RequestParam String district) {
-        List<LocalResponseDto> data = authService.getLocalList(city, district);
+    public ResponseEntity<Result<List<LocalResponseDto>>> getLocals(@RequestParam String city, @RequestParam String district) {
+        List<LocalResponseDto> data = authService.getLocals(city, district);
         return Result.toResult(ResultCode.LOCAL_READ_SUCCESS, data);
     }
 

@@ -1,10 +1,10 @@
 package dingdong.dingdong.util.exception;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 @Getter
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class ResourceNotFoundException extends RuntimeException {
 
     private final ResultCode resultCode;

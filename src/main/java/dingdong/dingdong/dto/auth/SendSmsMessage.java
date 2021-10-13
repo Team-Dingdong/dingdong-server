@@ -1,12 +1,14 @@
 package dingdong.dingdong.dto.auth;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Data
-@AllArgsConstructor
+@Getter
+@Builder
 @NoArgsConstructor
+@AllArgsConstructor
 public class SendSmsMessage {
 
     private String to;
