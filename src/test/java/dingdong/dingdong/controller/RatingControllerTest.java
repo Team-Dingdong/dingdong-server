@@ -158,7 +158,7 @@ class RatingControllerTest {
 
     @Test
     @DisplayName("본인 평가 조회")
-    void getRating() throws Exception {
+    void getMyRating() throws Exception {
         TokenDto tokenDto = getTokenDto();
 
         String tokenType = "Bearer ";
@@ -187,7 +187,7 @@ class RatingControllerTest {
 
     @Test
     @DisplayName("평가 조회")
-    void testGetRating() throws Exception {
+    void getRating() throws Exception {
         TokenDto tokenDto = getTokenDto();
 
         String tokenType = "Bearer ";

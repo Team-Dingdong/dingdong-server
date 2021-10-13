@@ -33,17 +33,9 @@ public class Auth {
     private LocalDateTime requestTime;
 
     @Column(nullable = false)
-    private boolean done;
+    private Boolean done;
 
-    public Auth(String phone, String authNumber, String requestId, LocalDateTime requestTime) {
-        this.phone = phone;
-        this.authNumber = authNumber;
-        this.requestId = requestId;
-        this.requestTime = requestTime;
-    }
-
-    public void reauth(String authNumber, String requestId, LocalDateTime requestTime,
-        boolean done) {
+    public void reauth(String authNumber, String requestId, LocalDateTime requestTime, Boolean done) {
         this.authNumber = authNumber;
         this.requestId = requestId;
         this.requestTime = requestTime;

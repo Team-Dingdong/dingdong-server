@@ -1,18 +1,24 @@
 package dingdong.dingdong.domain.user;
 
-import lombok.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.MapsId;
+import javax.persistence.OneToOne;
+import javax.persistence.PrePersist;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
-import org.hibernate.annotations.DynamicUpdate;
-
-import javax.persistence.*;
 
 @Entity
 @Getter
-@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@DynamicUpdate
 public class Profile {
 
     @Id
@@ -43,9 +49,8 @@ public class Profile {
             : this.profileImageUrl;
     }
 
-    public Profile(User user) {
-        this.id = user.getId();
-        this.user = user;
+    public void setProfileImageUrl(String path) {
+        this.profileImageUrl = path;
     }
 
     public void setNickname(String nickname) {
