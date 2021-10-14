@@ -2,14 +2,21 @@ package dingdong.dingdong.domain.chat;
 
 
 import dingdong.dingdong.domain.BaseTimeEntity;
-import dingdong.dingdong.dto.chat.ChatPromiseRequestDto;
-import lombok.*;
-import org.springframework.format.annotation.DateTimeFormat;
-
-import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.MapsId;
+import javax.persistence.OneToOne;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 
 @Entity
 @Getter
@@ -39,25 +46,13 @@ public class ChatPromise extends BaseTimeEntity {
     private PromiseType type;
 
     // 전체 인원
-    private int totalPeople;
+    private Integer totalPeople;
 
     // 투표 인원
-    private int votingPeople;
+    private Integer votingPeople;
 
     // 약속 마감 시간
     private LocalDateTime promiseEndTime;
-
-    public ChatPromise(ChatRoom chatRoom, ChatPromiseRequestDto chatPromiseRequestDto) {
-        this.id = chatRoom.getId();
-        this.chatRoom = chatRoom;
-        this.promiseDate = chatPromiseRequestDto.getPromiseDate();
-        this.promiseTime = chatPromiseRequestDto.getPromiseTime();
-        this.promiseLocal = chatPromiseRequestDto.getPromiseLocal();
-        this.type = PromiseType.PROGRESS;
-        this.promiseEndTime = LocalDateTime.now().plusHours(3);
-        this.totalPeople = chatRoom.getPost().getGatheredPeople();
-        this.votingPeople = 1;
-    }
 
     public void plusVotingPeople() {
         this.votingPeople =

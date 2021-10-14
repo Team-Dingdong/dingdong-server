@@ -1,13 +1,10 @@
 package dingdong.dingdong.controller;
 
 import dingdong.dingdong.config.TokenProvider;
+import dingdong.dingdong.domain.chat.RedisChatMessage;
 import dingdong.dingdong.domain.user.User;
-import dingdong.dingdong.dto.chat.RedisChatMessage;
 import dingdong.dingdong.service.auth.AuthService;
-import dingdong.dingdong.util.exception.ResourceNotFoundException;
-import dingdong.dingdong.util.exception.ResultCode;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.messaging.handler.annotation.Header;
@@ -17,7 +14,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RestController;
 
-@Slf4j
 @RequiredArgsConstructor
 @RestController
 public class ChatController {
@@ -32,21 +28,16 @@ public class ChatController {
      */
     @MessageMapping("/chat/message")
     public void message(RedisChatMessage message, @Header("Authorization") String token) {
-        User user = null;
         String jwt = token.substring(7);
         if (StringUtils.hasText(jwt) && tokenProvider.validateToken(jwt)) {
-            log.info("authentication : {}", tokenProvider.getAuthentication(jwt));
             Authentication authentication = tokenProvider.getAuthentication(jwt);
             SecurityContextHolder.getContext().setAuthentication(authentication);
-            user = authService.getUserInfo();
-            if (user == null) {
-                throw new ResourceNotFoundException(ResultCode.USER_NOT_FOUND);
-            }
+            User user = authService.getUserInfo();
+
+            message.setSender(user.getId().toString());
+
+            // Websocket에 발행된 메시지를 redis로 발행(publish)
+            redisTemplate.convertAndSend(channelTopic.getTopic(), message);
         }
-
-        message.setSender(user.getId().toString());
-
-        // Websocket에 발행된 메시지를 redis로 발행(publish)
-        redisTemplate.convertAndSend(channelTopic.getTopic(), message);
     }
 }

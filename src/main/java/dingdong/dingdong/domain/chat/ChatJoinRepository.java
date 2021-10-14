@@ -1,15 +1,12 @@
 package dingdong.dingdong.domain.chat;
 
 import dingdong.dingdong.domain.user.User;
+import java.util.List;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Optional;
-
-@Transactional
 public interface ChatJoinRepository extends JpaRepository<ChatJoin, Long> {
 
     List<ChatJoin> findAllByUser(User user);
