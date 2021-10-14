@@ -91,8 +91,4 @@ public interface PostRepository extends JpaRepository<Post, Long> {
         countQuery = "select count(*) from post",
         nativeQuery = true)
     Page<Post> findPostByCategoryIdNotLocalSortByEndDate(Long categoryId, Pageable pageable);
-
-    @Modifying
-    @Query(value = "delete from post where post.post_id = :id", nativeQuery = true)
-    void deleteByPostId(Long id);
 }

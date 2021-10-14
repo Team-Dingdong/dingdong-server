@@ -25,7 +25,7 @@ public class Profile {
 
     private String nickname;
 
-    @ColumnDefault("varchar(255) default 'https://dingdongbucket.s3.ap-northeast-2.amazonaws.com/static/default_profile.jpg'")
+    @Column(columnDefinition = "varchar(255) default 'https://dingdongbucket.s3.ap-northeast-2.amazonaws.com/static/default_profile.jpg'")
     private String profileImageUrl;
 
     @ColumnDefault("0")

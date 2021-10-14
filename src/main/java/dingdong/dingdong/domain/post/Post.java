@@ -3,9 +3,8 @@ package dingdong.dingdong.domain.post;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import dingdong.dingdong.domain.BaseTimeEntity;
-import dingdong.dingdong.domain.chat.ChatRoom;
 import dingdong.dingdong.domain.user.User;
-import dingdong.dingdong.dto.post.PostRequestDto;
+import dingdong.dingdong.dto.post.PostCreateRequestDto;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicUpdate;
@@ -29,23 +28,17 @@ public class Post extends BaseTimeEntity {
     @Column(name = "post_id", nullable = false)
     private Long id;
 
-    @NotNull
     private String title;
 
-    @NotNull
     private int cost;
 
-    @NotNull
     private int people;
 
-    @NotNull
     @ColumnDefault("1")
     private int gatheredPeople;
 
-    @NotNull
     private String local;
 
-    @NotNull
     private String bio;
 
     @Column(columnDefinition = "varchar(255) default 'https://dingdongbucket.s3.ap-northeast-2.amazonaws.com/static/default_post.png'")
@@ -94,17 +87,6 @@ public class Post extends BaseTimeEntity {
     @JsonBackReference
     private List<PostTag> postTags = new ArrayList<>();
 
-
-    // title, people, price, bio, local
-    public void setPost(Category category, PostRequestDto request) {
-        this.category = category;
-        this.title = request.getTitle();
-        this.people = request.getPeople();
-        this.cost = request.getCost();
-        this.bio = request.getBio();
-        this.local = request.getLocal();
-        this.done = false;
-    }
 
     public void plusUserCount() {
         this.gatheredPeople =

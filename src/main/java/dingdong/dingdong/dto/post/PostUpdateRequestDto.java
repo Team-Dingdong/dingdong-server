@@ -7,16 +7,17 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 @Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class PostRequestDto {
+public class PostUpdateRequestDto {
 
     private String title;
 
-    private int people;
+    private String people;
 
-    private int cost;
+    private String cost;
 
     private String bio;
 
@@ -28,5 +29,4 @@ public class PostRequestDto {
 
     @JsonIgnore
     private List<MultipartFile> postImages;
-
 }

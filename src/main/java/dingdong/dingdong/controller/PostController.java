@@ -2,9 +2,7 @@ package dingdong.dingdong.controller;
 
 import dingdong.dingdong.domain.user.CurrentUser;
 import dingdong.dingdong.domain.user.User;
-import dingdong.dingdong.dto.post.PostDetailResponseDto;
-import dingdong.dingdong.dto.post.PostGetResponseDto;
-import dingdong.dingdong.dto.post.PostRequestDto;
+import dingdong.dingdong.dto.post.*;
 import dingdong.dingdong.service.chat.ChatService;
 import dingdong.dingdong.service.post.PostService;
 import dingdong.dingdong.util.exception.Result;
@@ -16,15 +14,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/post")
@@ -45,7 +37,7 @@ public class PostController {
             data = postService.findAllByCreateDate(pageable);
         } else {
             // 유저의 local 정보가 있는 경우(유저의 local 정보에 기반하여 나누기 GET)
-            data = postService.findAllByCreateDateWithLocal(user.getLocal1().getId(), user.getLocal2().getId(), pageable);
+            data = postService.findAllByCreateDateWithLocal(user, pageable);
         }
         return Result.toResult(ResultCode.POST_READ_SUCCESS, data);
     }
@@ -61,7 +53,7 @@ public class PostController {
             data = postService.findAllByEndDate(pageable);
         } else {
             // 유저의 local 정보가 없는 경우(유저의 local 정보에 기반하여 나누기 GET)
-            data = postService.findAllByEndDateWithLocal(user.getLocal1().getId(), user.getLocal2().getId(), pageable);
+            data = postService.findAllByEndDateWithLocal(user, pageable);
         }
         return Result.toResult(ResultCode.POST_READ_SUCCESS, data);
     }
@@ -77,9 +69,7 @@ public class PostController {
             data = postService.findPostByCategoryId(categoryId, pageable);
         } else {
             // user가 local 정보를 설정한 경우(local 정보에 기반하여 나누기 get)
-            Long local1 = user.getLocal1().getId();
-            Long local2 = user.getLocal2().getId();
-            data = postService.findPostByCategoryIdWithLocal(local1, local2, categoryId, pageable);
+            data = postService.findPostByCategoryIdWithLocal(user, categoryId, pageable);
         }
         return Result.toResult(ResultCode.POST_READ_SUCCESS, data);
     }
@@ -95,10 +85,7 @@ public class PostController {
             data = postService.findPostByCategoryIdSortByEndDate(categoryId, pageable);
         } else {
             // user가 local 정보를 설정한 경우(local 정보에 기반하여 나누기 get)
-            Long local1 = user.getLocal1().getId();
-            Long local2 = user.getLocal2().getId();
-            data = postService
-                .findPostByCategoryIdSortByEndDateWithLocal(local1, local2, categoryId, pageable);
+            data = postService.findPostByCategoryIdSortByEndDateWithLocal(user, categoryId, pageable);
         }
         return Result.toResult(ResultCode.POST_READ_SUCCESS, data);
     }
@@ -107,16 +94,16 @@ public class PostController {
     @GetMapping("/user/sell")
     public ResponseEntity<Result<Page<PostGetResponseDto>>> findPostByUser(@CurrentUser User user,
         @PageableDefault(size = 5, direction = Sort.Direction.DESC) Pageable pageable) {
-        Page<PostGetResponseDto> postPage = postService.findPostByUser(user, pageable);
-        return Result.toResult(ResultCode.POST_READ_SUCCESS, postPage);
+        Page<PostGetResponseDto> data = postService.findPostByUser(user, pageable);
+        return Result.toResult(ResultCode.POST_READ_SUCCESS, data);
     }
 
     // 특정 유저(본인 제외)가 생성한 나누기 피드들 불러오기
-    @GetMapping("/user/{id}")
-    public ResponseEntity<Result<Page<PostGetResponseDto>>> findPostByUserId(@PathVariable Long id,
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<Result<Page<PostGetResponseDto>>> findPostByUserId(@PathVariable Long userId,
         @PageableDefault(size = 5, direction = Sort.Direction.DESC) Pageable pageable) {
-        Page<PostGetResponseDto> postPage = postService.findPostByUserId(id, pageable);
-        return Result.toResult(ResultCode.POST_READ_SUCCESS, postPage);
+        Page<PostGetResponseDto> data = postService.findPostByUserId(userId, pageable);
+        return Result.toResult(ResultCode.POST_READ_SUCCESS, data);
     }
 
     // 유저가 공동구매에 참여한 나누기 피드들 불러오기 (마이페이지 구매내역 조회)
@@ -124,47 +111,51 @@ public class PostController {
     public ResponseEntity<Result<Page<PostGetResponseDto>>> findPostByUserIdOnChat(
         @CurrentUser User user,
         @PageableDefault(size = 5, direction = Sort.Direction.DESC) Pageable pageable) {
-        Page<PostGetResponseDto> postPage = postService.findPostByUserIdOnChatJoin(user, pageable);
-        return Result.toResult(ResultCode.POST_READ_SUCCESS, postPage);
+        Page<PostGetResponseDto> data = postService.findPostByUserIdOnChatJoin(user, pageable);
+        return Result.toResult(ResultCode.POST_READ_SUCCESS, data);
     }
 
     // 특정 나누기 상세보기 불러오기
     @GetMapping("/{postId}")
     public ResponseEntity<Result<PostDetailResponseDto>> findPostById(@PathVariable Long postId) {
         PostDetailResponseDto data = postService.findPostById(postId);
-        ResultCode message = ResultCode.POST_READ_SUCCESS;
-        return Result.toResult(message, data);
+        return Result.toResult(ResultCode.POST_READ_SUCCESS, data);
     }
 
     // 나누기 생성
     @PostMapping("")
-    public ResponseEntity<Result<Long>> createPost(@CurrentUser User user,
-        @ModelAttribute PostRequestDto requestDto) throws IOException {
-        Long postId = postService.createPost(user, requestDto);
-        return Result.toResult(ResultCode.POST_CREATE_SUCCESS, postId);
+    public ResponseEntity<Result<PostResponseDto>> createPost(@CurrentUser User user,
+        @ModelAttribute @Valid PostCreateRequestDto postCreateRequestDto) {
+        Long postId = postService.createPost(user, postCreateRequestDto);
+        PostResponseDto data = PostResponseDto.builder()
+                .id(postId)
+                .build();
+        return Result.toResult(ResultCode.POST_CREATE_SUCCESS, data);
     }
 
     // 나누기 수정
-    @PatchMapping("/{id}")
-    public ResponseEntity<Result> updatePost(@ModelAttribute PostRequestDto request,
-        @PathVariable Long id) throws IOException {
-        postService.updatePost(id, request);
-        return Result.toResult(ResultCode.POST_UPDATE_SUCCESS);
+    @PatchMapping("/{postId}")
+    public ResponseEntity<Result<PostResponseDto>> updatePost(@PathVariable Long postId,
+        @ModelAttribute @Valid PostUpdateRequestDto postUpdateRequestDto) {
+        postService.updatePost(postId, postUpdateRequestDto);
+        PostResponseDto data = PostResponseDto.builder()
+                .id(postId)
+                .build();
+        return Result.toResult(ResultCode.POST_UPDATE_SUCCESS, data);
     }
 
     // 나누기 삭제
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Result> deletePost(@PathVariable Long id) {
-        postService.deletePost(id);
+    @DeleteMapping("/{postId}")
+    public ResponseEntity<Result> deletePost(@PathVariable Long postId) {
+        postService.deletePost(postId);
         return Result.toResult(ResultCode.POST_DELETE_SUCCESS);
     }
 
     // 나누기 거래 확정 하기
     @PostMapping("/confirmed/{postId}")
-    public ResponseEntity<Result<String>> confirmed(@CurrentUser User user, @PathVariable Long postId) {
-
+    public ResponseEntity<Result> confirmed(@CurrentUser User user, @PathVariable Long postId) {
         chatService.confirmedPost(user, postId);
-        return Result.toResult(ResultCode.POST_CONFIRMED_SUCCESS, null);
+        return Result.toResult(ResultCode.POST_CONFIRMED_SUCCESS);
     }
 
     // 검색 기능 구현

@@ -1,7 +1,6 @@
 package dingdong.dingdong.service.post;
 
 import static dingdong.dingdong.util.exception.ResultCode.CATEGORY_NOT_FOUND;
-import static dingdong.dingdong.util.exception.ResultCode.POST_CREATE_FAIL;
 import static dingdong.dingdong.util.exception.ResultCode.POST_NOT_FOUND;
 import static dingdong.dingdong.util.exception.ResultCode.USER_NOT_FOUND;
 
@@ -20,12 +19,11 @@ import dingdong.dingdong.domain.user.User;
 import dingdong.dingdong.domain.user.UserRepository;
 import dingdong.dingdong.dto.post.PostDetailResponseDto;
 import dingdong.dingdong.dto.post.PostGetResponseDto;
-import dingdong.dingdong.dto.post.PostRequestDto;
+import dingdong.dingdong.dto.post.PostCreateRequestDto;
+import dingdong.dingdong.dto.post.PostUpdateRequestDto;
 import dingdong.dingdong.service.chat.ChatService;
 import dingdong.dingdong.service.s3.S3Uploader;
-import dingdong.dingdong.util.exception.ForbiddenException;
 import dingdong.dingdong.util.exception.ResourceNotFoundException;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -54,18 +52,18 @@ public class PostService {
 
     // 유저의 LOCAL 정보에 기반하여 나누기 불러오기 (정렬 기준: 최신순)(홈화면)
     @Transactional(readOnly = true)
-    public Page<PostGetResponseDto> findAllByCreateDateWithLocal(Long local1, Long local2,
+    public Page<PostGetResponseDto> findAllByCreateDateWithLocal(User user,
         Pageable pageable) {
-        Page<Post> posts = postRepository.findAllByCreateDate(local1, local2, pageable);
+        Page<Post> posts = postRepository.findAllByCreateDate(user.getLocal1().getId(), user.getLocal2().getId(), pageable);
 
         return posts.map(PostGetResponseDto::from);
     }
 
     // 유저의 LOCAL 정보에 기반하여 나누기 불러오기 (정렬 기준: 마감임박순)(홈화면)
     @Transactional(readOnly = true)
-    public Page<PostGetResponseDto> findAllByEndDateWithLocal(Long local1, Long local2,
+    public Page<PostGetResponseDto> findAllByEndDateWithLocal(User user,
         Pageable pageable) {
-        Page<Post> posts = postRepository.findAllByEndDate(local1, local2, pageable);
+        Page<Post> posts = postRepository.findAllByEndDate(user.getLocal1().getId(), user.getLocal2().getId(), pageable);
 
         return posts.map(PostGetResponseDto::from);
     }
@@ -82,12 +80,12 @@ public class PostService {
 
     // 유저의 LOCAL 정보에 기반하여 카테고리별로 나누기 불러오기 (정렬 기준: 마감임박순)(카테고리 화면)
     @Transactional(readOnly = true)
-    public Page<PostGetResponseDto> findPostByCategoryIdWithLocal(Long local1, Long local2,
+    public Page<PostGetResponseDto> findPostByCategoryIdWithLocal(User user,
         Long categoryId, Pageable pageable) {
         Category category = categoryRepository.findById(categoryId)
             .orElseThrow(() -> new ResourceNotFoundException(CATEGORY_NOT_FOUND));
         Page<Post> posts = postRepository
-            .findByCategoryId(local1, local2, category.getId(), pageable);
+            .findByCategoryId(user.getLocal1().getId(), user.getLocal2().getId(), category.getId(), pageable);
 
         return posts.map(PostGetResponseDto::from);
     }
@@ -103,10 +101,8 @@ public class PostService {
     // 특정 유저(본인 제외)가 생성한 나누기 피드들 불러오기
     @Transactional(readOnly = true)
     public Page<PostGetResponseDto> findPostByUserId(Long id, Pageable pageable) {
-        User user = userRepository.findById(id)
-            .orElseThrow(() -> new ResourceNotFoundException(USER_NOT_FOUND));
-        Page<Post> posts = postRepository.findByUserId(id, pageable);
-
+        User user = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(USER_NOT_FOUND));
+        Page<Post> posts = postRepository.findByUserId(user.getId(), pageable);
         return posts.map(PostGetResponseDto::from);
     }
 
@@ -146,12 +142,12 @@ public class PostService {
 
     // 유저의 LOCAL 정보에 기반하여 카테고리별 나누기 불러오기 (정렬 기준: 마감임박순)(카테고리 화면)(유저의 local 정보가 기입된 경우)
     @Transactional(readOnly = true)
-    public Page<PostGetResponseDto> findPostByCategoryIdSortByEndDateWithLocal(Long local1,
-        Long local2, Long categoryId, Pageable pageable) {
+    public Page<PostGetResponseDto> findPostByCategoryIdSortByEndDateWithLocal(User user,
+         Long categoryId, Pageable pageable) {
         Category category = categoryRepository.findById(categoryId)
             .orElseThrow(() -> new ResourceNotFoundException(CATEGORY_NOT_FOUND));
         Page<Post> posts = postRepository
-            .findPostByCategoryIdSortByEndDate(local1, local2, category.getId(), pageable);
+            .findPostByCategoryIdSortByEndDate(user.getLocal1().getId(), user.getLocal2().getId(), category.getId(), pageable);
 
         return posts.map(PostGetResponseDto::from);
     }
@@ -170,64 +166,62 @@ public class PostService {
 
     // 나누기 피드(post) 생성
     @Transactional
-    public Long createPost(User user, PostRequestDto postRequestDto) throws IOException {
-        Post post = new Post();
-        if (postRequestDto == null) {
-            throw new ForbiddenException(POST_CREATE_FAIL);
-        }
+    public Long createPost(User user, PostCreateRequestDto request) {
 
         // CategoryId
-        Category category = categoryRepository.findById(postRequestDto.getCategoryId())
+        Category category = categoryRepository.findById(request.getCategoryId())
             .orElseThrow(() -> new ResourceNotFoundException(CATEGORY_NOT_FOUND));
 
         List<String> paths = new ArrayList<>();
-
         // ImageList to S3
-        if (postRequestDto.getPostImages() != null) {
-
-            List<MultipartFile> files = postRequestDto.getPostImages();
+        if (request.getPostImages() != null) {
+            List<MultipartFile> files = request.getPostImages();
             for (MultipartFile file : files) {
                 paths.add(s3Uploader.upload(file, "static"));
             }
-
-
-            if (paths.size() < 3) {
-                while (paths.size() < 3) {
-                    paths.add(
+        }
+        if (paths.size() < 3) {
+            while (paths.size() < 3) {
+                paths.add(
                         "https://dingdongbucket.s3.ap-northeast-2.amazonaws.com/static/default_post.png");
-                }
             }
         }
-        post.setImageUrl1(paths.get(0));
-        post.setImageUrl2(paths.get(1));
-        post.setImageUrl3(paths.get(2));
 
-        post.setPost(category, postRequestDto);
-        post.setUser(user);
-
+        // 나눔 저장
+        Post post = Post.builder()
+                .title(request.getTitle())
+                .people(Integer.parseInt(request.getPeople()))
+                .cost(Integer.parseInt(request.getCost()))
+                .bio(request.getBio())
+                .local(request.getLocal())
+                .user(user)
+                .category(category)
+                .imageUrl1(paths.get(0))
+                .imageUrl2(paths.get(1))
+                .imageUrl3(paths.get(2))
+                .build();
         postRepository.save(post);
         postRepository.flush();
 
         // Post PostTag 업로드
-        String str = postRequestDto.getPostTag();
+        String str = request.getPostTag();
         String[] array = (str.substring(1)).split("#");
 
-        for (int i = 0; i < array.length; i++) {
+        for (String s : array) {
             Tag tag = new Tag();
-            if (!tagRepository.existsByName(array[i])) {
-                tag.setName(array[i]);
+            if (!tagRepository.existsByName(s)) {
+                tag.setName(s);
                 tagRepository.save(tag);
                 tagRepository.flush();
             } else {
-                tag = tagRepository.findByName(array[i]);
+                tag = tagRepository.findByName(s);
             }
-
-            PostTag postTag = new PostTag();
-            postTag.setPost(post);
-            postTag.setTag(tag);
+            PostTag postTag = PostTag.builder()
+                    .post(post)
+                    .tag(tag)
+                    .build();
             postTagRepository.save(postTag);
         }
-
         chatService.createChatRoom(post);
         return post.getId();
     }
@@ -251,58 +245,62 @@ public class PostService {
 
     // 나누기 피드(post) 수정
     @Transactional
-    public void updatePost(Long id, PostRequestDto postRequestDto) throws IOException {
+    public void updatePost(Long id, PostUpdateRequestDto requestDto) {
         Post post = postRepository.findById(id)
             .orElseThrow(() -> new ResourceNotFoundException(POST_NOT_FOUND));
 
         // CategoryId
-        Category category = categoryRepository.findById(postRequestDto.getCategoryId())
+        Category category = categoryRepository.findById(requestDto.getCategoryId())
             .orElseThrow(() -> new ResourceNotFoundException(CATEGORY_NOT_FOUND));
 
+        List<String> paths = new ArrayList<>();
         // ImageList to S3
-        if (postRequestDto.getPostImages() != null) {
-            List<String> paths = new ArrayList<>();
-
+        if (requestDto.getPostImages() != null) {
             // 이미지를 AWS S3에 업로드
-            List<MultipartFile> files = postRequestDto.getPostImages();
+            List<MultipartFile> files = requestDto.getPostImages();
             for (MultipartFile file : files) {
                 paths.add(s3Uploader.upload(file, "static"));
             }
-
             if (paths.size() < 3) {
                 while (paths.size() < 3) {
                     paths.add(
                         "https://dingdongbucket.s3.ap-northeast-2.amazonaws.com/static/default_post.png");
                 }
             }
-            post.setImageUrl1(paths.get(0));
-            post.setImageUrl2(paths.get(1));
-            post.setImageUrl3(paths.get(2));
         }
-
-        post.setPost(category, postRequestDto);
+        Post.builder()
+                .title(requestDto.getTitle())
+                .people(Integer.parseInt(requestDto.getPeople()))
+                .cost(Integer.parseInt(requestDto.getCost()))
+                .bio(requestDto.getBio())
+                .local(requestDto.getLocal())
+                .imageUrl1(paths.get(0))
+                .imageUrl2(paths.get(1))
+                .imageUrl3(paths.get(2))
+                .category(category)
+                .build();
         postRepository.save(post);
 
         // 나누기 PostTag Update
         postRepository.flush();
-        String str = postRequestDto.getPostTag();
+        String str = requestDto.getPostTag();
         String[] array = (str.substring(1)).split("#");
 
         postTagRepository.deleteByPostId(post.getId());
 
-        for (int i = 0; i < array.length; i++) {
+        for (String s : array) {
             Tag tag = new Tag();
-            if (!tagRepository.existsByName(array[i])) {
-                tag.setName(array[i]);
+            if (!tagRepository.existsByName(s)) {
+                tag.setName(s);
                 tagRepository.save(tag);
                 tagRepository.flush();
             } else {
-                tag = tagRepository.findByName(array[i]);
+                tag = tagRepository.findByName(s);
             }
-
-            PostTag postTag = new PostTag();
-            postTag.setPost(post);
-            postTag.setTag(tag);
+            PostTag postTag = PostTag.builder()
+                    .post(post)
+                    .tag(tag)
+                    .build();
             postTagRepository.save(postTag);
         }
     }
