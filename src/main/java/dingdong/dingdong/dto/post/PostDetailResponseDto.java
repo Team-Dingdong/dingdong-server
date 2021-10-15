@@ -28,7 +28,7 @@ public class PostDetailResponseDto {
 
     private Number bad;
 
-    private int cost;
+    private Integer cost;
 
     private String bio;
 
@@ -38,11 +38,11 @@ public class PostDetailResponseDto {
 
     private LocalDateTime modifiedDate;
 
-    private int people;
+    private Integer people;
 
-    private int gatheredPeople;
+    private Integer gatheredPeople;
 
-    private boolean done;
+    private Boolean done;
 
     private String imageUrl1;
 
@@ -65,7 +65,7 @@ public class PostDetailResponseDto {
             .modifiedDate(post.getModifiedDate())
             .people(post.getPeople())
             .gatheredPeople(post.getGatheredPeople())
-            .done(post.isDone())
+            .done(post.getDone())
             .local(post.getLocal())
             .userId(post.getUser().getId())
             .nickname(post.getUser().getProfile().getNickname())

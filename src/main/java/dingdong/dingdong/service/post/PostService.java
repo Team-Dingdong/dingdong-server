@@ -166,16 +166,16 @@ public class PostService {
 
     // 나누기 피드(post) 생성
     @Transactional
-    public Long createPost(User user, PostCreateRequestDto request) {
+    public Long createPost(User user, PostCreateRequestDto postCreateRequestDto) {
 
         // CategoryId
-        Category category = categoryRepository.findById(request.getCategoryId())
+        Category category = categoryRepository.findById(postCreateRequestDto.getCategoryId())
             .orElseThrow(() -> new ResourceNotFoundException(CATEGORY_NOT_FOUND));
 
         List<String> paths = new ArrayList<>();
         // ImageList to S3
-        if (request.getPostImages() != null) {
-            List<MultipartFile> files = request.getPostImages();
+        if (postCreateRequestDto.getPostImages() != null) {
+            List<MultipartFile> files = postCreateRequestDto.getPostImages();
             for (MultipartFile file : files) {
                 paths.add(s3Uploader.upload(file, "static"));
             }
@@ -189,11 +189,11 @@ public class PostService {
 
         // 나눔 저장
         Post post = Post.builder()
-                .title(request.getTitle())
-                .people(Integer.parseInt(request.getPeople()))
-                .cost(Integer.parseInt(request.getCost()))
-                .bio(request.getBio())
-                .local(request.getLocal())
+                .title(postCreateRequestDto.getTitle())
+                .people(Integer.parseInt(postCreateRequestDto.getPeople()))
+                .cost(Integer.parseInt(postCreateRequestDto.getCost()))
+                .bio(postCreateRequestDto.getBio())
+                .local(postCreateRequestDto.getLocal())
                 .user(user)
                 .category(category)
                 .imageUrl1(paths.get(0))
@@ -204,7 +204,7 @@ public class PostService {
         postRepository.flush();
 
         // Post PostTag 업로드
-        String str = request.getPostTag();
+        String str = postCreateRequestDto.getPostTag();
         String[] array = (str.substring(1)).split("#");
 
         for (String s : array) {
@@ -245,64 +245,74 @@ public class PostService {
 
     // 나누기 피드(post) 수정
     @Transactional
-    public void updatePost(Long id, PostUpdateRequestDto requestDto) {
+    public void updatePost(Long id, PostUpdateRequestDto postUpdateRequestDto) {
         Post post = postRepository.findById(id)
             .orElseThrow(() -> new ResourceNotFoundException(POST_NOT_FOUND));
 
-        // CategoryId
-        Category category = categoryRepository.findById(requestDto.getCategoryId())
-            .orElseThrow(() -> new ResourceNotFoundException(CATEGORY_NOT_FOUND));
-
-        List<String> paths = new ArrayList<>();
-        // ImageList to S3
-        if (requestDto.getPostImages() != null) {
-            // 이미지를 AWS S3에 업로드
-            List<MultipartFile> files = requestDto.getPostImages();
-            for (MultipartFile file : files) {
-                paths.add(s3Uploader.upload(file, "static"));
-            }
-            if (paths.size() < 3) {
-                while (paths.size() < 3) {
-                    paths.add(
-                        "https://dingdongbucket.s3.ap-northeast-2.amazonaws.com/static/default_post.png");
+        if (postUpdateRequestDto.getTitle() != null){
+            post.setTitle(postUpdateRequestDto.getTitle());
+        }
+        if (postUpdateRequestDto.getCost() != null){
+            post.setCost(Integer.parseInt(postUpdateRequestDto.getCost()));
+        }
+        if (postUpdateRequestDto.getPeople() != null){
+            post.setPeople(Integer.parseInt(postUpdateRequestDto.getPeople()));
+        }
+        if(postUpdateRequestDto.getBio() != null){
+            post.setBio(postUpdateRequestDto.getBio());
+        }
+        if(postUpdateRequestDto.getLocal() != null){
+            post.setLocal(postUpdateRequestDto.getLocal());
+        }
+        if(postUpdateRequestDto.getCategoryId() != null) {
+            Category category = categoryRepository.findById(postUpdateRequestDto.getCategoryId())
+                    .orElseThrow(() -> new ResourceNotFoundException(CATEGORY_NOT_FOUND));
+            post.setCategory(category);
+        }
+        if(postUpdateRequestDto.getPostTag() != null){
+            List<String> paths = new ArrayList<>();
+            // ImageList to S3
+            if (postUpdateRequestDto.getPostImages() != null) {
+                // 이미지를 AWS S3에 업로드
+                List<MultipartFile> files = postUpdateRequestDto.getPostImages();
+                for (MultipartFile file : files) {
+                    paths.add(s3Uploader.upload(file, "static"));
                 }
-            }
+                if (paths.size() < 3) {
+                    while (paths.size() < 3) {
+                        paths.add(
+                                "https://dingdongbucket.s3.ap-northeast-2.amazonaws.com/static/default_post.png");
+                    }
+                }
         }
-        Post.builder()
-                .title(requestDto.getTitle())
-                .people(Integer.parseInt(requestDto.getPeople()))
-                .cost(Integer.parseInt(requestDto.getCost()))
-                .bio(requestDto.getBio())
-                .local(requestDto.getLocal())
-                .imageUrl1(paths.get(0))
-                .imageUrl2(paths.get(1))
-                .imageUrl3(paths.get(2))
-                .category(category)
-                .build();
+
+        }
         postRepository.save(post);
-
         // 나누기 PostTag Update
-        postRepository.flush();
-        String str = requestDto.getPostTag();
-        String[] array = (str.substring(1)).split("#");
+        if (postUpdateRequestDto.getPostTag() != null){
+            postRepository.flush();
+            String str = postUpdateRequestDto.getPostTag();
+            String[] array = (str.substring(1)).split("#");
 
-        postTagRepository.deleteByPostId(post.getId());
+            postTagRepository.deleteByPostId(post.getId());
 
-        for (String s : array) {
-            Tag tag = new Tag();
-            if (!tagRepository.existsByName(s)) {
-                tag.setName(s);
-                tagRepository.save(tag);
-                tagRepository.flush();
-            } else {
-                tag = tagRepository.findByName(s);
+            for (String s : array) {
+                Tag tag = new Tag();
+                if (!tagRepository.existsByName(s)) {
+                    tag.setName(s);
+                    tagRepository.save(tag);
+                    tagRepository.flush();
+                } else {
+                    tag = tagRepository.findByName(s);
+                }
+                PostTag postTag = PostTag.builder()
+                        .post(post)
+                        .tag(tag)
+                        .build();
+                postTagRepository.save(postTag);
             }
-            PostTag postTag = PostTag.builder()
-                    .post(post)
-                    .tag(tag)
-                    .build();
-            postTagRepository.save(postTag);
         }
+
     }
 
     // local 정보에 기반하지 않고 제목, 카테고리 검색 기능(검색 기능)(유저의 LOCAL 정보가 기입되지 않은 경우)

@@ -15,15 +15,15 @@ public class PostGetResponseDto {
 
     private String title;
 
-    private int people;
+    private Integer people;
 
-    private int cost;
+    private Integer cost;
 
     private String bio;
 
     private String local;
 
-    private boolean done;
+    private Boolean done;
 
     private LocalDateTime createdDate;
 
@@ -39,7 +39,7 @@ public class PostGetResponseDto {
             .cost(post.getCost())
             .bio(post.getBio())
             .local(post.getLocal())
-            .done(post.isDone())
+            .done(post.getDone())
             .imageUrl1(post.getImageUrl1())
             .createdDate(post.getCreatedDate())
             .build();

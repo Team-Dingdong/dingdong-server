@@ -649,6 +649,7 @@ class PostControllerTest {
 //                fieldWithPath("data.content[].imageUrl1").type("String").description("나누기의 이미지1")
 //                    .optional(),
 //                fieldWithPath("data.content[].tag").type("String").description("나누기의 태그")
+
             )
         ));
     }
