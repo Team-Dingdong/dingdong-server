@@ -103,7 +103,13 @@ public enum ResultCode {
     POST_CONFIRMED_FAIL_TIME(BAD_REQUEST, "거래 약속 시간이 지나지 않아 거래 확정이 불가능합니다"),
 
     /* 401 UNAUTHORIZED : 인증되지 않은 사용자 */
-    INVALID_AUTH_TOKEN(UNAUTHORIZED, "권한 정보가 없는 토큰입니다"),
+    INVALID_AUTH_TOKEN(UNAUTHORIZED, "올바른 토큰이 아닙니다"),
+    INVALID_JWT_SIGN(UNAUTHORIZED, "잘못된 JWT 서명입니다"),
+    INVALID_JWT_EXPIRED(UNAUTHORIZED, "만료된 JWT 토큰입니다"),
+    INVALID_AUTH_INFO(UNAUTHORIZED, "전화번호나 인증번호가 맞지 않습니다"),
+    INVALID_ACCOUNT(UNAUTHORIZED, "계정이 비활성화 되었습니다"),
+    CREDENTIALS_EXPIRED(UNAUTHORIZED, "비밀번호 유효기간이 만료되었습니다"),
+    UNKNOWN_AUTHENTICATION_ERROR(UNAUTHORIZED, "알 수 없는 이유로 인에 실패했습니다"),
 
     /* 403 FORBIDDEN : 권한이 없는 사용자 */
     CHAT_ROOM_QUIT_FAIL_OWNER(FORBIDDEN, "방장은 채팅방을 나갈 수 없습니다"),

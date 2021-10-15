@@ -40,7 +40,11 @@ public class RatingService {
         }
 
         Rating rating = ratingRepository.findBySenderAndReceiver(sender, receiver)
-            .orElse(new Rating(sender, receiver));
+            .orElse(Rating.builder()
+                .sender(sender)
+                .receiver(receiver)
+                .build());
+
         rating.setType(ratingRequestDto.getType());
         ratingRepository.save(rating);
 

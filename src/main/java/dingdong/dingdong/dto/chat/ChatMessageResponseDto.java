@@ -2,17 +2,16 @@ package dingdong.dingdong.dto.chat;
 
 import dingdong.dingdong.domain.chat.ChatMessage;
 import dingdong.dingdong.domain.chat.MessageType;
+import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
-
-@Data
+@Getter
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 public class ChatMessageResponseDto {
 
     private Long userId;
@@ -21,7 +20,7 @@ public class ChatMessageResponseDto {
 
     private String profileImageUrl;
 
-    private boolean isOwner;
+    private Boolean isOwner;
 
     private MessageType type;
 

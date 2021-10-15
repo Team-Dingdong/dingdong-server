@@ -1,24 +1,21 @@
 package dingdong.dingdong.util.exception;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.InternalAuthenticationServiceException;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.authentication.CredentialsExpiredException;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 @Slf4j
 @RestControllerAdvice
@@ -54,28 +51,40 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return Result.toResult(e.getResultCode());
     }
 
-    @ExceptionHandler(AuthenticationException.class)
-    protected ResponseEntity<Result> handleAuthenticationException(AuthenticationException e) {
-        log.error("handleAuthenticationException : {}", e.getMessage());
-        if (e instanceof BadCredentialsException) {
-            return Result.toResult(ResultCode.AUTH_FAIL);
-        } else if (e instanceof InternalAuthenticationServiceException) {
-            return Result.toResult(ResultCode.AUTH_NOT_FOUND);
-        } else if (e instanceof UsernameNotFoundException) {
-            return Result.toResult(ResultCode.AUTH_NOT_FOUND);
-        }
-        return Result.toResult(ResultCode.AUTH_ERROR);
+    @ExceptionHandler(BadCredentialsException.class)
+    protected ResponseEntity<Result> handleBadCredentialsException(
+        BadCredentialsException e) {
+        log.error("handleBadCredentialsException : {}", e.getMessage());
+        return Result.toResult(ResultCode.INVALID_AUTH_INFO);
+    }
+
+    @ExceptionHandler(DisabledException.class)
+    protected ResponseEntity<Result> handleDisabledException(DisabledException e) {
+        log.error("handleDisabledException : {}", e.getMessage());
+        return Result.toResult(ResultCode.INVALID_ACCOUNT);
+    }
+
+    @ExceptionHandler(CredentialsExpiredException.class)
+    protected ResponseEntity<Result> handleCredentialsExpiredException(
+        CredentialsExpiredException e) {
+        log.error("handleCredentialsExpiredException : {}", e.getMessage());
+        return Result.toResult(ResultCode.CREDENTIALS_EXPIRED);
+    }
+
+    @ExceptionHandler(UnknownAuthenticationException.class)
+    protected ResponseEntity<Result> handleUnknownAuthenticationException(
+        UnknownAuthenticationException e) {
+        log.error("handleUnknownAuthenticationException : {}", e.getResultCode());
+        return Result.toResult(e.getResultCode());
     }
 
     @Override
     protected ResponseEntity handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
         HttpHeaders headers, HttpStatus status, WebRequest request) {
         List<FieldError> allFieldErrors = ex.getBindingResult().getFieldErrors();
-        List<Map<String, String>> data = new ArrayList<>();
+        Map<String, String> data = new HashMap<>();
         for (FieldError fieldError : allFieldErrors) {
-            Map<String, String> item = new HashMap<>();
-            item.put(fieldError.getField(), fieldError.getDefaultMessage());
-            data.add(item);
+            data.put(fieldError.getField(), fieldError.getDefaultMessage());
         }
         return Result.toResult(ResultCode.VALID_ERROR, data);
     }

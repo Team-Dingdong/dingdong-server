@@ -12,7 +12,6 @@ import java.util.List;
 @Entity
 @Getter
 @Builder
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @DynamicUpdate
@@ -37,11 +36,6 @@ public class ChatRoom {
 
     @OneToOne(mappedBy = "chatRoom")
     private ChatPromise chatPromise;
-
-    public ChatRoom(Post post) {
-        this.id = post.getId();
-        this.post = post;
-    }
 
     public void setInfo(ChatMessage chatMessage) {
         this.lastChatMessage = chatMessage.getMessage();

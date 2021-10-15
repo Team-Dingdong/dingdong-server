@@ -93,24 +93,25 @@ class ProfileControllerTest {
             .authNumber(authNumber)
             .requestId(requestId)
             .requestTime(requestTime)
+            .done(false)
             .build();
 
         authRepository.save(auth);
-
-        String nickname = "testNickname";
-        String profileImageUrl = "testProfileImageUrl";
-        Profile profile = Profile.builder()
-            .id(id)
-            .nickname(nickname)
-            .profileImageUrl(profileImageUrl)
-            .build();
 
         String authority = "ROLE_USER";
         User user = User.builder()
             .id(id)
             .phone(phone)
-            .profile(profile)
             .authority(authority)
+            .build();
+
+        String nickname = "testNickname";
+        String profileImageUrl = "testProfileImageUrl";
+        Profile profile = Profile.builder()
+            .id(id)
+            .user(user)
+            .nickname(nickname)
+            .profileImageUrl(profileImageUrl)
             .build();
 
         profileRepository.save(profile);

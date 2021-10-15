@@ -1,6 +1,6 @@
 package dingdong.dingdong.config;
 
-import dingdong.dingdong.dto.chat.RedisChatRoom;
+import dingdong.dingdong.domain.chat.RedisChatRoom;
 import dingdong.dingdong.service.chat.RedisSubscriber;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,8 +18,8 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.web.socket.messaging.DefaultSimpUserRegistry;
 
 @RequiredArgsConstructor
-@Configuration
 @EnableRedisRepositories
+@Configuration
 public class RedisConfig {
 
     @Value("${spring.redis.host}")

@@ -2,20 +2,19 @@ package dingdong.dingdong.dto.chat;
 
 import dingdong.dingdong.domain.chat.ChatPromise;
 import dingdong.dingdong.domain.chat.PromiseType;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.springframework.format.annotation.DateTimeFormat;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 
-@Data
+@Getter
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 public class ChatPromiseResponseDto {
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
@@ -28,10 +27,10 @@ public class ChatPromiseResponseDto {
     private String promiseLocal;
 
     // 전체 인원
-    private int totalPeople;
+    private Integer totalPeople;
 
     // 투표 인원
-    private int votingPeople;
+    private Integer votingPeople;
 
     // 약속 마감 시간
     private LocalDateTime promiseEndTime;

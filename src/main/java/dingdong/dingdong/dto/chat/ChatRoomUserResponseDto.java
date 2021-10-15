@@ -4,13 +4,13 @@ import dingdong.dingdong.domain.chat.ChatRoom;
 import dingdong.dingdong.domain.user.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Data
+@Getter
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 public class ChatRoomUserResponseDto {
 
     private Long userId;
@@ -19,7 +19,7 @@ public class ChatRoomUserResponseDto {
 
     private String profileImageUrl;
 
-    private boolean isOwner;
+    private Boolean isOwner;
 
     public static ChatRoomUserResponseDto from(ChatRoom chatRoom, User user) {
         return ChatRoomUserResponseDto.builder()
