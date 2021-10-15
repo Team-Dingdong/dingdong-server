@@ -83,6 +83,12 @@ public class Post extends BaseTimeEntity {
         }
     }
 
+    public void setTitle(String title){ this.title = title; }
+    public void setCost(int cost){ this.cost = cost; }
+    public void setPeople(int people){ this.people = people; }
+    public void setBio(String bio){ this.bio = bio; }
+    public void setLocal(String local){ this.local = local; }
+
     @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonBackReference
     private List<PostTag> postTags = new ArrayList<>();
