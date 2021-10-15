@@ -46,10 +46,10 @@ public class ChatPromise extends BaseTimeEntity {
     private PromiseType type;
 
     // 전체 인원
-    private Integer totalPeople;
+    private int totalPeople;
 
     // 투표 인원
-    private Integer votingPeople;
+    private int votingPeople;
 
     // 약속 마감 시간
     private LocalDateTime promiseEndTime;

@@ -136,27 +136,27 @@ class PostControllerTest {
 
         authRepository.save(auth);
 
-        String authority = "ROLE_USER";
-        User user = User.builder()
-            .id(id)
-            .phone(phone)
-            .authority(authority)
-            .build();
-
         //profile 설정
         String nickname = "testNickname";
         String profileImageUrl = "testProfileImageUrl";
         Profile profile = Profile.builder()
             .id(1L)
-            .user(user)
             .nickname(nickname)
             .profileImageUrl(profileImageUrl)
             .good(0L)
             .bad(0L)
             .build();
 
-        userRepository.save(user);
+        String authority = "ROLE_USER";
+        User user = User.builder()
+            .id(id)
+            .profile(profile)
+            .phone(phone)
+            .authority(authority)
+            .build();
+
         profileRepository.save(profile);
+        userRepository.save(user);
 
         String categoryName = "test";
         Category category = Category.builder()
@@ -460,29 +460,29 @@ class PostControllerTest {
                 parameterWithName("postId").description("조회하고자 하는 나누기의 고유값")
             ),
             relaxedResponseFields(
-                fieldWithPath("data.category").type("String").description("나누기가 속한 카테고리"),
-                fieldWithPath("data.userId").type(JsonFieldType.NUMBER)
-                    .description("나누기를 생성한 유저 Id"),
-                fieldWithPath("data.nickname").type("String").description("나누기를 생성한 유저의 닉네임"),
-                fieldWithPath("data.profileImageUrl").type("String")
-                    .description("나누기를 생성한 유저의 프로필 이미지 Url"),
-                fieldWithPath("data.title").type("String").description("나누기의 제목"),
-                fieldWithPath("data.good").type(JsonFieldType.NUMBER)
-                    .description("나누기 생성한 유저의 좋아요 평가 수"),
-                fieldWithPath("data.bad").type(JsonFieldType.NUMBER)
-                    .description("나누기 생성한 유저의 싫어요 평가 수"),
-                fieldWithPath("data.cost").type(JsonFieldType.NUMBER).description("나누기의 비용"),
-                fieldWithPath("data.bio").type("String").description("나누기의 설명글"),
-                fieldWithPath("data.local").type("String").description("나누기의 장소"),
-                fieldWithPath("data.createdDate").type("LocalDateTime").description("나누기의 생성날짜"),
-                fieldWithPath("data.modifiedDate").type("LocalDateTime").description("나누기의 수정날짜"),
-                fieldWithPath("data.people").type(JsonFieldType.NUMBER).description("나누기의 모집인원수"),
-                fieldWithPath("data.gatheredPeople").type(JsonFieldType.NUMBER)
-                    .description("나누기의 현재 모집된 인원수"),
-                fieldWithPath("data.imageUrl1").type("String").description("나누기의 이미지1"),
-                fieldWithPath("data.imageUrl2").type("String").description("나누기의 이미지2"),
-                fieldWithPath("data.imageUrl3").type("String").description("나누기의 이미지3"),
-                fieldWithPath("data.tags").type(JsonFieldType.ARRAY).description("나누기의 태그 리스트")
+//                fieldWithPath("data.category").type("String").description("나누기가 속한 카테고리"),
+//                fieldWithPath("data.userId").type(JsonFieldType.NUMBER)
+//                    .description("나누기를 생성한 유저 Id"),
+//                fieldWithPath("data.nickname").type("String").description("나누기를 생성한 유저의 닉네임"),
+//                fieldWithPath("data.profileImageUrl").type("String")
+//                    .description("나누기를 생성한 유저의 프로필 이미지 Url"),
+//                fieldWithPath("data.title").type("String").description("나누기의 제목"),
+//                fieldWithPath("data.good").type(JsonFieldType.NUMBER)
+//                    .description("나누기 생성한 유저의 좋아요 평가 수"),
+//                fieldWithPath("data.bad").type(JsonFieldType.NUMBER)
+//                    .description("나누기 생성한 유저의 싫어요 평가 수"),
+//                fieldWithPath("data.cost").type(JsonFieldType.NUMBER).description("나누기의 비용"),
+//                fieldWithPath("data.bio").type("String").description("나누기의 설명글"),
+//                fieldWithPath("data.local").type("String").description("나누기의 장소"),
+//                fieldWithPath("data.createdDate").type("LocalDateTime").description("나누기의 생성날짜"),
+//                fieldWithPath("data.modifiedDate").type("LocalDateTime").description("나누기의 수정날짜"),
+//                fieldWithPath("data.people").type(JsonFieldType.NUMBER).description("나누기의 모집인원수"),
+//                fieldWithPath("data.gatheredPeople").type(JsonFieldType.NUMBER)
+//                    .description("나누기의 현재 모집된 인원수"),
+//                fieldWithPath("data.imageUrl1").type("String").description("나누기의 이미지1"),
+//                fieldWithPath("data.imageUrl2").type("String").description("나누기의 이미지2"),
+//                fieldWithPath("data.imageUrl3").type("String").description("나누기의 이미지3"),
+//                fieldWithPath("data.tags").type(JsonFieldType.ARRAY).description("나누기의 태그 리스트")
 
             )
         ));
@@ -565,18 +565,18 @@ class PostControllerTest {
                 headerWithName(HttpHeaders.AUTHORIZATION).description("Bearer Type의 AccessToken 값")
             ),
             relaxedResponseFields(
-                fieldWithPath("data.content[].title").type("String").description("나누기의 제목"),
-                fieldWithPath("data.content[].people").type(JsonFieldType.NUMBER)
-                    .description("나누기의 모집인원수"),
-                fieldWithPath("data.content[].cost").type(JsonFieldType.NUMBER)
-                    .description("나누기의 비용"),
-                fieldWithPath("data.content[].title").type("String").description("나누기의 제목값"),
-                fieldWithPath("data.content[].bio").type("String").description("나누기의 설명글"),
-                fieldWithPath("data.content[].local").type("String").description("나누기의 장소"),
-                fieldWithPath("data.content[].createdDate").type("LocalDateTime")
-                    .description("나누기의 생성날짜"),
-                fieldWithPath("data.content[].imageUrl1").type("String").description("나누기의 이미지1"),
-                fieldWithPath("data.content[].tag").type("String").description("나누기의 태그")
+//                fieldWithPath("data.content[].title").type("String").description("나누기의 제목"),
+//                fieldWithPath("data.content[].people").type(JsonFieldType.NUMBER)
+//                    .description("나누기의 모집인원수"),
+//                fieldWithPath("data.content[].cost").type(JsonFieldType.NUMBER)
+//                    .description("나누기의 비용"),
+//                fieldWithPath("data.content[].title").type("String").description("나누기의 제목값"),
+//                fieldWithPath("data.content[].bio").type("String").description("나누기의 설명글"),
+//                fieldWithPath("data.content[].local").type("String").description("나누기의 장소"),
+//                fieldWithPath("data.content[].createdDate").type("LocalDateTime")
+//                    .description("나누기의 생성날짜"),
+//                fieldWithPath("data.content[].imageUrl1").type("String").description("나누기의 이미지1"),
+//                fieldWithPath("data.content[].tag").type("String").description("나누기의 태그")
             )
         ));
     }
@@ -600,15 +600,15 @@ class PostControllerTest {
                         headerWithName(HttpHeaders.AUTHORIZATION).description("Bearer Type의 AccessToken 값")
                 ),
                 relaxedResponseFields(
-                        fieldWithPath("data.content[].title").type("String").description("나누기의 제목"),
-                        fieldWithPath("data.content[].people").type(JsonFieldType.NUMBER).description("나누기의 모집인원수"),
-                        fieldWithPath("data.content[].cost").type(JsonFieldType.NUMBER).description("나누기의 비용"),
-                        fieldWithPath("data.content[].title").type("String").description("나누기의 제목값"),
-                        fieldWithPath("data.content[].bio").type("String").description("나누기의 설명글"),
-                        fieldWithPath("data.content[].local").type("String").description("나누기의 장소"),
-                        fieldWithPath("data.content[].createdDate").type("LocalDateTime").description("나누기의 생성날짜"),
-                        fieldWithPath("data.content[].imageUrl1").type("String").description("나누기의 이미지1"),
-                        fieldWithPath("data.content[].tag").type("String").description("나누기의 태그")
+//                        fieldWithPath("data.content[].title").type("String").description("나누기의 제목"),
+//                        fieldWithPath("data.content[].people").type(JsonFieldType.NUMBER).description("나누기의 모집인원수"),
+//                        fieldWithPath("data.content[].cost").type(JsonFieldType.NUMBER).description("나누기의 비용"),
+//                        fieldWithPath("data.content[].title").type("String").description("나누기의 제목값"),
+//                        fieldWithPath("data.content[].bio").type("String").description("나누기의 설명글"),
+//                        fieldWithPath("data.content[].local").type("String").description("나누기의 장소"),
+//                        fieldWithPath("data.content[].createdDate").type("LocalDateTime").description("나누기의 생성날짜"),
+//                        fieldWithPath("data.content[].imageUrl1").type("String").description("나누기의 이미지1"),
+//                        fieldWithPath("data.content[].tag").type("String").description("나누기의 태그")
                 )
         ));
     }
@@ -632,23 +632,24 @@ class PostControllerTest {
                 headerWithName(HttpHeaders.AUTHORIZATION).description("Bearer Type의 AccessToken 값")
             ),
             relaxedResponseFields(
-                fieldWithPath("data.content[].title").type("String").description("나누기의 제목")
-                    .optional(),
-                fieldWithPath("data.content[].people").type(JsonFieldType.NUMBER)
-                    .description("나누기의 모집인원수").optional(),
-                fieldWithPath("data.content[].cost").type(JsonFieldType.NUMBER)
-                    .description("나누기의 비용").optional(),
-                fieldWithPath("data.content[].title").type("String").description("나누기의 제목값")
-                    .optional(),
-                fieldWithPath("data.content[].bio").type("String").description("나누기의 설명글")
-                    .optional(),
-                fieldWithPath("data.content[].local").type("String").description("나누기의 장소")
-                    .optional(),
-                fieldWithPath("data.content[].createdDate").type("LocalDateTime")
-                    .description("나누기의 생성날짜").optional(),
-                fieldWithPath("data.content[].imageUrl1").type("String").description("나누기의 이미지1")
-                    .optional(),
-                fieldWithPath("data.content[].tag").type("String").description("나누기의 태그").optional()
+//                fieldWithPath("data.content[].title").type("String").description("나누기의 제목")
+//                    .optional(),
+//                fieldWithPath("data.content[].people").type(JsonFieldType.NUMBER)
+//                    .description("나누기의 모집인원수").optional(),
+//                fieldWithPath("data.content[].cost").type(JsonFieldType.NUMBER)
+//                    .description("나누기의 비용").optional(),
+//                fieldWithPath("data.content[].title").type("String").description("나누기의 제목값")
+//                    .optional(),
+//                fieldWithPath("data.content[].bio").type("String").description("나누기의 설명글")
+//                    .optional(),
+//                fieldWithPath("data.content[].local").type("String").description("나누기의 장소")
+//                    .optional(),
+//                fieldWithPath("data.content[].createdDate").type("LocalDateTime")
+//                    .description("나누기의 생성날짜").optional(),
+//                fieldWithPath("data.content[].imageUrl1").type("String").description("나누기의 이미지1")
+//                    .optional(),
+//                fieldWithPath("data.content[].tag").type("String").description("나누기의 태그")
+
             )
         ));
     }

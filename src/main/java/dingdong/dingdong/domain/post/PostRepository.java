@@ -7,7 +7,6 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 
-@Transactional
 public interface PostRepository extends JpaRepository<Post, Long> {
 
     // 홈화면 최신순 정렬

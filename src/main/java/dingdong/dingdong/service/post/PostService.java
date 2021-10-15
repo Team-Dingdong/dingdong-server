@@ -166,16 +166,16 @@ public class PostService {
 
     // 나누기 피드(post) 생성
     @Transactional
-    public Long createPost(User user, PostCreateRequestDto request) {
+    public Long createPost(User user, PostCreateRequestDto postCreateRequestDto) {
 
         // CategoryId
-        Category category = categoryRepository.findById(request.getCategoryId())
+        Category category = categoryRepository.findById(postCreateRequestDto.getCategoryId())
             .orElseThrow(() -> new ResourceNotFoundException(CATEGORY_NOT_FOUND));
 
         List<String> paths = new ArrayList<>();
         // ImageList to S3
-        if (request.getPostImages() != null) {
-            List<MultipartFile> files = request.getPostImages();
+        if (postCreateRequestDto.getPostImages() != null) {
+            List<MultipartFile> files = postCreateRequestDto.getPostImages();
             for (MultipartFile file : files) {
                 paths.add(s3Uploader.upload(file, "static"));
             }
@@ -189,11 +189,11 @@ public class PostService {
 
         // 나눔 저장
         Post post = Post.builder()
-                .title(request.getTitle())
-                .people(Integer.parseInt(request.getPeople()))
-                .cost(Integer.parseInt(request.getCost()))
-                .bio(request.getBio())
-                .local(request.getLocal())
+                .title(postCreateRequestDto.getTitle())
+                .people(Integer.parseInt(postCreateRequestDto.getPeople()))
+                .cost(Integer.parseInt(postCreateRequestDto.getCost()))
+                .bio(postCreateRequestDto.getBio())
+                .local(postCreateRequestDto.getLocal())
                 .user(user)
                 .category(category)
                 .imageUrl1(paths.get(0))
@@ -204,7 +204,7 @@ public class PostService {
         postRepository.flush();
 
         // Post PostTag 업로드
-        String str = request.getPostTag();
+        String str = postCreateRequestDto.getPostTag();
         String[] array = (str.substring(1)).split("#");
 
         for (String s : array) {

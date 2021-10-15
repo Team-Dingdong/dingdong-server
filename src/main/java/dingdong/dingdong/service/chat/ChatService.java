@@ -84,7 +84,7 @@ public class ChatService {
         if (chatJoinRepository.existsByChatRoomAndUser(chatRoom, user)) {
             throw new DuplicateException(ResultCode.CHAT_ROOM_DUPLICATION);
         }
-        if (chatRoom.getPost().isDone()) {
+        if (chatRoom.getPost().getDone()) {
             throw new LimitException(ResultCode.CHAT_ROOM_ENTER_FAIL_DONE);
         }
         if (chatPromise != null && chatPromise.getType() != PromiseType.END) {
@@ -429,7 +429,7 @@ public class ChatService {
         if (chatRoom.getPost().getUser().getId() != user.getId()) {
             throw new ForbiddenException(ResultCode.FORBIDDEN_MEMBER);
         }
-        if (chatRoom.getPost().isDone()) {
+        if (chatRoom.getPost().getDone()) {
             throw new DuplicateException(ResultCode.POST_CONFIRMED_DUPLICATION);
         }
         if (chatPromise.getType() != PromiseType.CONFIRMED) {

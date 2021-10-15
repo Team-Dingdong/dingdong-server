@@ -7,9 +7,11 @@ import dingdong.dingdong.domain.user.User;
 import dingdong.dingdong.dto.post.PostCreateRequestDto;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
+import javax.persistence.criteria.CriteriaBuilder;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +23,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @DynamicUpdate
+@DynamicInsert
 public class Post extends BaseTimeEntity {
 
     @Id
@@ -50,8 +53,8 @@ public class Post extends BaseTimeEntity {
     @Column(columnDefinition = "varchar(255) default 'https://dingdongbucket.s3.ap-northeast-2.amazonaws.com/static/default_post.png'")
     private String imageUrl3;
 
-    @Column(columnDefinition = "boolean default false")
-    private boolean done;
+    @Column(columnDefinition = "Boolean default false")
+    private Boolean done;
 
     public void confirmed() {
         this.done = true;
