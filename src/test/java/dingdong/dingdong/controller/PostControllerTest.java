@@ -294,7 +294,7 @@ class PostControllerTest {
         TokenDto tokenDto = getTokenDto();
 
         mockMvc.perform(
-            RestDocumentationRequestBuilders.get("/api/v1/post/sorted_by=desc(createdDate)")
+            RestDocumentationRequestBuilders.get("/api/v1/post/sorted-by=desc(createdDate)")
                 .param("page", "1")
                 .param("size", "5")
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + tokenDto.getAccessToken())
@@ -330,7 +330,7 @@ class PostControllerTest {
     void findPostsSortByEndDate() throws Exception {
         TokenDto tokenDto = getTokenDto();
 
-        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v1/post/sorted_by=desc(endDate)")
+        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v1/post/sorted-by=desc(endDate)")
             .param("page", "1")
             .param("size", "5")
             .header(HttpHeaders.AUTHORIZATION, tokenDto.getAccessToken())
@@ -368,7 +368,7 @@ class PostControllerTest {
         TokenDto tokenDto = getTokenDto();
 
         mockMvc.perform(RestDocumentationRequestBuilders
-            .get("/api/v1/post/category/sorted_by=desc(createdDate)/{categoryId}", 1L)
+            .get("/api/v1/post/category/sorted-by=desc(createdDate)/{categoryId}", 1L)
             .param("page", "1")
             .param("size", "5")
             .header(HttpHeaders.AUTHORIZATION, tokenDto.getAccessToken())
@@ -407,7 +407,7 @@ class PostControllerTest {
         TokenDto tokenDto = getTokenDto();
 
         mockMvc.perform(RestDocumentationRequestBuilders
-            .get("/api/v1/post/category/sorted_by=desc(endDate)/{categoryId}", 1L)
+            .get("/api/v1/post/category/sorted-by=desc(endDate)/{categoryId}", 1L)
             .param("page", "1")
             .param("size", "5")
             .header(HttpHeaders.AUTHORIZATION, tokenDto.getAccessToken())
@@ -648,7 +648,7 @@ class PostControllerTest {
                     .description("나누기의 생성날짜").optional(),
                 fieldWithPath("data.content[].imageUrl1").type("String").description("나누기의 이미지1")
                     .optional(),
-                fieldWithPath("data.content[].tag").type("String").description("나누기의 태그")
+                fieldWithPath("data.content[].tag").type("String").description("나누기의 태그").optional()
             )
         ));
     }
