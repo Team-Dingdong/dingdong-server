@@ -29,7 +29,8 @@ public class S3Uploader {
     public String upload(MultipartFile multipartFile, String dirName) {
         try {
             File uploadFile = convert(multipartFile)
-                .orElseThrow(() -> new IllegalArgumentException("MultipartFile -> File로 전환이 실패했습니다."));
+                    .orElseThrow(() -> new IllegalArgumentException("MultipartFile -> File로 전환이 실패했습니다."));
+
             return upload(uploadFile, dirName);
         } catch (IOException e) {
             e.printStackTrace();

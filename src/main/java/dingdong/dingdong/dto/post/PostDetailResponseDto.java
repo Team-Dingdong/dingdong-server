@@ -2,19 +2,16 @@ package dingdong.dingdong.dto.post;
 
 import dingdong.dingdong.domain.post.Post;
 import dingdong.dingdong.domain.post.Tag;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Data
+@Getter
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 public class PostDetailResponseDto {
 
     private String category;

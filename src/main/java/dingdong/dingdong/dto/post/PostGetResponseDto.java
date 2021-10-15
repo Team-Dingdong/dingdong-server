@@ -1,17 +1,14 @@
 package dingdong.dingdong.dto.post;
 
 import dingdong.dingdong.domain.post.Post;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
-@Data
+@Getter
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 public class PostGetResponseDto {
 
     private Long id;
