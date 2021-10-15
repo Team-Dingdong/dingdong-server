@@ -3,14 +3,14 @@ package dingdong.dingdong.domain.post;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import dingdong.dingdong.domain.BaseTimeEntity;
-import dingdong.dingdong.domain.chat.ChatRoom;
 import dingdong.dingdong.domain.user.User;
-import dingdong.dingdong.dto.post.PostRequestDto;
+import dingdong.dingdong.dto.post.PostCreateRequestDto;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,23 +28,17 @@ public class Post extends BaseTimeEntity {
     @Column(name = "post_id", nullable = false)
     private Long id;
 
-    @Column(nullable = false)
     private String title;
 
-    @Column(nullable = false)
     private int cost;
 
-    @Column(nullable = false)
     private int people;
 
-    @Column(nullable = false)
     @ColumnDefault("1")
     private int gatheredPeople;
 
-    @Column(nullable = false)
     private String local;
 
-    @Column(nullable = false)
     private String bio;
 
     @Column(columnDefinition = "varchar(255) default 'https://dingdongbucket.s3.ap-northeast-2.amazonaws.com/static/default_post.png'")
@@ -94,23 +88,12 @@ public class Post extends BaseTimeEntity {
     private List<PostTag> postTags = new ArrayList<>();
 
 
-    // title, people, price, bio, local
-    public void setPost(Category category, PostRequestDto request) {
-        this.category = category;
-        this.title = request.getTitle();
-        this.people = request.getPeople();
-        this.cost = request.getCost();
-        this.bio = request.getBio();
-        this.local = request.getLocal();
-        this.done = false;
-    }
-
     public void plusUserCount() {
         this.gatheredPeople =
             this.gatheredPeople == this.people ? this.gatheredPeople : this.gatheredPeople + 1;
     }
 
     public void minusUserCount() {
-        this.gatheredPeople = this.gatheredPeople == 0 ? 0 : this.gatheredPeople - 1;
+        this.gatheredPeople = this.gatheredPeople == 0 ? 0 :this.gatheredPeople - 1;
     }
 }

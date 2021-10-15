@@ -8,12 +8,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
-@Slf4j
 @RequiredArgsConstructor
 @Component
 public class S3Uploader {
@@ -29,7 +27,8 @@ public class S3Uploader {
     public String upload(MultipartFile multipartFile, String dirName) {
         try {
             File uploadFile = convert(multipartFile)
-                .orElseThrow(() -> new IllegalArgumentException("MultipartFile -> File로 전환이 실패했습니다."));
+                    .orElseThrow(() -> new IllegalArgumentException("MultipartFile -> File로 전환이 실패했습니다."));
+
             return upload(uploadFile, dirName);
         } catch (IOException e) {
             e.printStackTrace();
