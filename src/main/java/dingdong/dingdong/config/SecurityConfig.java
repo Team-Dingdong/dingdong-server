@@ -9,11 +9,13 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.csrf.CsrfFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.web.filter.CharacterEncodingFilter;
 
-@Configuration
-@EnableWebSecurity
 @RequiredArgsConstructor
+@EnableWebSecurity
+@Configuration
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final HttpLogoutSuccessHandler logoutSuccessHandler;
@@ -24,7 +26,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 
     @Override
-    public void configure(WebSecurity web) throws Exception {
+    public void configure(WebSecurity web) {
         web.ignoring()
             .antMatchers("/h2-console/**", "/favicon.ico", "/api/v1/chat")
             .mvcMatchers("/node_modules/**", "/api/v1/chat")
@@ -37,6 +39,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .mvcMatchers("/console", "/webjars/**/**", "/ws-stomp/**", "/api/v1/auth",
                 "/api/v1/auth/send-sms", "/docs/**", "/api/v1/chat").permitAll()
             .anyRequest().hasAuthority("ROLE_USER");
+
+        CharacterEncodingFilter filter = new CharacterEncodingFilter();
+        filter.setEncoding("UTF-8");
+        filter.setForceEncoding(true);
+        http.addFilterBefore(filter, CsrfFilter.class);
+
         http.cors()
             .disable();
         http.csrf()
@@ -66,3 +74,5 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 
 }
+
+

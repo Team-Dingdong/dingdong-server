@@ -29,13 +29,19 @@ public class ChatService {
     private final ChatSubscriber chatSubscriber;
 
     private final UserRepository userRepository;
-    private final Long adminId = 1L;
+    private static final Long ADMINID = 1L;
 
     // 채팅방 생성
     @Transactional
     public void createChatRoom(Post post) {
-        ChatRoom chatRoom = new ChatRoom(post);
-        ChatJoin chatJoin = new ChatJoin(chatRoom, post.getUser());
+        ChatRoom chatRoom = ChatRoom.builder()
+            .id(post.getId())
+            .post(post)
+            .build();
+        ChatJoin chatJoin = ChatJoin.builder()
+            .chatRoom(chatRoom)
+            .user(post.getUser())
+            .build();
 
         chatRoomRepository.save(chatRoom);
         chatJoinRepository.save(chatJoin);
@@ -44,7 +50,7 @@ public class ChatService {
     }
 
     // 채팅방 목록 조회
-    @Transactional
+    @Transactional(readOnly = true)
     public List<ChatRoomResponseDto> findAllRoom(User user) {
         List<ChatJoin> chatJoins = chatJoinRepository.findAllByUser(user);
         List<ChatRoom> chatRooms = chatJoins.stream().map(ChatJoin::getChatRoom)
@@ -55,7 +61,7 @@ public class ChatService {
     }
 
     // 채팅방 정보 조회
-    @Transactional
+    @Transactional(readOnly = true)
     public ChatRoomResponseDto findRoomById(User user, Long id) {
         ChatRoom chatRoom = chatRoomRepository.findByPostId(id)
             .orElseThrow(() -> new ResourceNotFoundException(ResultCode.CHAT_ROOM_NOT_FOUND));
@@ -88,21 +94,35 @@ public class ChatService {
             throw new LimitException(ResultCode.CHAT_ROOM_ENTER_FAIL_LIMIT);
         }
 
-        ChatJoin chatJoin = new ChatJoin(chatRoom, user);
+        ChatJoin chatJoin = ChatJoin.builder()
+            .chatRoom(chatRoom)
+            .user(user)
+            .build();
         chatJoinRepository.save(chatJoin);
 
         chatRoom.getPost().plusUserCount();
 
-        User admin = userRepository.getById(adminId);
+        User admin = userRepository.getById(ADMINID);
 
-        String message =
-            user.getProfile().getNickname() + ChatMessageValue.ENTER_MESSAGE.getMessage();
-        RedisChatMessage redisChatMessage = new RedisChatMessage(chatRoom, admin, MessageType.ENTER,
-            message);
+        String message = user.getProfile().getNickname() + ChatMessageValue.ENTER_MESSAGE.getMessage();
+
+        RedisChatMessage redisChatMessage = RedisChatMessage.builder()
+            .roomId(chatRoom.getId())
+            .sender(admin.getId().toString())
+            .profileImageUrl(admin.getProfile().getProfileImageUrl())
+            .type(MessageType.ENTER)
+            .message(message)
+            .build();
         chatSubscriber.sendMessage(redisChatMessage);
 
         // 메시지 DB에 저장하기 위해 객체 생성
-        ChatMessage chatMessage = new ChatMessage(chatRoom, admin, redisChatMessage);
+        ChatMessage chatMessage = ChatMessage.builder()
+            .chatRoom(chatRoom)
+            .sender(admin)
+            .type(redisChatMessage.getType())
+            .message(redisChatMessage.getMessage())
+            .sendTime(LocalDateTime.now())
+            .build();
         chatMessageRepository.save(chatMessage);
 
         chatRoom.setInfo(chatMessage);
@@ -132,16 +152,27 @@ public class ChatService {
 
         chatRoom.getPost().minusUserCount();
 
-        User admin = userRepository.getById(adminId);
+        User admin = userRepository.getById(ADMINID);
 
         String message =
             user.getProfile().getNickname() + ChatMessageValue.QUIT_MESSAGE.getMessage();
-        RedisChatMessage redisChatMessage = new RedisChatMessage(chatRoom, admin, MessageType.QUIT,
-            message);
+        RedisChatMessage redisChatMessage = RedisChatMessage.builder()
+            .roomId(chatRoom.getId())
+            .sender(admin.getId().toString())
+            .profileImageUrl(admin.getProfile().getProfileImageUrl())
+            .type(MessageType.QUIT)
+            .message(message)
+            .build();
         chatSubscriber.sendMessage(redisChatMessage);
 
         // 메시지 DB에 저장하기 위해 객체 생성
-        ChatMessage chatMessage = new ChatMessage(chatRoom, admin, redisChatMessage);
+        ChatMessage chatMessage = ChatMessage.builder()
+            .chatRoom(chatRoom)
+            .sender(admin)
+            .type(redisChatMessage.getType())
+            .message(redisChatMessage.getMessage())
+            .sendTime(LocalDateTime.now())
+            .build();
         chatMessageRepository.save(chatMessage);
 
         chatRoom.setInfo(chatMessage);
@@ -149,7 +180,7 @@ public class ChatService {
     }
 
     // 채팅방 사용자 목록 조회
-    @Transactional
+    @Transactional(readOnly = true)
     public List<ChatRoomUserResponseDto> findUsers(User user, Long id) {
         ChatRoom chatRoom = chatRoomRepository.findByPostId(id)
             .orElseThrow(() -> new ResourceNotFoundException(ResultCode.CHAT_ROOM_NOT_FOUND));
@@ -166,7 +197,7 @@ public class ChatService {
     }
 
     // 채팅 메세지 조회
-    @Transactional
+    @Transactional(readOnly = true)
     public List<ChatMessageResponseDto> findChatMessages(User user, Long id) {
         ChatRoom chatRoom = chatRoomRepository.findByPostId(id)
             .orElseThrow(() -> new ResourceNotFoundException(ResultCode.CHAT_ROOM_NOT_FOUND));
@@ -181,7 +212,7 @@ public class ChatService {
     }
 
     // 채팅 약속 조회
-    @Transactional
+    @Transactional(readOnly = true)
     public ChatPromiseResponseDto findByPostId(User user, Long id) {
         ChatRoom chatRoom = chatRoomRepository.findByPostId(id)
             .orElseThrow(() -> new ResourceNotFoundException(ResultCode.CHAT_ROOM_NOT_FOUND));
@@ -198,7 +229,7 @@ public class ChatService {
 
     // 채팅 약속 수정
     @Transactional
-    public void updatePromise(User user, Long id, ChatPromiseRequestDto request) {
+    public void updatePromise(User user, Long id, ChatPromiseRequestDto chatPromiseRequestDto) {
         ChatRoom chatRoom = chatRoomRepository.findByPostId(id)
             .orElseThrow(() -> new ResourceNotFoundException(ResultCode.CHAT_ROOM_NOT_FOUND));
         ChatPromise chatPromise = chatPromiseRepository.findByChatRoomId(chatRoom.getId())
@@ -210,37 +241,51 @@ public class ChatService {
         if (chatPromise.getType() == PromiseType.CONFIRMED) {
             throw new LimitException(ResultCode.CHAT_PROMISE_UPDATE_FAIL_CONFIRMED);
         }
-        if (request.getPromiseDate() != null) {
-            chatPromise.setPromiseDate(request.getPromiseDate());
+        if (chatPromiseRequestDto.getPromiseDate() != null) {
+            chatPromise.setPromiseDate(chatPromiseRequestDto.getPromiseDate());
         }
-        if (request.getPromiseTime() != null) {
-            chatPromise.setPromiseTime(request.getPromiseTime());
+        if (chatPromiseRequestDto.getPromiseTime() != null) {
+            chatPromise.setPromiseTime(chatPromiseRequestDto.getPromiseTime());
         }
-        if (request.getPromiseLocal() != null) {
-            chatPromise.setPromiseLocal(request.getPromiseLocal());
+        if (chatPromiseRequestDto.getPromiseLocal() != null) {
+            chatPromise.setPromiseLocal(chatPromiseRequestDto.getPromiseLocal());
         }
 
         List<ChatPromiseVote> chatPromiseVotes = chatPromiseVoteRepository
             .findAllByChatRoom(chatRoom);
         chatPromiseVoteRepository.deleteAll(chatPromiseVotes);
 
-        ChatPromiseVote chatPromiseVote = new ChatPromiseVote(chatRoom, user);
+        ChatPromiseVote chatPromiseVote = ChatPromiseVote.builder()
+            .chatRoom(chatRoom)
+            .user(user)
+            .build();
         chatPromiseVoteRepository.save(chatPromiseVote);
 
         chatPromise.updateAll();
         chatPromiseRepository.save(chatPromise);
 
-        User admin = userRepository.getById(adminId);
+        User admin = userRepository.getById(ADMINID);
 
         String message = "[나눔 약속 수정] " + chatPromise.getPromiseDate().toString() + " " + chatPromise
             .getPromiseTime().toString() + " " + chatPromise.getPromiseLocal()
             + ChatMessageValue.PROMISE_UPDATE_MESSAGE.getMessage();
-        RedisChatMessage redisChatMessage = new RedisChatMessage(chatRoom, admin,
-            MessageType.PROMISE_AGAIN, message);
+        RedisChatMessage redisChatMessage = RedisChatMessage.builder()
+            .roomId(chatRoom.getId())
+            .sender(admin.getId().toString())
+            .profileImageUrl(admin.getProfile().getProfileImageUrl())
+            .type(MessageType.PROMISE_AGAIN)
+            .message(message)
+            .build();
         chatSubscriber.sendMessage(redisChatMessage);
 
         // 메시지 DB에 저장하기 위해 객체 생성
-        ChatMessage chatMessage = new ChatMessage(chatRoom, admin, redisChatMessage);
+        ChatMessage chatMessage = ChatMessage.builder()
+            .chatRoom(chatRoom)
+            .sender(admin)
+            .type(redisChatMessage.getType())
+            .message(redisChatMessage.getMessage())
+            .sendTime(LocalDateTime.now())
+            .build();
         chatMessageRepository.save(chatMessage);
 
         chatRoom.setInfo(chatMessage);
@@ -250,7 +295,7 @@ public class ChatService {
 
     // 채팅 약속 생성
     @Transactional
-    public void createChatPromise(User user, Long id, ChatPromiseRequestDto request) {
+    public void createChatPromise(User user, Long id, ChatPromiseRequestDto chatPromiseRequestDto) {
         ChatRoom chatRoom = chatRoomRepository.findByPostId(id)
             .orElseThrow(() -> new ResourceNotFoundException(ResultCode.CHAT_ROOM_NOT_FOUND));
 
@@ -264,24 +309,48 @@ public class ChatService {
             throw new LimitException(ResultCode.CHAT_PROMISE_CREATE_FAIL_ONLY);
         }
 
-        ChatPromise chatPromise = new ChatPromise(chatRoom, request);
-        ChatPromiseVote chatPromiseVote = new ChatPromiseVote(chatRoom, user);
+        ChatPromise chatPromise = ChatPromise.builder()
+            .id(chatRoom.getId())
+            .chatRoom(chatRoom)
+            .promiseDate(chatPromiseRequestDto.getPromiseDate())
+            .promiseTime(chatPromiseRequestDto.getPromiseTime())
+            .promiseLocal(chatPromiseRequestDto.getPromiseLocal())
+            .type(PromiseType.PROGRESS)
+            .promiseEndTime(LocalDateTime.now().plusHours(3))
+            .totalPeople(chatRoom.getPost().getGatheredPeople())
+            .votingPeople(1)
+            .build();
+        ChatPromiseVote chatPromiseVote = ChatPromiseVote.builder()
+            .chatRoom(chatRoom)
+            .user(user)
+            .build();
 
         chatPromiseRepository.save(chatPromise);
         chatPromiseVoteRepository.save(chatPromiseVote);
 
-        User admin = userRepository.getById(adminId);
+        User admin = userRepository.getById(ADMINID);
 
         String message =
-            "[나눔 약속] " + request.getPromiseDate().toString() + " " + request.getPromiseTime()
-                .toString() + " " + request.getPromiseLocal()
+            "[나눔 약속] " + chatPromiseRequestDto.getPromiseDate().toString() + " " + chatPromiseRequestDto.getPromiseTime()
+                .toString() + " " + chatPromiseRequestDto.getPromiseLocal()
                 + ChatMessageValue.PROMISE_CREATE_MESSAGE.getMessage();
-        RedisChatMessage redisChatMessage = new RedisChatMessage(chatRoom, admin,
-            MessageType.PROMISE, message);
+        RedisChatMessage redisChatMessage = RedisChatMessage.builder()
+            .roomId(chatRoom.getId())
+            .sender(admin.getId().toString())
+            .profileImageUrl(admin.getProfile().getProfileImageUrl())
+            .type(MessageType.PROMISE)
+            .message(message)
+            .build();
         chatSubscriber.sendMessage(redisChatMessage);
 
         // 메시지 DB에 저장하기 위해 객체 생성
-        ChatMessage chatMessage = new ChatMessage(chatRoom, admin, redisChatMessage);
+        ChatMessage chatMessage = ChatMessage.builder()
+            .chatRoom(chatRoom)
+            .sender(admin)
+            .type(redisChatMessage.getType())
+            .message(redisChatMessage.getMessage())
+            .sendTime(LocalDateTime.now())
+            .build();
         chatMessageRepository.save(chatMessage);
 
         chatRoom.setInfo(chatMessage);
@@ -304,24 +373,38 @@ public class ChatService {
         }
 
         if (!chatPromiseVoteRepository.existsByChatRoomAndUser(chatRoom, user)) {
-            ChatPromiseVote chatPromiseVote = new ChatPromiseVote(chatRoom, user);
+            ChatPromiseVote chatPromiseVote = ChatPromiseVote.builder()
+                .chatRoom(chatRoom)
+                .user(user)
+                .build();
             chatPromiseVoteRepository.save(chatPromiseVote);
             chatPromise.plusVotingPeople();
             chatPromiseRepository.save(chatPromise);
 
             if (chatPromise.getType() == PromiseType.CONFIRMED) {
-                User admin = userRepository.getById(adminId);
+                User admin = userRepository.getById(ADMINID);
 
                 String message =
                     "[나눔 약속 확정] " + chatPromise.getPromiseDate().toString() + " " + chatPromise
                         .getPromiseTime().toString() + " " + chatPromise.getPromiseLocal()
                         + ChatMessageValue.PROMISE_CONFIRMED_MESSAGE.getMessage();
-                RedisChatMessage redisChatMessage = new RedisChatMessage(chatRoom, admin,
-                    MessageType.PROMISE_CONFIRMED, message);
+                RedisChatMessage redisChatMessage = RedisChatMessage.builder()
+                    .roomId(chatRoom.getId())
+                    .sender(admin.getId().toString())
+                    .profileImageUrl(admin.getProfile().getProfileImageUrl())
+                    .type(MessageType.PROMISE_CONFIRMED)
+                    .message(message)
+                    .build();
                 chatSubscriber.sendMessage(redisChatMessage);
 
                 // 메시지 DB에 저장하기 위해 객체 생성
-                ChatMessage chatMessage = new ChatMessage(chatRoom, admin, redisChatMessage);
+                ChatMessage chatMessage = ChatMessage.builder()
+                    .chatRoom(chatRoom)
+                    .sender(admin)
+                    .type(redisChatMessage.getType())
+                    .message(redisChatMessage.getMessage())
+                    .sendTime(LocalDateTime.now())
+                    .build();
                 chatMessageRepository.save(chatMessage);
 
                 chatRoom.setInfo(chatMessage);
@@ -362,6 +445,7 @@ public class ChatService {
     }
 
     // 일정시간마다 Scheduling 작동.
+    @Transactional
     @Scheduled(fixedDelay = 60000 * 60) // 1시간마다 작동
     public void checkEndTime() {
         chatPromiseRepository.updateByLocalDateTime();

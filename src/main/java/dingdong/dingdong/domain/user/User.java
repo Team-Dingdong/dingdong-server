@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Data
+@Getter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -40,17 +40,12 @@ public class User extends BaseTimeEntity {
     @JoinColumn(name = "local2")
     private Local local2;
 
-    @OneToOne(mappedBy = "user")
+    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
     private Profile profile;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JsonManagedReference
     private List<Post> posts = new ArrayList<>();
-
-    public User(String phone) {
-        this.phone = phone;
-        this.authority = "ROLE_USER";
-    }
 
     public void setLocal(Local local1, Local local2) {
         this.local1 = local1;
@@ -58,4 +53,7 @@ public class User extends BaseTimeEntity {
         this.localDate = LocalDateTime.now();
     }
 
+    public void setUnsubscribe() {
+        this.authority = "ROLE_UNSUB_USER";
+    }
 }

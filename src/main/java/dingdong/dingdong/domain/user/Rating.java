@@ -30,11 +30,6 @@ public class Rating {
 
     private RatingType type;
 
-    public Rating(User sender, User receiver) {
-        this.sender = sender;
-        this.receiver = receiver;
-    }
-
     public void setType(RatingType type) {
         this.type = type;
     }

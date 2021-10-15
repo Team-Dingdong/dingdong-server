@@ -3,13 +3,13 @@ package dingdong.dingdong.dto.rating;
 import dingdong.dingdong.domain.user.Profile;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Data
+@Getter
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 public class RatingResponseDto {
 
     private Long good;

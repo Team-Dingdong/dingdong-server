@@ -27,8 +27,4 @@ public class ChatJoin {
     @JoinColumn(name = "user_id")
     private User user;
 
-    public ChatJoin(ChatRoom chatRoom, User user) {
-        this.chatRoom = chatRoom;
-        this.user = user;
-    }
 }

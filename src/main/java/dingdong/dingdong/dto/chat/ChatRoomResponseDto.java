@@ -2,17 +2,16 @@ package dingdong.dingdong.dto.chat;
 
 import dingdong.dingdong.domain.chat.ChatRoom;
 import dingdong.dingdong.domain.user.User;
+import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
-
-@Data
+@Getter
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 public class ChatRoomResponseDto {
 
     private Long id;
@@ -25,9 +24,9 @@ public class ChatRoomResponseDto {
 
     private String imageUrl;
 
-    private int userCount;
+    private Integer userCount;
 
-    private boolean isOwner;
+    private Boolean isOwner;
 
     public static ChatRoomResponseDto from(ChatRoom chatRoom, User user) {
         return ChatRoomResponseDto.builder()
