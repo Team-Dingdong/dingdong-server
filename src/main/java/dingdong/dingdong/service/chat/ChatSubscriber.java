@@ -3,7 +3,7 @@ package dingdong.dingdong.service.chat;
 import dingdong.dingdong.domain.chat.*;
 import dingdong.dingdong.domain.user.User;
 import dingdong.dingdong.domain.user.UserRepository;
-import dingdong.dingdong.dto.chat.RedisChatMessage;
+import dingdong.dingdong.domain.chat.RedisChatMessage;
 import dingdong.dingdong.util.exception.ResourceNotFoundException;
 import dingdong.dingdong.util.exception.ResultCode;
 import lombok.RequiredArgsConstructor;
@@ -34,8 +34,7 @@ public class ChatSubscriber {
             String nickname = user.getProfile().getNickname();
             String profileImageUrl = user.getProfile().getProfileImageUrl();
 
-            redisChatMessage.setSender(nickname);
-            redisChatMessage.setProfileImageUrl(profileImageUrl);
+            redisChatMessage.setUserMessage(nickname, profileImageUrl);
 
             // 채팅방을 구독한 클라이언트에게 메시지 발송
             messagingTemplate.convertAndSend("/topic/chat/room/" + redisChatMessage.getRoomId(),

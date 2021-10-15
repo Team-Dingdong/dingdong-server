@@ -1,12 +1,11 @@
-package dingdong.dingdong.dto.chat;
+package dingdong.dingdong.domain.chat;
 
+import java.util.Map;
+import javax.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
-
-import javax.annotation.PostConstruct;
-import java.util.Map;
 
 @RequiredArgsConstructor
 @Repository
@@ -25,12 +24,12 @@ public class RedisChatRoomRepository {
         opsHashChatRoom.put(CHAT_ROOMS, redisChatRoom.getRoomId(), redisChatRoom);
     }
 
-    public Map<String, RedisChatRoom> findAll() {
-        return opsHashChatRoom.entries(CHAT_ROOMS);
-    }
-
     public RedisChatRoom findById(String id) {
         return opsHashChatRoom.get(CHAT_ROOMS, id);
+    }
+
+    public Map<String, RedisChatRoom> findAll() {
+        return opsHashChatRoom.entries(CHAT_ROOMS);
     }
 
     public void update(RedisChatRoom redisChatRoom) {

@@ -27,8 +27,4 @@ public class ChatPromiseVote {
     @JoinColumn(name = "user_id")
     private User user;
 
-    public ChatPromiseVote(ChatRoom chatRoom, User user) {
-        this.chatRoom = chatRoom;
-        this.user = user;
-    }
 }

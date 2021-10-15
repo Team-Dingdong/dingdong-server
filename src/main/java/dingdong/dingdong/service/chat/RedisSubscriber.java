@@ -4,9 +4,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import dingdong.dingdong.domain.chat.*;
 import dingdong.dingdong.domain.user.User;
 import dingdong.dingdong.domain.user.UserRepository;
-import dingdong.dingdong.dto.chat.RedisChatMessage;
+import dingdong.dingdong.domain.chat.RedisChatMessage;
 import dingdong.dingdong.util.exception.ResourceNotFoundException;
 import dingdong.dingdong.util.exception.ResultCode;
+import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
@@ -46,18 +47,13 @@ public class RedisSubscriber {
 
             // MessageType에 따라 처리
             if (MessageType.ENTER.equals(redisChatMessage.getType())) {
-                redisChatMessage.setSender("띵-동");
-                redisChatMessage.setMessage(nickname + "님이 입장하였습니다");
-
+                redisChatMessage.setAdminMessage("띵-동", nickname + "님이 입장하였습니다");
                 user = userRepository.getById(1L);
             } else if (MessageType.QUIT.equals(redisChatMessage.getType())) {
-                redisChatMessage.setSender("띵-동");
-                redisChatMessage.setMessage(nickname + "님이 퇴장하였습니다");
-
+                redisChatMessage.setAdminMessage("띵-동", nickname + "님이 퇴장하였습니다");
                 user = userRepository.getById(1L);
             } else {
-                redisChatMessage.setSender(nickname);
-                redisChatMessage.setProfileImageUrl(profileImageUrl);
+                redisChatMessage.setUserMessage(nickname, profileImageUrl);
             }
 
             // 채팅방을 구독한 클라이언트에게 메시지 발송
@@ -65,7 +61,13 @@ public class RedisSubscriber {
                 redisChatMessage);
 
             // 메시지 DB에 저장하기 위해 객체 생성
-            ChatMessage chatMessage = new ChatMessage(chatRoom, user, redisChatMessage);
+            ChatMessage chatMessage = ChatMessage.builder()
+                .chatRoom(chatRoom)
+                .sender(user)
+                .type(redisChatMessage.getType())
+                .message(redisChatMessage.getMessage())
+                .sendTime(LocalDateTime.now())
+                .build();
             chatMessageRepository.save(chatMessage);
 
             chatRoom.setInfo(chatMessage);

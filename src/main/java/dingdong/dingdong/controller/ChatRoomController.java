@@ -3,22 +3,26 @@ package dingdong.dingdong.controller;
 import dingdong.dingdong.domain.user.CurrentUser;
 import dingdong.dingdong.domain.user.User;
 import dingdong.dingdong.dto.chat.ChatMessageResponseDto;
-import dingdong.dingdong.dto.chat.ChatRoomResponseDto;
-import dingdong.dingdong.dto.chat.ChatRoomUserResponseDto;
 import dingdong.dingdong.dto.chat.ChatPromiseRequestDto;
 import dingdong.dingdong.dto.chat.ChatPromiseResponseDto;
+import dingdong.dingdong.dto.chat.ChatRoomResponseDto;
+import dingdong.dingdong.dto.chat.ChatRoomUserResponseDto;
 import dingdong.dingdong.service.chat.ChatService;
 import dingdong.dingdong.util.exception.Result;
 import dingdong.dingdong.util.exception.ResultCode;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import javax.validation.Valid;
 import java.util.List;
+import javax.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-@Slf4j
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v1/chat")
@@ -76,16 +80,16 @@ public class ChatRoomController {
     // 채팅 약속 생성
     @PostMapping("/promise/{roomId}")
     public ResponseEntity<Result> createChatPromise(@CurrentUser User user,
-        @PathVariable Long roomId, @Valid @RequestBody ChatPromiseRequestDto request) {
-        chatService.createChatPromise(user, roomId, request);
+        @PathVariable Long roomId, @Valid @RequestBody ChatPromiseRequestDto chatPromiseRequestDto) {
+        chatService.createChatPromise(user, roomId, chatPromiseRequestDto);
         return Result.toResult(ResultCode.CHAT_PROMISE_CREATE_SUCCESS);
     }
 
     // 채팅 약속 수정
     @PatchMapping("/promise/{roomId}")
     public ResponseEntity<Result> updateChatPromise(@CurrentUser User user,
-        @PathVariable Long roomId, @Valid @RequestBody ChatPromiseRequestDto request) {
-        chatService.updatePromise(user, roomId, request);
+        @PathVariable Long roomId, @Valid @RequestBody ChatPromiseRequestDto chatPromiseRequestDto) {
+        chatService.updatePromise(user, roomId, chatPromiseRequestDto);
         return Result.toResult(ResultCode.CHAT_PROMISE_UPDATE_SUCCESS);
     }
 
