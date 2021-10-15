@@ -1,18 +1,54 @@
 package dingdong.dingdong.controller;
 
+import static dingdong.dingdong.domain.chat.PromiseType.CONFIRMED;
+import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
+import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.modifyUris;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.relaxedResponseFields;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
-import dingdong.dingdong.domain.chat.*;
-import dingdong.dingdong.domain.post.*;
-import dingdong.dingdong.domain.user.*;
+import dingdong.dingdong.domain.chat.ChatJoin;
+import dingdong.dingdong.domain.chat.ChatJoinRepository;
+import dingdong.dingdong.domain.chat.ChatPromise;
+import dingdong.dingdong.domain.chat.ChatPromiseRepository;
+import dingdong.dingdong.domain.chat.ChatPromiseVote;
+import dingdong.dingdong.domain.chat.ChatPromiseVoteRepository;
+import dingdong.dingdong.domain.chat.ChatRoom;
+import dingdong.dingdong.domain.chat.ChatRoomRepository;
+import dingdong.dingdong.domain.post.Category;
+import dingdong.dingdong.domain.post.CategoryRepository;
+import dingdong.dingdong.domain.post.Post;
+import dingdong.dingdong.domain.post.PostRepository;
+import dingdong.dingdong.domain.post.PostTag;
+import dingdong.dingdong.domain.post.PostTagRepository;
+import dingdong.dingdong.domain.post.Tag;
+import dingdong.dingdong.domain.post.TagRepository;
+import dingdong.dingdong.domain.user.Auth;
+import dingdong.dingdong.domain.user.AuthRepository;
+import dingdong.dingdong.domain.user.Profile;
+import dingdong.dingdong.domain.user.ProfileRepository;
+import dingdong.dingdong.domain.user.User;
+import dingdong.dingdong.domain.user.UserRepository;
 import dingdong.dingdong.dto.auth.AuthRequestDto;
 import dingdong.dingdong.dto.auth.TokenDto;
-import dingdong.dingdong.dto.post.PostRequestDto;
 import dingdong.dingdong.service.auth.AuthService;
 import dingdong.dingdong.service.auth.AuthType;
-import dingdong.dingdong.service.post.PostService;
-import org.junit.jupiter.api.Test;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
@@ -20,33 +56,10 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.*;
-
-import static dingdong.dingdong.domain.chat.PromiseType.*;
-import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
-import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
-import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.fileUpload;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
-import static org.springframework.restdocs.payload.PayloadDocumentation.*;
-import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
-import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
 @SpringBootTest
@@ -113,32 +126,37 @@ class PostControllerTest {
         String requestId = "testRequestId";
         LocalDateTime requestTime = LocalDateTime.now();
         Auth auth = Auth.builder()
-                .id(id)
-                .phone(phone)
-                .authNumber(authNumber)
-                .requestId(requestId)
-                .requestTime(requestTime)
-                .build();
+            .id(id)
+            .phone(phone)
+            .authNumber(authNumber)
+            .requestId(requestId)
+            .requestTime(requestTime)
+            .done(false)
+            .build();
 
         authRepository.save(auth);
-
-        //profile 설정
-        Profile profile = Profile.builder()
-            .id(1L)
-            .good(0L)
-            .bad(0L)
-            .build();
 
         String authority = "ROLE_USER";
         User user = User.builder()
             .id(id)
             .phone(phone)
-            .profile(profile)
             .authority(authority)
             .build();
 
-        profileRepository.save(profile);
+        //profile 설정
+        String nickname = "testNickname";
+        String profileImageUrl = "testProfileImageUrl";
+        Profile profile = Profile.builder()
+            .id(1L)
+            .user(user)
+            .nickname(nickname)
+            .profileImageUrl(profileImageUrl)
+            .good(0L)
+            .bad(0L)
+            .build();
+
         userRepository.save(user);
+        profileRepository.save(profile);
 
         String categoryName = "test";
         Category category = Category.builder()
@@ -207,8 +225,10 @@ class PostControllerTest {
                 .chatRoom(chatRoom)
                 .promiseDate(LocalDate.now())
                 .promiseTime(LocalTime.now().minusHours(5))
-                .promiseEndTime(LocalDateTime.now())
                 .promiseLocal("test")
+                .totalPeople(3)
+                .votingPeople(1)
+                .promiseEndTime(LocalDateTime.now())
                 .type(CONFIRMED)
                 .build();
         chatPromiseRepository.save(chatPromise);
@@ -277,7 +297,7 @@ class PostControllerTest {
             RestDocumentationRequestBuilders.get("/api/v1/post/sorted_by=desc(createdDate)")
                 .param("page", "1")
                 .param("size", "5")
-                .header(HttpHeaders.AUTHORIZATION, tokenDto.getAccessToken())
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + tokenDto.getAccessToken())
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
             .andDo(print()).andExpect(status().is2xxSuccessful()).andDo(print())

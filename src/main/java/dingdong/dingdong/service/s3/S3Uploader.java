@@ -18,8 +18,8 @@ import org.springframework.web.multipart.MultipartFile;
 @Component
 public class S3Uploader {
 
-    private static final String TEMP_FILE_PATH = "src/main/resources/static/"; // local에서의 path
-    //private final static String TEMP_FILE_PATH = "/home/ec2-user/app/static"; // ec2 서버 path
+//    private static final String TEMP_FILE_PATH = "src/main/resources/static/"; // local에서의 path
+    private final static String TEMP_FILE_PATH = "/home/ec2-user/app/static"; // ec2 서버 path
     private final AmazonS3Client amazonS3Client;
 
     @Value("${cloud.aws.s3.bucket}")

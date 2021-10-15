@@ -94,54 +94,55 @@ class RatingControllerTest {
             .authNumber(authNumber)
             .requestId(requestId)
             .requestTime(requestTime)
+            .done(false)
             .build();
 
         authRepository.save(auth);
+
+        String authority = "ROLE_USER";
+        User user1 = User.builder()
+            .id(id1)
+            .phone(phone1)
+            .authority(authority)
+            .build();
 
         String nickname1 = "testNickname1";
         String profileImageUrl1 = "testProfileImageUrl1";
         Profile profile1 = Profile.builder()
             .id(id1)
+            .user(user1)
             .nickname(nickname1)
             .profileImageUrl(profileImageUrl1)
             .good(0L)
             .bad(0L)
             .build();
 
-        String authority = "ROLE_USER";
-        User user1 = User.builder()
-            .id(id1)
-            .phone(phone1)
-            .profile(profile1)
-            .authority(authority)
-            .build();
-
-        profileRepository.save(profile1);
         userRepository.save(user1);
+        profileRepository.save(profile1);
 
         // user2 생성
         Long id2 = 2L;
         String phone2 = "02012345678";
 
+        User user2 = User.builder()
+            .id(id2)
+            .phone(phone2)
+            .authority(authority)
+            .build();
+
         String nickname2 = "testNickname2";
         String profileImageUrl2 = "testProfileImageUrl2";
         Profile profile2 = Profile.builder()
             .id(id2)
+            .user(user2)
             .nickname(nickname2)
             .profileImageUrl(profileImageUrl2)
             .good(0L)
             .bad(0L)
             .build();
 
-        User user2 = User.builder()
-            .id(id2)
-            .phone(phone2)
-            .profile(profile2)
-            .authority(authority)
-            .build();
-
-        profileRepository.save(profile2);
         userRepository.save(user2);
+        profileRepository.save(profile2);
     }
 
     TokenDto getTokenDto() {
