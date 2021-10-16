@@ -19,6 +19,7 @@ public enum ResultCode {
 
     /* 200 OK */
     LOGIN_SUCCESS(OK, "로그인 성공"),
+    LOGOUT_SUCCESS(OK, "로그아웃 성공"),
     REISSUE_SUCCESS(OK, "토큰 재발급 성공"),
     CHECK_EMAIL_SUCCESS(OK, "사용가능한 이메일입니다"),
     CHECK_NICKNAME_SUCCESS(OK, "사용가능한 닉네임입니다"),
