@@ -127,6 +127,15 @@ public class AuthService implements UserDetailsService {
         return tokenDto;
     }
 
+    @Transactional
+    public void logout(User user) {
+        //refresh token 삭제
+        RefreshToken targetRefreshToken = refreshTokenRepository.findById(user.getPhone())
+            .orElseThrow(() -> new ResourceNotFoundException(ResultCode.USER_NOT_FOUND));
+        refreshTokenRepository.delete(targetRefreshToken);
+        //access token
+    }
+
     // 회원 가입
     @Transactional
     public TokenDto signup(AuthRequestDto authRequestDto) {
