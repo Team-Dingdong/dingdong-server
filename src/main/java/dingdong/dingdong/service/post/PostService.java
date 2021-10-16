@@ -244,7 +244,7 @@ public class PostService {
                 chatJoinRepository.deleteByPostId(id);
                 chatRoomRepository.deleteById(id);
             }
-            postRepository.delete(post);
+            postRepository.deletePostById(post.getId());
         } else {
             throw new ForbiddenException(POST_DELETE_FAIL_DONE);
         }
