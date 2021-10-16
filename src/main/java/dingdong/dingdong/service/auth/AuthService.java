@@ -61,6 +61,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
@@ -79,6 +80,7 @@ public class AuthService implements UserDetailsService {
     private final RefreshTokenRepository refreshTokenRepository;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final TokenProvider tokenProvider;
+    private final PasswordEncoder passwordEncoder;
 
     // 로그인한 유저 정보 반환 to @CurrentUser
     public User getUserInfo() {
@@ -93,7 +95,7 @@ public class AuthService implements UserDetailsService {
         if (auth == null || user == null) {
             throw new UsernameNotFoundException(phone);
         }
-
+        log.info("auth password : {}", auth.getAuthNumber());
         return new UserAccount(auth, user.getAuthority());
     }
 
@@ -128,8 +130,6 @@ public class AuthService implements UserDetailsService {
     // 회원 가입
     @Transactional
     public TokenDto signup(AuthRequestDto authRequestDto) {
-        TokenDto tokenDto = login(authRequestDto);
-
         User user = User.builder()
             .phone(authRequestDto.getPhone())
             .authority("ROLE_USER")
@@ -141,7 +141,7 @@ public class AuthService implements UserDetailsService {
         userRepository.save(user);
         profileRepository.save(profile);
 
-        return tokenDto;
+        return login(authRequestDto);
     }
 
     // 토큰 재발급
@@ -187,7 +187,6 @@ public class AuthService implements UserDetailsService {
     // 닉네임 설정
     @Transactional
     public void setNickname(User user, NicknameRequestDto nicknameRequestDto) {
-        log.info("user : {}, {}", user.getId(), user.getPhone());
         checkNickname(nicknameRequestDto.getNickname());
         Profile profile = profileRepository.findById(user.getId())
             .orElseThrow(() -> new ResourceNotFoundException(ResultCode.PROFILE_NOT_FOUND));
@@ -217,11 +216,11 @@ public class AuthService implements UserDetailsService {
     }
 
     // 휴대폰 인증 번호 확인
-    @Transactional(readOnly = true)
+    @Transactional
     public Map<AuthType, TokenDto> auth(AuthRequestDto authRequestDto) {
-//        LocalDateTime now = LocalDateTime.now();
-//        LocalDateTime requestTime = authRepository.findRequestTimeByPhone(authRequestDto.getPhone())
-//            .orElseThrow(() -> new UsernameNotFoundException(authRequestDto.getPhone()));
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime requestTime = authRepository.findRequestTimeByPhone(authRequestDto.getPhone())
+            .orElseThrow(() -> new UsernameNotFoundException(authRequestDto.getPhone()));
 
 //        Duration duration = Duration.between(requestTime, now);
 //        if(duration.getSeconds() > 300) {
@@ -288,13 +287,13 @@ public class AuthService implements UserDetailsService {
             if (sendSmsResponseDto.getStatusCode().equals("202")) {
                 if (authRepository.existsByPhone(messageRequestDto.getTo())) {
                     Auth auth = authRepository.findByPhone(messageRequestDto.getTo());
-                    auth.reauth(code, sendSmsResponseDto.getRequestId(),
+                    auth.reauth(passwordEncoder.encode(code), sendSmsResponseDto.getRequestId(),
                         sendSmsResponseDto.getRequestTime(), false);
                     authRepository.save(auth);
                 } else {
                     Auth auth = Auth.builder()
                         .phone(messageRequestDto.getTo())
-                        .authNumber(code)
+                        .authNumber(passwordEncoder.encode(code))
                         .requestId(sendSmsResponseDto.getRequestId())
                         .requestTime(sendSmsResponseDto.getRequestTime())
                         .done(false)
