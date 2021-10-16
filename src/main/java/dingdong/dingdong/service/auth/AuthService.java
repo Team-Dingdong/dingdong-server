@@ -281,14 +281,15 @@ public class AuthService implements UserDetailsService {
             RestTemplate restTemplate = new RestTemplate();
             restTemplate.setRequestFactory(new HttpComponentsClientHttpRequestFactory());
             SendSmsResponseDto sendSmsResponseDto = restTemplate.postForObject(new URI(
-                "https://sens.apigw.ntruss.com/sms/v2/services/" + applicationNaverSENS.getServiceId()
+                "https://sens.apigw.ntruss.com/sms/v2/services/" + applicationNaverSENS
+                    .getServiceId()
                     + "/messages"), body, SendSmsResponseDto.class);
 
             if (sendSmsResponseDto.getStatusCode().equals("202")) {
                 if (authRepository.existsByPhone(messageRequestDto.getTo())) {
                     Auth auth = authRepository.findByPhone(messageRequestDto.getTo());
                     auth.reauth(passwordEncoder.encode(code), sendSmsResponseDto.getRequestId(),
-                        sendSmsResponseDto.getRequestTime(), false);
+                        sendSmsResponseDto.getRequestTime());
                     authRepository.save(auth);
                 } else {
                     Auth auth = Auth.builder()
@@ -296,7 +297,6 @@ public class AuthService implements UserDetailsService {
                         .authNumber(passwordEncoder.encode(code))
                         .requestId(sendSmsResponseDto.getRequestId())
                         .requestTime(sendSmsResponseDto.getRequestTime())
-                        .done(false)
                         .build();
                     authRepository.save(auth);
                 }
@@ -329,7 +329,8 @@ public class AuthService implements UserDetailsService {
                 .append(accessKey)
                 .toString();
 
-            SecretKeySpec signingKey = new SecretKeySpec(secretKey.getBytes(StandardCharsets.UTF_8), "HmacSHA256");
+            SecretKeySpec signingKey = new SecretKeySpec(secretKey.getBytes(StandardCharsets.UTF_8),
+                "HmacSHA256");
             Mac mac = Mac.getInstance("HmacSHA256");
             mac.init(signingKey);
 
