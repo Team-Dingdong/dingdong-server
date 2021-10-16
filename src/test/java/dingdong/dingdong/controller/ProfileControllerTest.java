@@ -42,6 +42,7 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.restdocs.payload.JsonFieldType;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -57,6 +58,9 @@ class ProfileControllerTest {
 
     @Autowired
     ObjectMapper objectMapper;
+
+    @Autowired
+    PasswordEncoder passwordEncoder;
 
     @Autowired
     AuthService authService;
@@ -90,7 +94,7 @@ class ProfileControllerTest {
         Auth auth = Auth.builder()
             .id(id)
             .phone(phone)
-            .authNumber(authNumber)
+            .authNumber(passwordEncoder.encode(authNumber))
             .requestId(requestId)
             .requestTime(requestTime)
             .build();
@@ -118,10 +122,11 @@ class ProfileControllerTest {
     }
 
     TokenDto getTokenDto() {
-        Auth auth = authRepository.findById(1L).get();
+        String phone = "01012345678";
+        String authNumber = "123456";
         AuthRequestDto authRequestDto = AuthRequestDto.builder()
-            .phone(auth.getPhone())
-            .authNumber(auth.getAuthNumber())
+            .phone(phone)
+            .authNumber(authNumber)
             .build();
         Map<AuthType, TokenDto> data = authService.auth(authRequestDto);
 
@@ -132,9 +137,10 @@ class ProfileControllerTest {
     @DisplayName("본인 프로필 조회 테스트")
     void getMyProfile() throws Exception {
         TokenDto tokenDto = getTokenDto();
+        String token = "Bearer " + tokenDto.getAccessToken();
 
         mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v1/profile")
-            .header(HttpHeaders.AUTHORIZATION, tokenDto.getAccessToken())
+            .header(HttpHeaders.AUTHORIZATION, token)
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON))
             .andDo(print()).andExpect(status().isOk()).andDo(print())
@@ -159,9 +165,10 @@ class ProfileControllerTest {
     @DisplayName("프로필 조회 테스트")
     void getProfile() throws Exception {
         TokenDto tokenDto = getTokenDto();
+        String token = "Bearer " + tokenDto.getAccessToken();
 
         mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v1/profile/{userId}", 1L)
-            .header(HttpHeaders.AUTHORIZATION, tokenDto.getAccessToken())
+            .header(HttpHeaders.AUTHORIZATION, token)
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON))
             .andDo(print()).andExpect(status().isOk()).andDo(print())
@@ -189,6 +196,7 @@ class ProfileControllerTest {
     @DisplayName("프로필 수정 테스트")
     void updateProfile() throws Exception {
         TokenDto tokenDto = getTokenDto();
+        String token = "Bearer " + tokenDto.getAccessToken();
 
         MultipartFile profileImage = new MockMultipartFile("file", "profileImage.jpeg",
             "image/jpeg", "<<jpeg data>>".getBytes());
