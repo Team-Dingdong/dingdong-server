@@ -15,9 +15,11 @@ public class PostGetResponseDto {
 
     private String title;
 
-    private Integer people;
+    private int people;
 
-    private Integer cost;
+    private int gatheredPeople;
+
+    private int cost;
 
     private String bio;
 
@@ -29,8 +31,6 @@ public class PostGetResponseDto {
 
     private String imageUrl1;
 
-    private String tag;
-
     public static PostGetResponseDto from(Post post) {
         return PostGetResponseDto.builder()
             .id(post.getId())
@@ -41,6 +41,7 @@ public class PostGetResponseDto {
             .local(post.getLocal())
             .done(post.getDone())
             .imageUrl1(post.getImageUrl1())
+            .done(post.getDone())
             .createdDate(post.getCreatedDate())
             .build();
     }

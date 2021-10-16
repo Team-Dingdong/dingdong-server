@@ -7,7 +7,6 @@ import dingdong.dingdong.service.chat.ChatService;
 import dingdong.dingdong.service.post.PostService;
 import dingdong.dingdong.util.exception.Result;
 import dingdong.dingdong.util.exception.ResultCode;
-import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -27,10 +26,10 @@ public class PostController {
     private final ChatService chatService;
 
     // 홈화면, 모든 나누기 불러오기(정렬방식: 최신순)
-    @GetMapping("/sorted-by=desc(createdDate)")
+    @GetMapping("/sort=desc&sortby=createdDate")
     public ResponseEntity<Result<Page<PostGetResponseDto>>> findPostsSortByCreatedDate(
         @CurrentUser User user,
-        @PageableDefault(size = 5, direction = Sort.Direction.DESC) Pageable pageable) {
+        @PageableDefault(size = 5) Pageable pageable) {
         Page<PostGetResponseDto> data;
         if (user.getLocal1() == null && user.getLocal2() == null) {
             // 유저의 local 정보가 없는 경우
@@ -43,7 +42,7 @@ public class PostController {
     }
 
     // 홈화면, 모든 나누기 불러오기(정렬방식: 마감임박순)
-    @GetMapping("/sorted-by=desc(endDate)")
+    @GetMapping("/sort=desc&sortby=endDate")
     public ResponseEntity<Result<Page<PostGetResponseDto>>> findPostsSortByEndDate(
         @CurrentUser User user,
         @PageableDefault(size = 5, direction = Sort.Direction.DESC) Pageable pageable) {
@@ -59,10 +58,10 @@ public class PostController {
     }
 
     // 카테고리별 나누기 피드들 불러오기(카테고리 화면)(정렬 방식: 최신순)
-    @GetMapping("/category/sorted-by=desc(createdDate)/{categoryId}")
+    @GetMapping("/sort=desc&sortby=category&createdDate/{categoryId}")
     public ResponseEntity<Result<Page<PostGetResponseDto>>> findPostByCategoryIdSortByCreatedDate(
         @CurrentUser User user, @PathVariable Long categoryId,
-        @PageableDefault(size = 5, direction = Sort.Direction.DESC) Pageable pageable) {
+        @PageableDefault(size = 5) Pageable pageable) {
         Page<PostGetResponseDto> data;
         if (user.getLocal1() == null && user.getLocal2() == null) {
             // user가 local 정보를 설정 안 한 경우
@@ -75,7 +74,7 @@ public class PostController {
     }
 
     // 카테고리별 나누기 피드들 불러오기(카테고리 화면)(정렬 방식: 마감임박순)
-    @GetMapping("/category/sorted-by=desc(endDate)/{categoryId}")
+    @GetMapping("/sort=desc&sortby=category&endDate/{categoryId}")
     public ResponseEntity<Result<Page<PostGetResponseDto>>> findPostByCategoryIdSortByEndDate(
         @CurrentUser User user, @PathVariable Long categoryId,
         @PageableDefault(size = 5, direction = Sort.Direction.DESC) Pageable pageable) {
@@ -85,7 +84,8 @@ public class PostController {
             data = postService.findPostByCategoryIdSortByEndDate(categoryId, pageable);
         } else {
             // user가 local 정보를 설정한 경우(local 정보에 기반하여 나누기 get)
-            data = postService.findPostByCategoryIdSortByEndDateWithLocal(user, categoryId, pageable);
+            data = postService
+                .findPostByCategoryIdSortByEndDateWithLocal(user, categoryId, pageable);
         }
         return Result.toResult(ResultCode.POST_READ_SUCCESS, data);
     }
@@ -100,7 +100,8 @@ public class PostController {
 
     // 특정 유저(본인 제외)가 생성한 나누기 피드들 불러오기
     @GetMapping("/user/{userId}")
-    public ResponseEntity<Result<Page<PostGetResponseDto>>> findPostByUserId(@PathVariable Long userId,
+    public ResponseEntity<Result<Page<PostGetResponseDto>>> findPostByUserId(
+        @PathVariable Long userId,
         @PageableDefault(size = 5, direction = Sort.Direction.DESC) Pageable pageable) {
         Page<PostGetResponseDto> data = postService.findPostByUserId(userId, pageable);
         return Result.toResult(ResultCode.POST_READ_SUCCESS, data);
@@ -128,8 +129,8 @@ public class PostController {
         @ModelAttribute @Valid PostCreateRequestDto postCreateRequestDto) {
         Long postId = postService.createPost(user, postCreateRequestDto);
         PostResponseDto data = PostResponseDto.builder()
-                .id(postId)
-                .build();
+            .id(postId)
+            .build();
         return Result.toResult(ResultCode.POST_CREATE_SUCCESS, data);
     }
 
@@ -139,8 +140,8 @@ public class PostController {
         @ModelAttribute @Valid PostUpdateRequestDto postUpdateRequestDto) {
         postService.updatePost(postId, postUpdateRequestDto);
         PostResponseDto data = PostResponseDto.builder()
-                .id(postId)
-                .build();
+            .id(postId)
+            .build();
         return Result.toResult(ResultCode.POST_UPDATE_SUCCESS, data);
     }
 

@@ -28,7 +28,7 @@ public class PostDetailResponseDto {
 
     private Number bad;
 
-    private Integer cost;
+    private int cost;
 
     private String bio;
 
@@ -38,9 +38,9 @@ public class PostDetailResponseDto {
 
     private LocalDateTime modifiedDate;
 
-    private Integer people;
+    private int people;
 
-    private Integer gatheredPeople;
+    private int gatheredPeople;
 
     private Boolean done;
 

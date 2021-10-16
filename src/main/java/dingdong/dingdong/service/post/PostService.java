@@ -1,6 +1,7 @@
 package dingdong.dingdong.service.post;
 
 import static dingdong.dingdong.util.exception.ResultCode.CATEGORY_NOT_FOUND;
+import static dingdong.dingdong.util.exception.ResultCode.POST_DELETE_FAIL_DONE;
 import static dingdong.dingdong.util.exception.ResultCode.POST_NOT_FOUND;
 import static dingdong.dingdong.util.exception.ResultCode.USER_NOT_FOUND;
 
@@ -23,6 +24,7 @@ import dingdong.dingdong.dto.post.PostCreateRequestDto;
 import dingdong.dingdong.dto.post.PostUpdateRequestDto;
 import dingdong.dingdong.service.chat.ChatService;
 import dingdong.dingdong.service.s3.S3Uploader;
+import dingdong.dingdong.util.exception.ForbiddenException;
 import dingdong.dingdong.util.exception.ResourceNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
@@ -78,7 +80,7 @@ public class PostService {
         return PostDetailResponseDto.from(post, tags);
     }
 
-    // 유저의 LOCAL 정보에 기반하여 카테고리별로 나누기 불러오기 (정렬 기준: 마감임박순)(카테고리 화면)
+    // 유저의 LOCAL 정보에 기반하여 카테고리별로 나누기 불러오기 (정렬 기준: 최신순)(카테고리 화면)
     @Transactional(readOnly = true)
     public Page<PostGetResponseDto> findPostByCategoryIdWithLocal(User user,
         Long categoryId, Pageable pageable) {
@@ -231,16 +233,22 @@ public class PostService {
     public void deletePost(Long id) {
         Post post = postRepository.findById(id)
             .orElseThrow(() -> new ResourceNotFoundException(POST_NOT_FOUND));
-        postTagRepository.deleteByPostId(post.getId());
 
-        if (chatPromiseRepository.existsById(id)) {
-            chatPromiseRepository.deleteById(id);
+        if(post.getDone() == Boolean.TRUE){
+            postTagRepository.deleteByPostId(post.getId());
+
+            if (chatPromiseRepository.existsById(id)) {
+                chatPromiseRepository.deleteById(id);
+            }
+            if (chatRoomRepository.existsByPostId(id)) {
+                chatJoinRepository.deleteByPostId(id);
+                chatRoomRepository.deleteById(id);
+            }
+            postRepository.deletePostById(post.getId());
+        } else {
+            throw new ForbiddenException(POST_DELETE_FAIL_DONE);
         }
-        if (chatRoomRepository.existsByPostId(id)) {
-            chatJoinRepository.deleteByPostId(id);
-            chatRoomRepository.deleteById(id);
-        }
-        postRepository.delete(post);
+
     }
 
     // 나누기 피드(post) 수정
