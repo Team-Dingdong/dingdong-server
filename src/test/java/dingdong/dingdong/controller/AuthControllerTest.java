@@ -96,7 +96,6 @@ class AuthControllerTest {
             .authNumber(authNumber)
             .requestId(requestId)
             .requestTime(requestTime)
-            .done(false)
             .build();
 
         authRepository.save(auth);
