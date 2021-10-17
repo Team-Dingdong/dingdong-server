@@ -25,13 +25,13 @@ public class Profile {
     private Long id;
 
     @MapsId
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")
     private User user;
 
     private String nickname;
 
-    @ColumnDefault("https://dingdongbucket.s3.ap-northeast-2.amazonaws.com/static/default_profile.jpg")
+    @ColumnDefault("'https://dingdongbucket.s3.ap-northeast-2.amazonaws.com/static/default_profile.jpg'")
     private String profileImageUrl;
 
     @ColumnDefault("0")

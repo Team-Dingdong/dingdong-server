@@ -11,6 +11,7 @@ import dingdong.dingdong.domain.user.Profile;
 import dingdong.dingdong.domain.user.ProfileRepository;
 import dingdong.dingdong.domain.user.RefreshToken;
 import dingdong.dingdong.domain.user.RefreshTokenRepository;
+import dingdong.dingdong.domain.user.Role;
 import dingdong.dingdong.domain.user.User;
 import dingdong.dingdong.domain.user.UserAccount;
 import dingdong.dingdong.domain.user.UserRepository;
@@ -95,8 +96,7 @@ public class AuthService implements UserDetailsService {
         if (auth == null || user == null) {
             throw new UsernameNotFoundException(phone);
         }
-        log.info("auth password : {}", auth.getAuthNumber());
-        return new UserAccount(auth, user.getAuthority());
+        return new UserAccount(auth, user.getAuthority().name());
     }
 
     // 로그인
@@ -141,7 +141,7 @@ public class AuthService implements UserDetailsService {
     public TokenDto signup(AuthRequestDto authRequestDto) {
         User user = User.builder()
             .phone(authRequestDto.getPhone())
-            .authority("ROLE_USER")
+            .authority(Role.REGULAR)
             .build();
         Profile profile = Profile.builder()
             .id(user.getId())
