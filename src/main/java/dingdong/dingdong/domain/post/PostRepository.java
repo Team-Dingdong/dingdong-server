@@ -10,30 +10,28 @@ import org.springframework.transaction.annotation.Transactional;
 public interface PostRepository extends JpaRepository<Post, Long> {
 
     // 홈화면 최신순 정렬
-    @Query(value = "select * from post, user where post.user_id = user.user_id AND (user.local1 = :local1 or user.local2 = :local2) ORDER BY post.created_date DESC",
+    @Query(value = "select * from post, user where post.user_id = user.user_id AND (user.local1 = :localId or user.local2 = :localId) ORDER BY post.created_date DESC",
         countQuery = "select count(*) from post",
         nativeQuery = true)
-    Page<Post> findAllByCreateDate(Long local1, Long local2, Pageable pageable);
+    Page<Post> findAllByCreateDateWithLocal(Long localId, Pageable pageable);
 
     // 홈화면 마감일자순 정렬
-    @Query(value =
-        "select * from post, user where post.user_id = user.user_id and (user.local1 = :local1 or user.local2 = :local2) "
+    @Query(value = "select * from post, user where post.user_id = user.user_id and (user.local1 = :localId or user.local2 = :localId) "
             +
             "order by (post.gathered_people / post.people) desc",
         countQuery = "select count(*) from post",
         nativeQuery = true)
-    Page<Post> findAllByEndDate(Long local1, Long local2, Pageable pageable);
+    Page<Post> findAllByEndDateWithLocal(Long localId, Pageable pageable);
 
-    @Query(value = "select * from post, user where post.user_id = user.user_id and (user.local1 = :local1 or user.local2 = :local2) and post.category_id = :categoryId ORDER BY post.created_date DESC",
+    @Query(value = "select * from post, user where post.user_id = user.user_id and (user.local1 = :localId or user.local2 = :localId) and post.category_id = :categoryId ORDER BY post.created_date DESC",
         countQuery = "select count(*) from post",
         nativeQuery = true)
-    Page<Post> findByCategoryId(Long local1, Long local2, Long categoryId, Pageable pageable);
+    Page<Post> findPostByCategoryIdWithLocal(Long categoryId, Long localId, Pageable pageable);
 
-    @Query(value = "select * from post, user where post.user_id = user.user_id and (user.local1 = :local1 or user.local2 = :local2) and post.category_id = :categoryId order by (post.gathered_people / post.people) desc",
+    @Query(value = "select * from post, user where post.user_id = user.user_id and (user.local1 = :localId or user.local2 = :localId) and post.category_id = :categoryId order by (post.gathered_people / post.people) desc",
         countQuery = "select count(*) from post",
         nativeQuery = true)
-    Page<Post> findPostByCategoryIdSortByEndDate(Long local1, Long local2, Long categoryId,
-        Pageable pageable);
+    Page<Post> findPostByCategoryIdSortByEndDateWithLocal(Long categoryId, Long localId, Pageable pageable);
 
     Page<Post> findByUserId(Long userId, Pageable pageable);
 
@@ -75,21 +73,21 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     @Query(value = "select * from post", countQuery = "select count(*) from post",
         nativeQuery = true)
-    Page<Post> findAllByCreateDateNotLocal(Pageable pageable);
+    Page<Post> findPostsSortByCreatedDateNotLocal(Pageable pageable);
 
     @Query(value = "select * from post ORDER BY (post.gathered_people / post.people) desc", countQuery = "select count(*) from post",
         nativeQuery = true)
-    Page<Post> findAllByEndDateNotLocal(Pageable pageable);
+    Page<Post> findPostsSortByEndDateNotLocal(Pageable pageable);
 
     @Query(value = "select * from post WHERE post.category_id = :categoryId ORDER BY post.created_date DESC",
         countQuery = "select count(*) from post",
         nativeQuery = true)
-    Page<Post> findPostByCategoryIdNotLocal(Long categoryId, Pageable pageable);
+    Page<Post> findPostByCategoryIdSortByCreatedDateNotLocal(Long categoryId, Pageable pageable);
 
     @Query(value = "select * from post WHERE post.category_id = :categoryId order by (post.gathered_people / post.people) desc",
         countQuery = "select count(*) from post",
         nativeQuery = true)
-    Page<Post> findPostByCategoryIdNotLocalSortByEndDate(Long categoryId, Pageable pageable);
+    Page<Post> findPostByCategoryIdSortByEndDateNotLocal(Long categoryId, Pageable pageable);
 
     @Modifying
     @Query(value = "delete from post where post.post_id = :postId",

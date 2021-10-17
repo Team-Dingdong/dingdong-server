@@ -1,6 +1,7 @@
 package dingdong.dingdong.service.post;
 
 import static dingdong.dingdong.util.exception.ResultCode.CATEGORY_NOT_FOUND;
+import static dingdong.dingdong.util.exception.ResultCode.LOCAL_NOT_FOUND;
 import static dingdong.dingdong.util.exception.ResultCode.POST_DELETE_FAIL_DONE;
 import static dingdong.dingdong.util.exception.ResultCode.POST_NOT_FOUND;
 import static dingdong.dingdong.util.exception.ResultCode.USER_NOT_FOUND;
@@ -52,20 +53,71 @@ public class PostService {
 
     private final ChatService chatService;
 
-    // 유저의 LOCAL 정보에 기반하여 나누기 불러오기 (정렬 기준: 최신순)(홈화면)
+    // 유저의 LOCAL 정보에 기반하여 나누기 불러오기 (정렬 기준: 최신순)(홈화면)(유저의 local 정보 기반)
     @Transactional(readOnly = true)
-    public Page<PostGetResponseDto> findAllByCreateDateWithLocal(User user,
+    public Page<PostGetResponseDto> findAllByCreateDateWithLocal(User user, Long localId,
         Pageable pageable) {
-        Page<Post> posts = postRepository.findAllByCreateDate(user.getLocal1().getId(), user.getLocal2().getId(), pageable);
+        Page<Post> posts;
+        if (localId == 1L){
+            posts = postRepository.findAllByCreateDateWithLocal(user.getLocal1().getId(), pageable);
+        }else if(localId == 2L){
+            posts = postRepository.findAllByCreateDateWithLocal(user.getLocal2().getId(), pageable);
+        }else{
+            throw new ResourceNotFoundException(LOCAL_NOT_FOUND);
+        }
 
         return posts.map(PostGetResponseDto::from);
     }
 
-    // 유저의 LOCAL 정보에 기반하여 나누기 불러오기 (정렬 기준: 마감임박순)(홈화면)
+    // 유저의 LOCAL 정보에 기반하여 나누기 불러오기 (정렬 기준: 마감임박순)(홈화면)(유저의 local 정보 기반)
     @Transactional(readOnly = true)
-    public Page<PostGetResponseDto> findAllByEndDateWithLocal(User user,
+    public Page<PostGetResponseDto> findAllByEndDateWithLocal(User user, Long localId,
         Pageable pageable) {
-        Page<Post> posts = postRepository.findAllByEndDate(user.getLocal1().getId(), user.getLocal2().getId(), pageable);
+        Page<Post> posts;
+        if (localId == 1L){
+            posts = postRepository.findAllByEndDateWithLocal(user.getLocal1().getId(), pageable);
+        }else if(localId == 2L){
+            posts = postRepository.findAllByEndDateWithLocal(user.getLocal2().getId(), pageable);
+        }else{
+            throw new ResourceNotFoundException(LOCAL_NOT_FOUND);
+        }
+        return posts.map(PostGetResponseDto::from);
+    }
+
+    // 유저의 LOCAL 정보에 기반하여 카테고리별로 나누기 불러오기 (정렬 기준: 최신순)(카테고리 화면)(유저의 local 정보 기반)
+    @Transactional(readOnly = true)
+    public Page<PostGetResponseDto> findPostByCategoryIdWithLocal(User user,
+        Long categoryId, Long localId, Pageable pageable) {
+        Category category = categoryRepository.findById(categoryId)
+            .orElseThrow(() -> new ResourceNotFoundException(CATEGORY_NOT_FOUND));
+        Page<Post> posts;
+        if (localId == 1L){
+            posts = postRepository.findPostByCategoryIdWithLocal(category.getId(), user.getLocal1().getId(), pageable);
+        }else if(localId == 2L){
+            posts = postRepository.findPostByCategoryIdWithLocal(category.getId(), user.getLocal2().getId(), pageable);
+        }else{
+            throw new ResourceNotFoundException(LOCAL_NOT_FOUND);
+        }
+
+        return posts.map(PostGetResponseDto::from);
+    }
+
+    // 유저의 LOCAL 정보에 기반하여 카테고리별 나누기 불러오기 (정렬 기준: 마감임박순)(카테고리 화면)(유저의 local 정보 기반)
+    @Transactional(readOnly = true)
+    public Page<PostGetResponseDto> findPostByCategoryIdSortByEndDateWithLocal(User user,
+        Long categoryId, Long localId, Pageable pageable) {
+        Category category = categoryRepository.findById(categoryId)
+            .orElseThrow(() -> new ResourceNotFoundException(CATEGORY_NOT_FOUND));
+        Page<Post> posts;
+        if (localId == 1L){
+            posts = postRepository.findPostByCategoryIdSortByEndDateWithLocal(category.getId(),
+                user.getLocal1().getId(), pageable);
+        }else if(localId == 2L){
+            posts = postRepository.findPostByCategoryIdSortByEndDateWithLocal(category.getId(),
+                user.getLocal2().getId(), pageable);
+        }else{
+            throw new ResourceNotFoundException(LOCAL_NOT_FOUND);
+        }
 
         return posts.map(PostGetResponseDto::from);
     }
@@ -78,18 +130,6 @@ public class PostService {
         List<Tag> tags = postTagRepository.findTagByPost(post);
 
         return PostDetailResponseDto.from(post, tags);
-    }
-
-    // 유저의 LOCAL 정보에 기반하여 카테고리별로 나누기 불러오기 (정렬 기준: 최신순)(카테고리 화면)
-    @Transactional(readOnly = true)
-    public Page<PostGetResponseDto> findPostByCategoryIdWithLocal(User user,
-        Long categoryId, Pageable pageable) {
-        Category category = categoryRepository.findById(categoryId)
-            .orElseThrow(() -> new ResourceNotFoundException(CATEGORY_NOT_FOUND));
-        Page<Post> posts = postRepository
-            .findByCategoryId(user.getLocal1().getId(), user.getLocal2().getId(), category.getId(), pageable);
-
-        return posts.map(PostGetResponseDto::from);
     }
 
     // 유저의 판매내역 리스트 (GET: 유저별로 출력되는 나누기 피드)
@@ -116,52 +156,40 @@ public class PostService {
         return posts.map(PostGetResponseDto::from);
     }
 
-    // 유저의 LOCAL 정보에 기반하지 않고 전체 나누기 불러오기 (정렬 기준: 최신순)(홈화면)(유저의 local 정보가 기입되지 않은 경우)
+    // 유저의 LOCAL 정보에 기반하지 않고 전체 나누기 불러오기 (정렬 기준: 최신순)(홈화면)(local 정보를 무시)
     @Transactional(readOnly = true)
-    public Page<PostGetResponseDto> findAllByCreateDate(Pageable pageable) {
-        Page<Post> postList = postRepository.findAllByCreateDateNotLocal(pageable);
+    public Page<PostGetResponseDto> findPostsSortByCreatedDateNotLocal(Pageable pageable) {
+        Page<Post> postList = postRepository.findPostsSortByCreatedDateNotLocal(pageable);
 
         return postList.map(PostGetResponseDto::from);
     }
 
-    // 유저의 LOCAL 정보에 기반하지 않고 전체 나누기 불러오기 (정렬 기준: 마감임박순)(홈화면)(유저의 local 정보가 기입되지 않은 경우)
+    // 유저의 LOCAL 정보에 기반하지 않고 전체 나누기 불러오기 (정렬 기준: 마감임박순)(홈화면)(local 정보를 무시)
     @Transactional(readOnly = true)
-    public Page<PostGetResponseDto> findAllByEndDate(Pageable pageable) {
-        Page<Post> posts = postRepository.findAllByEndDateNotLocal(pageable);
+    public Page<PostGetResponseDto> findPostsSortByEndDateNotLocal(Pageable pageable) {
+        Page<Post> posts = postRepository.findPostsSortByEndDateNotLocal(pageable);
 
         return posts.map(PostGetResponseDto::from);
     }
 
-    // 유저의 LOCAL 정보에 기반하여 카테고리별 나누기 불러오기 (정렬 기준: 최신순)(카테고리 화면)(유저의 local 정보가 기입된 경우)
+    // 유저의 LOCAL 정보에 기반하여 카테고리별 나누기 불러오기 (정렬 기준: 최신순)(카테고리 화면)(local 정보를 무시)
     @Transactional(readOnly = true)
-    public Page<PostGetResponseDto> findPostByCategoryId(Long categoryId, Pageable pageable) {
+    public Page<PostGetResponseDto> findPostByCategoryIdSortByCreatedDateNotLocal(Long categoryId, Pageable pageable) {
         Category category = categoryRepository.findById(categoryId)
             .orElseThrow(() -> new ResourceNotFoundException(CATEGORY_NOT_FOUND));
-        Page<Post> posts = postRepository.findPostByCategoryIdNotLocal(category.getId(), pageable);
+        Page<Post> posts = postRepository.findPostByCategoryIdSortByCreatedDateNotLocal(category.getId(), pageable);
 
         return posts.map(PostGetResponseDto::from);
     }
 
-    // 유저의 LOCAL 정보에 기반하여 카테고리별 나누기 불러오기 (정렬 기준: 마감임박순)(카테고리 화면)(유저의 local 정보가 기입된 경우)
+    // 유저의 LOCAL 정보에 기반하지 않고 카테고리별 나누기 불러오기 (정렬 기준: 마감임박순)(카테고리 화면)(local 정보를 무시)
     @Transactional(readOnly = true)
-    public Page<PostGetResponseDto> findPostByCategoryIdSortByEndDateWithLocal(User user,
-         Long categoryId, Pageable pageable) {
-        Category category = categoryRepository.findById(categoryId)
-            .orElseThrow(() -> new ResourceNotFoundException(CATEGORY_NOT_FOUND));
-        Page<Post> posts = postRepository
-            .findPostByCategoryIdSortByEndDate(user.getLocal1().getId(), user.getLocal2().getId(), category.getId(), pageable);
-
-        return posts.map(PostGetResponseDto::from);
-    }
-
-    // 유저의 LOCAL 정보에 기반하지 않고 카테고리별 나누기 불러오기 (정렬 기준: 마감임박순)(카테고리 화면)(유저의 local 정보가 기입되지 않은 경우)
-    @Transactional(readOnly = true)
-    public Page<PostGetResponseDto> findPostByCategoryIdSortByEndDate(Long categoryId,
+    public Page<PostGetResponseDto> findPostByCategoryIdSortByEndDateNotLocal(Long categoryId,
         Pageable pageable) {
         Category category = categoryRepository.findById(categoryId)
             .orElseThrow(() -> new ResourceNotFoundException(CATEGORY_NOT_FOUND));
         Page<Post> posts = postRepository
-            .findPostByCategoryIdNotLocalSortByEndDate(category.getId(), pageable);
+            .findPostByCategoryIdSortByEndDateNotLocal(category.getId(), pageable);
 
         return posts.map(PostGetResponseDto::from);
     }
@@ -248,7 +276,6 @@ public class PostService {
         } else {
             throw new ForbiddenException(POST_DELETE_FAIL_DONE);
         }
-
     }
 
     // 나누기 피드(post) 수정
