@@ -23,7 +23,6 @@ import dingdong.dingdong.util.exception.ResultCode;
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -121,9 +120,9 @@ public class ProfileService {
     }
 
     // 일정시간마다 Scheduling 작동.
-    @Transactional
-    @Scheduled(cron = "0 0 0 * * *", zone = "Asia/Seoul") // 1시간마다 작동
-    public void deleteUnsubUser() {
-        userRepository.deleteUnsubUser();
-    }
+//    @Transactional
+//    @Scheduled(cron = "0 0 0 * * *", zone = "Asia/Seoul") // 1시간마다 작동
+//    public void deleteUnsubUser() {
+//        userRepository.deleteUnsubUser();
+//    }
 }
