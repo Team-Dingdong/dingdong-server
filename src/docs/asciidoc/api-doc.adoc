@@ -56,7 +56,19 @@ include::{snippets}/auth-controller-test/auth/response-fields.adoc[]
 Response Example
 include::{snippets}/auth-controller-test/auth/response-body.adoc[]
 
-=== 2-3. 토큰 재발급
+=== 2-3. 로그아웃
+==== Request
+CURL
+include::{snippets}/auth-controller-test/logout/curl-request.adoc[]
+Request Headers
+include::{snippets}/auth-controller-test/logout/request-headers.adoc[]
+Request Http Example
+include::{snippets}/auth-controller-test/logout/http-request.adoc[]
+==== Response
+Response Example
+include::{snippets}/auth-controller-test/logout/response-body.adoc[]
+
+=== 2-4. 토큰 재발급
 ==== Request
 CURL
 include::{snippets}/auth-controller-test/reissue/curl-request.adoc[]
@@ -70,7 +82,7 @@ include::{snippets}/auth-controller-test/reissue/response-fields.adoc[]
 Response Example
 include::{snippets}/auth-controller-test/reissue/response-body.adoc[]
 
-=== 2-4. 닉네임 설정
+=== 2-5. 닉네임 설정
 ==== Request
 CURL
 include::{snippets}/auth-controller-test/nickname/curl-request.adoc[]
@@ -84,22 +96,22 @@ include::{snippets}/auth-controller-test/nickname/http-request.adoc[]
 Response Example
 include::{snippets}/auth-controller-test/nickname/response-body.adoc[]
 
-=== 2-5. 동네 목록 조회
+=== 2-6. 동네 목록 조회
 ==== Request
 CURL
-include::{snippets}/auth-controller-test/get-local-list/curl-request.adoc[]
+include::{snippets}/auth-controller-test/get-locals/curl-request.adoc[]
 Request Header
-include::{snippets}/auth-controller-test/get-local-list/request-headers.adoc[]
+include::{snippets}/auth-controller-test/get-locals/request-headers.adoc[]
 Request Parameters
-include::{snippets}/auth-controller-test/get-local-list/request-parameters.adoc[]
+include::{snippets}/auth-controller-test/get-locals/request-parameters.adoc[]
 ==== Response
 Response Fields
-include::{snippets}/auth-controller-test/get-local-list/response-fields.adoc[]
+include::{snippets}/auth-controller-test/get-locals/response-fields.adoc[]
 Response Example
-include::{snippets}/auth-controller-test/get-local-list/response-body.adoc[]
+include::{snippets}/auth-controller-test/get-locals/response-body.adoc[]
 
 
-=== 2-6. 동네 인증
+=== 2-7. 동네 인증
 ==== Request
 CURL
 include::{snippets}/auth-controller-test/local/curl-request.adoc[]
@@ -113,7 +125,7 @@ include::{snippets}/auth-controller-test/local/http-request.adoc[]
 Response Example
 include::{snippets}/auth-controller-test/local/response-body.adoc[]
 
-=== 2-7. 회원 탈퇴
+=== 2-8. 회원 탈퇴
 ==== Request
 CURL
 include::{snippets}/auth-controller-test/unsubscribe-user/curl-request.adoc[]

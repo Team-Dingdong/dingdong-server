@@ -51,6 +51,13 @@ public class AuthController {
         }
     }
 
+    // 로그아웃
+    @GetMapping("/logout")
+    public ResponseEntity<Result> logout(@CurrentUser User user) {
+        authService.logout(user);
+        return Result.toResult(ResultCode.LOGOUT_SUCCESS);
+    }
+
     // 토큰 재발급
     @PostMapping("/reissue")
     public ResponseEntity<Result<TokenDto>> reissue(@RequestBody TokenRequestDto tokenRequestDto) {

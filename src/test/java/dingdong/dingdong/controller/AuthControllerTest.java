@@ -46,6 +46,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.restdocs.payload.JsonFieldType;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -60,6 +61,9 @@ class AuthControllerTest {
 
     @Autowired
     ObjectMapper objectMapper;
+
+    @Autowired
+    PasswordEncoder passwordEncoder;
 
     @Autowired
     AuthService authService;
@@ -93,10 +97,9 @@ class AuthControllerTest {
         Auth auth = Auth.builder()
             .id(id)
             .phone(phone)
-            .authNumber(authNumber)
+            .authNumber(passwordEncoder.encode(authNumber))
             .requestId(requestId)
             .requestTime(requestTime)
-            .done(false)
             .build();
 
         authRepository.save(auth);
@@ -118,10 +121,11 @@ class AuthControllerTest {
     }
 
     TokenDto getTokenDto() {
-        Auth auth = authRepository.findById(1L).get();
+        String phone = "01012345678";
+        String authNumber = "123456";
         AuthRequestDto authRequestDto = AuthRequestDto.builder()
-            .phone(auth.getPhone())
-            .authNumber(auth.getAuthNumber())
+            .phone(phone)
+            .authNumber(authNumber)
             .build();
         Map<AuthType, TokenDto> data = authService.auth(authRequestDto);
 
@@ -156,10 +160,11 @@ class AuthControllerTest {
     @Test
     @DisplayName("휴대폰 인증 번호 확인 테스트")
     void auth() throws Exception {
-        Auth auth = authRepository.findById(1L).get();
+        String phone = "01012345678";
+        String authNumber = "123456";
         AuthRequestDto authRequestDto = AuthRequestDto.builder()
-            .phone(auth.getPhone())
-            .authNumber(auth.getAuthNumber())
+            .phone(phone)
+            .authNumber(authNumber)
             .build();
 
         mockMvc.perform(RestDocumentationRequestBuilders.post("/api/v1/auth")
@@ -186,6 +191,26 @@ class AuthControllerTest {
                     .description("JWT Refresh Token 값")
             )
         ));
+    }
+
+    @Test
+    @DisplayName("로그아웃 테스트")
+    void logout() throws Exception {
+        TokenDto tokenDto = getTokenDto();
+        String token = "Bearer " + tokenDto.getAccessToken();
+
+        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v1/auth/logout")
+            .header(HttpHeaders.AUTHORIZATION, token)
+            .accept(MediaType.APPLICATION_JSON))
+            .andDo(print()).andExpect(status().isOk()).andDo(print())
+            .andDo(document("{class-name}/{method-name}",
+                preprocessRequest(modifyUris().scheme(scheme).host(host).port(port), prettyPrint()),
+                preprocessResponse(prettyPrint()),
+                requestHeaders(
+                    headerWithName(HttpHeaders.AUTHORIZATION)
+                        .description("Bearer Type의 AccessToken 값")
+                )
+            ));
     }
 
     @Test
@@ -256,10 +281,11 @@ class AuthControllerTest {
     @DisplayName("동네 목록 조회 테스트")
     void getLocals() throws Exception {
         TokenDto tokenDto = getTokenDto();
+        String token = "Bearer " + tokenDto.getAccessToken();
 
         mockMvc.perform(
             RestDocumentationRequestBuilders.get("/api/v1/auth/local?city=서울특별시&district=성북구")
-                .header(HttpHeaders.AUTHORIZATION, tokenDto.getAccessToken())
+                .header(HttpHeaders.AUTHORIZATION, token)
                 .accept(MediaType.APPLICATION_JSON))
             .andDo(print()).andExpect(status().isOk()).andDo(print())
             .andDo(document("{class-name}/{method-name}",
@@ -284,6 +310,7 @@ class AuthControllerTest {
     @DisplayName("동네 인증 테스트")
     void local() throws Exception {
         TokenDto tokenDto = getTokenDto();
+        String token = "Bearer " + tokenDto.getAccessToken();
         Local local1 = localRepository.findById(1L).get();
         Local local2 = localRepository.findById(2L).get();
         LocalRequestDto localRequestDto = LocalRequestDto.builder()
@@ -292,7 +319,7 @@ class AuthControllerTest {
             .build();
 
         mockMvc.perform(RestDocumentationRequestBuilders.post("/api/v1/auth/local")
-            .header(HttpHeaders.AUTHORIZATION, tokenDto.getAccessToken())
+            .header(HttpHeaders.AUTHORIZATION, token)
             .content(objectMapper.writeValueAsString(localRequestDto))
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON))
@@ -315,9 +342,10 @@ class AuthControllerTest {
     @DisplayName("회원 탈퇴 테스트")
     void unsubscribeUser() throws Exception {
         TokenDto tokenDto = getTokenDto();
+        String token = "Bearer " + tokenDto.getAccessToken();
 
         mockMvc.perform(patch("/api/v1/auth/unsubscribe")
-            .header(HttpHeaders.AUTHORIZATION, tokenDto.getAccessToken())
+            .header(HttpHeaders.AUTHORIZATION, token)
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON))
             .andDo(print()).andExpect(status().isOk()).andDo(print())

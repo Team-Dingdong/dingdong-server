@@ -43,6 +43,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.restdocs.payload.JsonFieldType;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -57,6 +58,9 @@ class RatingControllerTest {
 
     @Autowired
     ObjectMapper objectMapper;
+
+    @Autowired
+    PasswordEncoder passwordEncoder;
 
     @Autowired
     AuthService authService;
@@ -91,10 +95,9 @@ class RatingControllerTest {
         Auth auth = Auth.builder()
             .id(id1)
             .phone(phone1)
-            .authNumber(authNumber)
+            .authNumber(passwordEncoder.encode(authNumber))
             .requestId(requestId)
             .requestTime(requestTime)
-            .done(false)
             .build();
 
         authRepository.save(auth);
@@ -146,11 +149,11 @@ class RatingControllerTest {
     }
 
     TokenDto getTokenDto() {
-        // user1의 token
-        Auth auth = authRepository.findById(1L).get();
+        String phone = "01012345678";
+        String authNumber = "123456";
         AuthRequestDto authRequestDto = AuthRequestDto.builder()
-            .phone(auth.getPhone())
-            .authNumber(auth.getAuthNumber())
+            .phone(phone)
+            .authNumber(authNumber)
             .build();
         Map<AuthType, TokenDto> data = authService.auth(authRequestDto);
 
@@ -161,9 +164,7 @@ class RatingControllerTest {
     @DisplayName("본인 평가 조회")
     void getMyRating() throws Exception {
         TokenDto tokenDto = getTokenDto();
-
-        String tokenType = "Bearer ";
-        String token = tokenType + tokenDto.getAccessToken();
+        String token = "Bearer " + tokenDto.getAccessToken();
 
         mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v1/rating")
             .header(HttpHeaders.AUTHORIZATION, token)
@@ -190,9 +191,7 @@ class RatingControllerTest {
     @DisplayName("평가 조회")
     void getRating() throws Exception {
         TokenDto tokenDto = getTokenDto();
-
-        String tokenType = "Bearer ";
-        String token = tokenType + tokenDto.getAccessToken();
+        String token = "Bearer " + tokenDto.getAccessToken();
 
         mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v1/rating/{userId}", 2L)
             .header(HttpHeaders.AUTHORIZATION, token)
@@ -222,9 +221,7 @@ class RatingControllerTest {
     @DisplayName("평가 생성")
     void createRating() throws Exception {
         TokenDto tokenDto = getTokenDto();
-
-        String tokenType = "Bearer ";
-        String token = tokenType + tokenDto.getAccessToken();
+        String token = "Bearer " + tokenDto.getAccessToken();
 
         RatingRequestDto ratingRequestDto = RatingRequestDto.builder()
             .type(RatingType.GOOD)
