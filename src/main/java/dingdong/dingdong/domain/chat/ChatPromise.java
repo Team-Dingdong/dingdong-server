@@ -37,6 +37,7 @@ public class ChatPromise extends BaseTimeEntity {
     private LocalDate promiseDate;
 
     @DateTimeFormat(pattern = "HH:mm:ss")
+
     private LocalTime promiseTime;
 
     // 약속 장소
