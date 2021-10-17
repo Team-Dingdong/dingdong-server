@@ -5,6 +5,7 @@ import dingdong.dingdong.domain.user.Auth;
 import dingdong.dingdong.domain.user.AuthRepository;
 import dingdong.dingdong.domain.user.Profile;
 import dingdong.dingdong.domain.user.ProfileRepository;
+import dingdong.dingdong.domain.user.Role;
 import dingdong.dingdong.domain.user.User;
 import dingdong.dingdong.domain.user.UserRepository;
 import dingdong.dingdong.dto.auth.AuthRequestDto;
@@ -72,42 +73,41 @@ class ChatRoomControllerTest {
 
         authRepository.save(auth);
 
+        User user1 = User.builder()
+            .id(id1)
+            .phone(phone1)
+            .authority(Role.REGULAR)
+            .build();
+
         Profile profile1 = Profile.builder()
             .id(id1)
+            .user(user1)
             .good(0L)
             .bad(0L)
             .build();
 
-        String authority = "ROLE_USER";
-        User user1 = User.builder()
-            .id(id1)
-            .phone(phone1)
-            .profile(profile1)
-            .authority(authority)
-            .build();
-
-        profileRepository.save(profile1);
         userRepository.save(user1);
+        profileRepository.save(profile1);
 
         // user2 생성
         Long id2 = 2L;
         String phone2 = "01022222222";
 
+        User user2 = User.builder()
+            .id(id2)
+            .phone(phone2)
+            .authority(Role.REGULAR)
+            .build();
+
         Profile profile2 = Profile.builder()
             .id(id2)
+            .user(user2)
             .good(0L)
             .bad(0L)
             .build();
 
-        User user2 = User.builder()
-            .id(id2)
-            .phone(phone2)
-            .profile(profile2)
-            .authority(authority)
-            .build();
-
-        profileRepository.save(profile2);
         userRepository.save(user2);
+        profileRepository.save(profile2);
     }
 
     TokenDto getTokenDto() {

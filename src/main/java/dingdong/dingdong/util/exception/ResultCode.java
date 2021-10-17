@@ -59,6 +59,7 @@ public enum ResultCode {
     LOCAL_CREATE_SUCCESS(CREATED, "동네 설정 성공"),
 
     RATING_CREATE_SUCCESS(CREATED, "평가 생성 성공"),
+    REPORT_CREATE_SUCCESS(CREATED, "신고 생성 성공"),
 
     POST_CREATE_SUCCESS(CREATED, "포스트 생성 성공"),
     POST_LIKE_CREATE_SUCCESS(CREATED, "포스트 좋아요 생성 성공"),
@@ -114,8 +115,11 @@ public enum ResultCode {
     UNKNOWN_AUTHENTICATION_ERROR(UNAUTHORIZED, "알 수 없는 이유로 인에 실패했습니다"),
 
     /* 403 FORBIDDEN : 권한이 없는 사용자 */
+    AUTH_FAIL_FORBIDDEN(FORBIDDEN, "가입할 수 없는 전화번호입니다"),
     CHAT_ROOM_QUIT_FAIL_OWNER(FORBIDDEN, "방장은 채팅방을 나갈 수 없습니다"),
     RATING_CREATE_FAIL_SELF(FORBIDDEN, "본인은 평가할 수 없습니다"),
+    RATING_CREATE_FAIL_FORBIDDEN(FORBIDDEN, "관계 없는 사용자를 평가할 수 없습니다"),
+    REPORT_CREATE_FAIL_SELF(FORBIDDEN, "본인은 신고할 수 없습니다"),
     FORBIDDEN_MEMBER(FORBIDDEN, "해당 권한이 없습니다."),
 
     /* 404 NOT_FOUND : Resource 를 찾을 수 없음 */
@@ -143,6 +147,7 @@ public enum ResultCode {
     CHAT_PROMISE_DUPLICATION(CONFLICT, "이미 약속 투표가 진행중입니다"),
     CHAT_PROMISE_VOTE_DUPLICATION(CONFLICT, "이미 투표하였습니다"),
     POST_CONFIRMED_DUPLICATION(CONFLICT, "이미 거래 확정하였습니다"),
+    REPORT_DUPLICATION(CONFLICT, "이미 신고한 사용자입니다"),
 
     /* 500 CONFLICT */
     AUTH_ERROR(INTERNAL_SERVER_ERROR, "인증 오류 발생"),

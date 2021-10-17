@@ -170,13 +170,45 @@ include::{snippets}/profile-controller-test/get-profile/response-body.adoc[]
 
 === 3-3. 프로필 수정
 
+=== 3-4. 프로필 신고하기
+==== Request
+CURL
+include::{snippets}/profile-controller-test/create-report/curl-request.adoc[]
+Request Header
+include::{snippets}/profile-controller-test/create-report/request-headers.adoc[]
+Request Path Parameters ->
+include::{snippets}/profile-controller-test/create-report/path-parameters.adoc[]
+Request Fields
+include::{snippets}/profile-controller-test/create-report/request-fields.adoc[]
+Request Http Example
+include::{snippets}/profile-controller-test/create-report/http-request.adoc[]
+==== Response
+Response Example
+include::{snippets}/rating-controller-test/create-rating/response-body.adoc[]
+
 == 4. 평가
 === 4-1. 본인 평가 조회
+==== Request
+CURL
+include::{snippets}/rating-controller-test/get-my-rating/curl-request.adoc[]
+Request Header
+include::{snippets}/rating-controller-test/get-my-rating/request-headers.adoc[]
+Request Http Example
+include::{snippets}/rating-controller-test/get-my-rating/http-request.adoc[]
+==== Response
+Response Fields
+include::{snippets}/rating-controller-test/get-my-rating/response-fields.adoc[]
+Response Example
+include::{snippets}/rating-controller-test/get-my-rating/response-body.adoc[]
+
+=== 4-2. 평가 조회
 ==== Request
 CURL
 include::{snippets}/rating-controller-test/get-rating/curl-request.adoc[]
 Request Header
 include::{snippets}/rating-controller-test/get-rating/request-headers.adoc[]
+Request Path Parameters ->
+include::{snippets}/rating-controller-test/get-rating/path-parameters.adoc[]
 Request Http Example
 include::{snippets}/rating-controller-test/get-rating/http-request.adoc[]
 ==== Response
@@ -184,22 +216,6 @@ Response Fields
 include::{snippets}/rating-controller-test/get-rating/response-fields.adoc[]
 Response Example
 include::{snippets}/rating-controller-test/get-rating/response-body.adoc[]
-
-=== 4-2. 평가 조회
-==== Request
-CURL
-include::{snippets}/rating-controller-test/test-get-rating/curl-request.adoc[]
-Request Header
-include::{snippets}/rating-controller-test/test-get-rating/request-headers.adoc[]
-Request Path Parameters ->
-include::{snippets}/rating-controller-test/test-get-rating/path-parameters.adoc[]
-Request Http Example
-include::{snippets}/rating-controller-test/test-get-rating/http-request.adoc[]
-==== Response
-Response Fields
-include::{snippets}/rating-controller-test/test-get-rating/response-fields.adoc[]
-Response Example
-include::{snippets}/rating-controller-test/test-get-rating/response-body.adoc[]
 
 === 4-3. 평가 생성
 ==== Request

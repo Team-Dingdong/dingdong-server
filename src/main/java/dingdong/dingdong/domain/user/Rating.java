@@ -20,18 +20,14 @@ public class Rating {
     @Column(name = "rating_id", nullable = false)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sender")
     private User sender;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "receiver")
     private User receiver;
 
     private RatingType type;
-
-    public void setType(RatingType type) {
-        this.type = type;
-    }
 
 }
