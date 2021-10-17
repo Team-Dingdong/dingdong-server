@@ -1,7 +1,8 @@
-/*
 package dingdong.dingdong.controller;
 
 import static dingdong.dingdong.domain.chat.PromiseType.CONFIRMED;
+import static dingdong.dingdong.domain.chat.PromiseType.PROGRESS;
+import static dingdong.dingdong.util.exception.ResultCode.POST_NOT_FOUND;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
@@ -44,6 +45,7 @@ import dingdong.dingdong.dto.auth.AuthRequestDto;
 import dingdong.dingdong.dto.auth.TokenDto;
 import dingdong.dingdong.service.auth.AuthService;
 import dingdong.dingdong.service.auth.AuthType;
+import dingdong.dingdong.util.exception.ResourceNotFoundException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -156,11 +158,10 @@ class PostControllerTest {
             .dong("상선동")
             .build();
 
-        String authority = "ROLE_USER";
         User user = User.builder()
             .id(id)
             .phone(phone)
-            .authority(authority)
+            .authority()
             .local1(local1)
             .local2(local2)
             .build();
@@ -220,6 +221,24 @@ class PostControllerTest {
             .build();
         postRepository.save(post);
 
+        Post post2 = Post.builder()
+            .id(2L)
+            .title(title)
+            .cost(cost)
+            .people(people)
+            .gatheredPeople(gatheredPeople)
+            .bio(bio)
+            .local(local)
+            .imageUrl1(imageUrl1)
+            .imageUrl2(imageUrl2)
+            .imageUrl3(imageUrl3)
+            .user(user)
+            .category(category)
+            .done(Boolean.FALSE)
+            .build();
+        postRepository.save(post);
+        postRepository.save(post2);
+
         PostTag postTag = PostTag.builder()
             .id(1L)
             .post(post)
@@ -227,9 +246,12 @@ class PostControllerTest {
             .build();
         postTagRepository.save(postTag);
 
+        Post post1 = postRepository.findById(post.getId())
+            .orElseThrow(() -> new ResourceNotFoundException(POST_NOT_FOUND));;
         List<PostTag> postTags = new ArrayList<>();
         postTags.add(postTag);
         post.setPostTags(postTags);
+        postRepository.save(post1);
 
         ChatRoom chatRoom = ChatRoom.builder()
             .id(1L)
@@ -255,7 +277,7 @@ class PostControllerTest {
                 .totalPeople(3)
                 .votingPeople(1)
                 .promiseEndTime(LocalDateTime.now())
-                .type(CONFIRMED)
+                .type(PROGRESS)
                 .build();
         chatPromiseRepository.save(chatPromise);
 
@@ -280,9 +302,7 @@ class PostControllerTest {
         return data.get(AuthType.LOGIN);
     }
 
-    */
-/*
-    @Test
+/*    @Test
     @DisplayName("나누기 생성")
     void createPost() throws Exception {
         TokenDto tokenDto = getTokenDto();
@@ -314,8 +334,8 @@ class PostControllerTest {
                         headerWithName(HttpHeaders.AUTHORIZATION).description("Bearer Type의 AccessToken 값")
                 )
         ));
-    }
-     *//*
+    }*/
+
 
     @Test
     @DisplayName("홈화면, 모든 나누기 불러오기(정렬방식: 최신순)")
@@ -488,7 +508,7 @@ class PostControllerTest {
     void findPostById() throws Exception {
         TokenDto tokenDto = getTokenDto();
 
-        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v1/post/{postId}", 1L)
+        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v1/post/{postId}", 2L)
             .header(HttpHeaders.AUTHORIZATION, tokenDto.getAccessToken())
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON))
@@ -553,9 +573,7 @@ class PostControllerTest {
         ));
     }
 
-    */
-/*
-    @Test
+/*    @Test
     @DisplayName("나누기 수정")
     void updatePost() throws Exception {
         TokenDto tokenDto = getTokenDto();
@@ -587,8 +605,8 @@ class PostControllerTest {
                         parameterWithName("id").description("조회하고자 하는 나누기의 고유값")
                 )
         ));
-    }
-     *//*
+    }*/
+
 
     @Test
     @DisplayName("현재 유저가 올린 나누기 목록 보기(프로필 판매내역 보기 화면)")
@@ -685,21 +703,21 @@ class PostControllerTest {
                 headerWithName(HttpHeaders.AUTHORIZATION).description("Bearer Type의 AccessToken 값")
             ),
             relaxedResponseFields(
-                fieldWithPath("data.content[].id").type("Long").description("나누기의 Id"),
-                fieldWithPath("data.content[].title").type("String").description("나누기의 제목"),
+                fieldWithPath("data.content[].id").type("Long").description("나누기의 Id").optional(),
+                fieldWithPath("data.content[].title").type("String").description("나누기의 제목").optional(),
                 fieldWithPath("data.content[].people").type(JsonFieldType.NUMBER)
-                    .description("나누기의 모집인원수"),
-                fieldWithPath("data.content[].gatheredPeople").type(JsonFieldType.NUMBER)
-                    .description("나누기의 현재까지 모집된 인원수"),
+                    .description("나누기의 모집인원수").optional(),
+                fieldWithPath("data.content[].gatheredPeople").type(JsonFieldType.NUMBER).optional()
+                    .description("나누기의 현재까지 모집된 인원수").optional(),
                 fieldWithPath("data.content[].cost").type(JsonFieldType.NUMBER)
-                    .description("나누기의 비용"),
-                fieldWithPath("data.content[].title").type("String").description("나누기의 제목값"),
-                fieldWithPath("data.content[].local").type("String").description("나누기의 장소"),
-                fieldWithPath("data.content[].bio").type("String").description("나누기의 설명글"),
+                    .description("나누기의 비용").optional(),
+                fieldWithPath("data.content[].title").type("String").description("나누기의 제목값").optional(),
+                fieldWithPath("data.content[].local").type("String").description("나누기의 장소").optional(),
+                fieldWithPath("data.content[].bio").type("String").description("나누기의 설명글").optional(),
                 fieldWithPath("data.content[].done").type("boolean").description("나누기의 완료여부").optional(),
                 fieldWithPath("data.content[].createdDate").type("LocalDateTime")
                     .description("나누기의 생성날짜").optional(),
-                fieldWithPath("data.content[].imageUrl1").type("String").description("나누기의 이미지1")
+                fieldWithPath("data.content[].imageUrl1").type("String").description("나누기의 이미지1").optional()
             )
         ));
     }
@@ -765,4 +783,3 @@ class PostControllerTest {
 
 }
 
-*/
