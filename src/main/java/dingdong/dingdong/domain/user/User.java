@@ -46,18 +46,18 @@ public class User extends BaseTimeEntity {
 
     private Role authority;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "local1")
     private Local local1;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "local2")
     private Local local2;
 
-    @OneToOne(mappedBy = "user", fetch = FetchType.EAGER)
+    @OneToOne(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Profile profile;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonManagedReference
     private List<Post> posts = new ArrayList<>();
 
@@ -70,5 +70,9 @@ public class User extends BaseTimeEntity {
     public void setUnsubscribe() {
         this.authority = Role.UNSUB;
         this.deletedDate = LocalDateTime.now();
+    }
+
+    public void setStopped() {
+        this.authority = Role.STOPPED;
     }
 }

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import dingdong.dingdong.config.TokenProvider;
 import dingdong.dingdong.domain.user.Auth;
 import dingdong.dingdong.domain.user.AuthRepository;
+import dingdong.dingdong.domain.user.BlackListRepository;
 import dingdong.dingdong.domain.user.Local;
 import dingdong.dingdong.domain.user.LocalRepository;
 import dingdong.dingdong.domain.user.Profile;
@@ -29,10 +30,10 @@ import dingdong.dingdong.dto.auth.TokenDto;
 import dingdong.dingdong.dto.auth.TokenRequestDto;
 import dingdong.dingdong.util.SecurityUtil;
 import dingdong.dingdong.util.exception.DuplicateException;
+import dingdong.dingdong.util.exception.ForbiddenException;
 import dingdong.dingdong.util.exception.JwtAuthException;
 import dingdong.dingdong.util.exception.ResourceNotFoundException;
 import dingdong.dingdong.util.exception.ResultCode;
-
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
@@ -77,6 +78,7 @@ public class AuthService implements UserDetailsService {
     private final UserRepository userRepository;
     private final AuthRepository authRepository;
     private final ProfileRepository profileRepository;
+    private final BlackListRepository blackListRepository;
     private final LocalRepository localRepository;
     private final RefreshTokenRepository refreshTokenRepository;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
@@ -127,6 +129,7 @@ public class AuthService implements UserDetailsService {
         return tokenDto;
     }
 
+    // 로그아웃
     @Transactional
     public void logout(User user) {
         //refresh token 삭제
@@ -166,7 +169,7 @@ public class AuthService implements UserDetailsService {
             .getAuthentication(tokenRequestDto.getAccessToken());
 
         // 3. 저장소에서 Member ID 를 기반으로 Refresh Token 값 가져옴
-        RefreshToken refreshToken = refreshTokenRepository.findByPhone(authentication.getName())
+        RefreshToken refreshToken = refreshTokenRepository.findById(authentication.getName())
             .orElseThrow(() -> new JwtAuthException(ResultCode.REFRESH_TOKEN_NOT_FOUND));
 
         // 4. Refresh Token 일치하는지 검사
@@ -183,6 +186,14 @@ public class AuthService implements UserDetailsService {
 
         // 토큰 발급
         return tokenDto;
+    }
+
+    // 블랙리스트 확인
+    @Transactional(readOnly = true)
+    public void checkBlackList(String phone) {
+        if (blackListRepository.existsById(phone)) {
+            throw new ForbiddenException(ResultCode.AUTH_FAIL_FORBIDDEN);
+        }
     }
 
     // 닉네임 중복 확인
@@ -227,6 +238,8 @@ public class AuthService implements UserDetailsService {
     // 휴대폰 인증 번호 확인
     @Transactional
     public Map<AuthType, TokenDto> auth(AuthRequestDto authRequestDto) {
+        checkBlackList(authRequestDto.getPhone());
+
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime requestTime = authRepository.findRequestTimeByPhone(authRequestDto.getPhone())
             .orElseThrow(() -> new UsernameNotFoundException(authRequestDto.getPhone()));
@@ -246,6 +259,7 @@ public class AuthService implements UserDetailsService {
     // 휴대폰 인증 번호 전송
     @Transactional
     public MessageResponseDto sendSms(MessageRequestDto messageRequestDto) {
+        checkBlackList(messageRequestDto.getTo());
         try {
             Long time = Timestamp.valueOf(LocalDateTime.now()).getTime();
             String code = makeRandom();
