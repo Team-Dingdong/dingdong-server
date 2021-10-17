@@ -16,11 +16,20 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import dingdong.dingdong.domain.chat.ChatJoin;
+import dingdong.dingdong.domain.chat.ChatJoinRepository;
+import dingdong.dingdong.domain.chat.ChatRoom;
+import dingdong.dingdong.domain.chat.ChatRoomRepository;
+import dingdong.dingdong.domain.post.Category;
+import dingdong.dingdong.domain.post.CategoryRepository;
+import dingdong.dingdong.domain.post.Post;
+import dingdong.dingdong.domain.post.PostRepository;
 import dingdong.dingdong.domain.user.Auth;
 import dingdong.dingdong.domain.user.AuthRepository;
 import dingdong.dingdong.domain.user.Profile;
 import dingdong.dingdong.domain.user.ProfileRepository;
 import dingdong.dingdong.domain.user.RatingRepository;
+import dingdong.dingdong.domain.user.Role;
 import dingdong.dingdong.domain.user.User;
 import dingdong.dingdong.domain.user.UserRepository;
 import dingdong.dingdong.dto.auth.AuthRequestDto;
@@ -77,6 +86,18 @@ class RatingControllerTest {
     @Autowired
     RatingRepository ratingRepository;
 
+    @Autowired
+    CategoryRepository categoryRepository;
+
+    @Autowired
+    PostRepository postRepository;
+
+    @Autowired
+    ChatRoomRepository chatRoomRepository;
+
+    @Autowired
+    ChatJoinRepository chatJoinRepository;
+
     @Value("${test.server.http.scheme}")
     String scheme;
     @Value("${test.server.http.host}")
@@ -102,11 +123,10 @@ class RatingControllerTest {
 
         authRepository.save(auth);
 
-        String authority = "ROLE_USER";
         User user1 = User.builder()
             .id(id1)
             .phone(phone1)
-            .authority(authority)
+            .authority(Role.REGULAR)
             .build();
 
         String nickname1 = "testNickname1";
@@ -130,7 +150,7 @@ class RatingControllerTest {
         User user2 = User.builder()
             .id(id2)
             .phone(phone2)
-            .authority(authority)
+            .authority(Role.REGULAR)
             .build();
 
         String nickname2 = "testNickname2";
@@ -146,6 +166,40 @@ class RatingControllerTest {
 
         userRepository.save(user2);
         profileRepository.save(profile2);
+
+        Category category = categoryRepository.findById(1L).get();
+        Post post = Post.builder()
+            .id(1L)
+            .user(user1)
+            .category(category)
+            .local("test local")
+            .people(2)
+            .title("test title")
+            .bio("test bio")
+            .cost(1000)
+            .build();
+        postRepository.save(post);
+
+        ChatRoom chatRoom = ChatRoom.builder()
+            .id(1L)
+            .post(post)
+            .build();
+        chatRoomRepository.save(chatRoom);
+
+        ChatJoin chatJoin1 = ChatJoin.builder()
+            .id(1L)
+            .chatRoom(chatRoom)
+            .user(user1)
+            .build();
+
+        ChatJoin chatJoin2 = ChatJoin.builder()
+            .id(2L)
+            .chatRoom(chatRoom)
+            .user(user2)
+            .build();
+
+        chatJoinRepository.save(chatJoin1);
+        chatJoinRepository.save(chatJoin2);
     }
 
     TokenDto getTokenDto() {

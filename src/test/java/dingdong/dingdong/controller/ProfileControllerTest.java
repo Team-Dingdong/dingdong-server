@@ -9,6 +9,7 @@ import static org.springframework.restdocs.operation.preprocess.Preprocessors.pr
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.relaxedResponseFields;
+import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -19,11 +20,13 @@ import dingdong.dingdong.domain.user.Auth;
 import dingdong.dingdong.domain.user.AuthRepository;
 import dingdong.dingdong.domain.user.Profile;
 import dingdong.dingdong.domain.user.ProfileRepository;
+import dingdong.dingdong.domain.user.Role;
 import dingdong.dingdong.domain.user.User;
 import dingdong.dingdong.domain.user.UserRepository;
 import dingdong.dingdong.dto.auth.AuthRequestDto;
 import dingdong.dingdong.dto.auth.TokenDto;
 import dingdong.dingdong.dto.profile.ProfileUpdateRequestDto;
+import dingdong.dingdong.dto.profile.ReportRequestDto;
 import dingdong.dingdong.service.auth.AuthService;
 import dingdong.dingdong.service.auth.AuthType;
 import dingdong.dingdong.service.profile.ProfileService;
@@ -86,14 +89,15 @@ class ProfileControllerTest {
 
     @BeforeEach
     void setUp() {
-        Long id = 1L;
-        String phone = "01012345678";
+        // user1 생성
+        Long id1 = 1L;
+        String phone1 = "01012345678";
         String authNumber = "123456";
         String requestId = "testRequestId";
         LocalDateTime requestTime = LocalDateTime.now();
         Auth auth = Auth.builder()
-            .id(id)
-            .phone(phone)
+            .id(id1)
+            .phone(phone1)
             .authNumber(passwordEncoder.encode(authNumber))
             .requestId(requestId)
             .requestTime(requestTime)
@@ -101,24 +105,49 @@ class ProfileControllerTest {
 
         authRepository.save(auth);
 
-        String authority = "ROLE_USER";
-        User user = User.builder()
-            .id(id)
-            .phone(phone)
-            .authority(authority)
+        User user1 = User.builder()
+            .id(id1)
+            .phone(phone1)
+            .authority(Role.REGULAR)
             .build();
 
-        String nickname = "testNickname";
-        String profileImageUrl = "testProfileImageUrl";
-        Profile profile = Profile.builder()
-            .id(id)
-            .user(user)
-            .nickname(nickname)
-            .profileImageUrl(profileImageUrl)
+        String nickname1 = "testNickname1";
+        String profileImageUrl1 = "testProfileImageUrl1";
+        Profile profile1 = Profile.builder()
+            .id(id1)
+            .user(user1)
+            .nickname(nickname1)
+            .profileImageUrl(profileImageUrl1)
+            .good(0L)
+            .bad(0L)
             .build();
 
-        profileRepository.save(profile);
-        userRepository.save(user);
+        userRepository.save(user1);
+        profileRepository.save(profile1);
+
+        // user2 생성
+        Long id2 = 2L;
+        String phone2 = "02012345678";
+
+        User user2 = User.builder()
+            .id(id2)
+            .phone(phone2)
+            .authority(Role.REGULAR)
+            .build();
+
+        String nickname2 = "testNickname2";
+        String profileImageUrl2 = "testProfileImageUrl2";
+        Profile profile2 = Profile.builder()
+            .id(id2)
+            .user(user2)
+            .nickname(nickname2)
+            .profileImageUrl(profileImageUrl2)
+            .good(0L)
+            .bad(0L)
+            .build();
+
+        userRepository.save(user2);
+        profileRepository.save(profile2);
     }
 
     TokenDto getTokenDto() {
@@ -204,5 +233,38 @@ class ProfileControllerTest {
             .profileImage(profileImage)
             .nickname("testNickname2")
             .build();
+    }
+
+    @Test
+    @DisplayName("프로필 신고 테스트")
+    void createReport() throws Exception {
+        TokenDto tokenDto = getTokenDto();
+        String token = "Bearer " + tokenDto.getAccessToken();
+
+        ReportRequestDto reportRequestDto = ReportRequestDto.builder()
+            .reason("test reason")
+            .build();
+
+        System.out.println(userRepository.findById(2L));
+        mockMvc.perform(RestDocumentationRequestBuilders.post("/api/v1/profile/report/{userId}", 2L)
+            .header(HttpHeaders.AUTHORIZATION, token)
+            .content(objectMapper.writeValueAsString(reportRequestDto))
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON))
+            .andDo(print()).andExpect(status().is2xxSuccessful()).andDo(print())
+            .andDo(document("{class-name}/{method-name}",
+                preprocessRequest(modifyUris().scheme(scheme).host(host).port(port), prettyPrint()),
+                preprocessResponse(prettyPrint()),
+                requestHeaders(
+                    headerWithName(HttpHeaders.AUTHORIZATION)
+                        .description("Bearer Type의 AccessToken 값")
+                ),
+                pathParameters(
+                    parameterWithName("userId").description("신하고자 하는 사용자의 고유 아이디 값")
+                ),
+                requestFields(
+                    fieldWithPath("reason").type(JsonFieldType.STRING).description("신고 사유")
+                )
+            ));
     }
 }

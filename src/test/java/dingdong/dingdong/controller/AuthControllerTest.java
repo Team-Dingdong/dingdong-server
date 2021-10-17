@@ -23,6 +23,7 @@ import dingdong.dingdong.domain.user.Local;
 import dingdong.dingdong.domain.user.LocalRepository;
 import dingdong.dingdong.domain.user.Profile;
 import dingdong.dingdong.domain.user.ProfileRepository;
+import dingdong.dingdong.domain.user.Role;
 import dingdong.dingdong.domain.user.User;
 import dingdong.dingdong.domain.user.UserRepository;
 import dingdong.dingdong.dto.auth.AuthRequestDto;
@@ -104,11 +105,10 @@ class AuthControllerTest {
 
         authRepository.save(auth);
 
-        String authority = "ROLE_USER";
         User user = User.builder()
             .id(id)
             .phone(phone)
-            .authority(authority)
+            .authority(Role.REGULAR)
             .build();
 
         Profile profile = Profile.builder()

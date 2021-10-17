@@ -1,11 +1,18 @@
 package dingdong.dingdong.service.rating;
 
-import dingdong.dingdong.domain.user.*;
+import dingdong.dingdong.domain.chat.ChatJoinRepository;
+import dingdong.dingdong.domain.user.Profile;
+import dingdong.dingdong.domain.user.ProfileRepository;
+import dingdong.dingdong.domain.user.Rating;
+import dingdong.dingdong.domain.user.RatingRepository;
+import dingdong.dingdong.domain.user.User;
+import dingdong.dingdong.domain.user.UserRepository;
 import dingdong.dingdong.dto.rating.RatingRequestDto;
 import dingdong.dingdong.dto.rating.RatingResponseDto;
 import dingdong.dingdong.util.exception.ForbiddenException;
 import dingdong.dingdong.util.exception.ResourceNotFoundException;
 import dingdong.dingdong.util.exception.ResultCode;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -19,6 +26,7 @@ public class RatingService {
     private final ProfileRepository profileRepository;
     private final UserRepository userRepository;
     private final RatingRepository ratingRepository;
+    private final ChatJoinRepository chatJoinRepository;
 
     // 평가 조회
     @Transactional
@@ -39,13 +47,17 @@ public class RatingService {
             throw new ForbiddenException(ResultCode.RATING_CREATE_FAIL_SELF);
         }
 
-        Rating rating = ratingRepository.findBySenderAndReceiver(sender, receiver)
-            .orElse(Rating.builder()
+        List<Long> users = chatJoinRepository.existsUserByUser(sender.getId());
+        if (!users.contains(userId)) {
+            throw new ForbiddenException(ResultCode.RATING_CREATE_FAIL_FORBIDDEN);
+        }
+
+        Rating rating = Rating.builder()
                 .sender(sender)
                 .receiver(receiver)
-                .build());
+                .type(ratingRequestDto.getType())
+                .build();
 
-        rating.setType(ratingRequestDto.getType());
         ratingRepository.save(rating);
 
         Long goodCount = ratingRepository.countByReceiverAndType(receiver, RatingType.GOOD);

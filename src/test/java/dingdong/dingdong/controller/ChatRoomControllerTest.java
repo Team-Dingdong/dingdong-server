@@ -5,6 +5,7 @@ import dingdong.dingdong.domain.user.Auth;
 import dingdong.dingdong.domain.user.AuthRepository;
 import dingdong.dingdong.domain.user.Profile;
 import dingdong.dingdong.domain.user.ProfileRepository;
+import dingdong.dingdong.domain.user.Role;
 import dingdong.dingdong.domain.user.User;
 import dingdong.dingdong.domain.user.UserRepository;
 import dingdong.dingdong.dto.auth.AuthRequestDto;
@@ -78,12 +79,11 @@ class ChatRoomControllerTest {
             .bad(0L)
             .build();
 
-        String authority = "ROLE_USER";
         User user1 = User.builder()
             .id(id1)
             .phone(phone1)
             .profile(profile1)
-            .authority(authority)
+            .authority(Role.REGULAR)
             .build();
 
         profileRepository.save(profile1);
@@ -103,7 +103,7 @@ class ChatRoomControllerTest {
             .id(id2)
             .phone(phone2)
             .profile(profile2)
-            .authority(authority)
+            .authority(Role.REGULAR)
             .build();
 
         profileRepository.save(profile2);

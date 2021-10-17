@@ -45,7 +45,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests()
             .mvcMatchers("/console", "/webjars/**/**", "/ws-stomp/**", "/api/v1/auth",
                 "/api/v1/auth/send-sms", "/docs/**", "/api/v1/chat").permitAll()
-            .anyRequest().hasAuthority("ROLE_USER");
+            .anyRequest().hasAuthority("REGULAR");
 
         CharacterEncodingFilter filter = new CharacterEncodingFilter();
         filter.setEncoding("UTF-8");
