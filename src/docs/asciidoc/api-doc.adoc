@@ -1,4 +1,4 @@
-= Dingdong REST API
+= DingDong REST API
 :toc: left
 :toclevels: 2
 :source-highlighter: highlightjs
