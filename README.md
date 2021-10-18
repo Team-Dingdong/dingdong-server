@@ -3,6 +3,8 @@
 > 1인 가구의 음식물 쓰레기, 생활 쓰레기를 줄이기 위한  
 > **식품 및 생필품 나누기 플랫폼**
 
+- 프로젝트 기간 : 2021.07.06 ~ 2021.11.09
+
 ### Tech Stack
 <p align="center">
   <img src="https://img.shields.io/badge/Java-v11-007396?style=flat-square&logo=Java&logoColor=white"/></a>&nbsp 
