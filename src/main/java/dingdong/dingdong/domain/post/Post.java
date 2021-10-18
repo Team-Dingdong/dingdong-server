@@ -91,6 +91,11 @@ public class Post extends BaseTimeEntity {
     public void setPeople(int people){ this.people = people; }
     public void setBio(String bio){ this.bio = bio; }
     public void setLocal(String local){ this.local = local; }
+    public void setImageUrl(String imageUrl1, String imageUrl2, String imageUrl3){
+        this.imageUrl1 = imageUrl1;
+        this.imageUrl2 = imageUrl2;
+        this.imageUrl3 = imageUrl3;
+    }
 
     @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonBackReference
