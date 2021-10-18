@@ -1,4 +1,3 @@
-/*
 package dingdong.dingdong.controller;
 
 import static dingdong.dingdong.domain.chat.PromiseType.CONFIRMED;
@@ -303,8 +302,7 @@ class PostControllerTest {
         return data.get(AuthType.LOGIN);
     }
 
-*/
-/*    @Test
+   /* @Test
     @DisplayName("나누기 생성")
     void createPost() throws Exception {
         TokenDto tokenDto = getTokenDto();
@@ -336,9 +334,8 @@ class PostControllerTest {
                         headerWithName(HttpHeaders.AUTHORIZATION).description("Bearer Type의 AccessToken 값")
                 )
         ));
-    }*//*
-
-
+    }
+*/
 
     @Test
     @DisplayName("홈화면, 모든 나누기 불러오기(정렬방식: 최신순)")
@@ -584,9 +581,8 @@ class PostControllerTest {
                 )
         ));
     }
-
-*/
-/*    @Test
+/*
+    @Test
     @DisplayName("나누기 수정")
     void updatePost() throws Exception {
         TokenDto tokenDto = getTokenDto();
@@ -618,8 +614,9 @@ class PostControllerTest {
                         parameterWithName("id").description("조회하고자 하는 나누기의 고유값")
                 )
         ));
-    }*//*
+    }
 
+*/
 
 
     @Test
@@ -955,4 +952,3 @@ class PostControllerTest {
 
 }
 
-*/

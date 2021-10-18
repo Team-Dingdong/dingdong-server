@@ -1,5 +1,6 @@
 package dingdong.dingdong.domain.post;
 
+import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -33,12 +34,18 @@ public interface PostRepository extends JpaRepository<Post, Long> {
         nativeQuery = true)
     Page<Post> findPostByCategoryIdSortByEndDateWithLocal(Long categoryId, Long localId, Pageable pageable);
 
-    Page<Post> findByUserId(Long userId, Pageable pageable);
+    @Query(value = "select * from post, user where post.user_id = user.user_id and user.user_id = :userId",
+        nativeQuery = true)
+    List<Post> findByUserId(Long userId);
 
-    @Query(value = "select * from post, chat_join where chat_join.user_id = :userId and chat_join.post_id = post.post_id and post.user_id != :userId",
+    @Query(value = "select * from post, user where post.user_id = user.user_id and user.user_id = :userId",
         countQuery = "select count(*) from post",
         nativeQuery = true)
-    Page<Post> findPostByUserIdOnChatJoin(Long userId, Pageable pageable);
+    Page<Post> findByUserIdPaging(Long userId, Pageable pageable);
+
+    @Query(value = "select * from post, chat_join where chat_join.user_id = :userId and chat_join.post_id = post.post_id and post.user_id != :userId",
+        nativeQuery = true)
+    List<Post> findPostByUserIdOnChatJoin(Long userId);
 
     @Query(value =
         "select * from post, user, post_tag, tag where post.user_id = user.user_id AND post.post_id = post_tag.post_id AND post_tag.tag_id = tag.tag_id AND"

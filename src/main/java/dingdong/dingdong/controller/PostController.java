@@ -7,6 +7,7 @@ import dingdong.dingdong.service.chat.ChatService;
 import dingdong.dingdong.service.post.PostService;
 import dingdong.dingdong.util.exception.Result;
 import dingdong.dingdong.util.exception.ResultCode;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -69,9 +70,8 @@ public class PostController {
 
     // 유저가 생성한 나누기 피드들 불러오기 (마이페이지 판매내역 조회)
     @GetMapping("/user/sell")
-    public ResponseEntity<Result<Page<PostGetResponseDto>>> findPostByUser(@CurrentUser User user,
-        @PageableDefault(size = 5, direction = Sort.Direction.DESC) Pageable pageable) {
-        Page<PostGetResponseDto> data = postService.findPostByUser(user, pageable);
+    public ResponseEntity<Result<List<PostGetResponseDto>>> findPostByUser(@CurrentUser User user){
+        List<PostGetResponseDto> data = postService.findPostByUser(user);
         return Result.toResult(ResultCode.POST_READ_SUCCESS, data);
     }
 
@@ -86,10 +86,8 @@ public class PostController {
 
     // 유저가 공동구매에 참여한 나누기 피드들 불러오기 (마이페이지 구매내역 조회)
     @GetMapping("/user/buy")
-    public ResponseEntity<Result<Page<PostGetResponseDto>>> findPostByUserIdOnChat(
-        @CurrentUser User user,
-        @PageableDefault(size = 5, direction = Sort.Direction.DESC) Pageable pageable) {
-        Page<PostGetResponseDto> data = postService.findPostByUserIdOnChatJoin(user, pageable);
+    public ResponseEntity<Result<List<PostGetResponseDto>>> findPostByUserIdOnChat(@CurrentUser User user) {
+        List<PostGetResponseDto> data = postService.findPostByUserIdOnChatJoin(user);
         return Result.toResult(ResultCode.POST_READ_SUCCESS, data);
     }
 

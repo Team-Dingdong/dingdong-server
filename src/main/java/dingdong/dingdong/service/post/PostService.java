@@ -29,6 +29,7 @@ import dingdong.dingdong.util.exception.ForbiddenException;
 import dingdong.dingdong.util.exception.ResourceNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -134,26 +135,27 @@ public class PostService {
 
     // 유저의 판매내역 리스트 (GET: 유저별로 출력되는 나누기 피드)
     @Transactional(readOnly = true)
-    public Page<PostGetResponseDto> findPostByUser(User user, Pageable pageable) {
-        Page<Post> posts = postRepository.findByUserId(user.getId(), pageable);
+    public List<PostGetResponseDto> findPostByUser(User user) {
+        List<Post> posts = postRepository.findByUserId(user.getId());
 
-        return posts.map(PostGetResponseDto::from);
+        return posts.stream().map(PostGetResponseDto::from).collect(Collectors.toList());
     }
 
     // 특정 유저(본인 제외)가 생성한 나누기 피드들 불러오기
     @Transactional(readOnly = true)
     public Page<PostGetResponseDto> findPostByUserId(Long id, Pageable pageable) {
         User user = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(USER_NOT_FOUND));
-        Page<Post> posts = postRepository.findByUserId(user.getId(), pageable);
+        Page<Post> posts = postRepository.findByUserIdPaging(user.getId(), pageable);
+
         return posts.map(PostGetResponseDto::from);
     }
 
     // 유저의 구매내역 리스트 (GET: 유저별로 출력되는 나누기 피드)
     @Transactional(readOnly = true)
-    public Page<PostGetResponseDto> findPostByUserIdOnChatJoin(User user, Pageable pageable) {
-        Page<Post> posts = postRepository.findPostByUserIdOnChatJoin(user.getId(), pageable);
+    public List<PostGetResponseDto> findPostByUserIdOnChatJoin(User user) {
+        List<Post> posts = postRepository.findPostByUserIdOnChatJoin(user.getId());
 
-        return posts.map(PostGetResponseDto::from);
+        return posts.stream().map(PostGetResponseDto::from).collect(Collectors.toList());
     }
 
     // 유저의 LOCAL 정보에 기반하지 않고 전체 나누기 불러오기 (정렬 기준: 최신순)(홈화면)(local 정보를 무시)
