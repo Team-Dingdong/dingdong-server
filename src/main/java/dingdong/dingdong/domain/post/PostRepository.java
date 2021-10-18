@@ -35,7 +35,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     Page<Post> findByUserId(Long userId, Pageable pageable);
 
-    @Query(value = "select * from post, chat_join where chat_join.user_id = :userId and chat_join.post_id = post.post_id",
+    @Query(value = "select * from post, chat_join where chat_join.user_id = :userId and chat_join.post_id = post.post_id and post.user_id != :userId",
         countQuery = "select count(*) from post",
         nativeQuery = true)
     Page<Post> findPostByUserIdOnChatJoin(Long userId, Pageable pageable);

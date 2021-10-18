@@ -304,24 +304,24 @@ public class PostService {
                     .orElseThrow(() -> new ResourceNotFoundException(CATEGORY_NOT_FOUND));
             post.setCategory(category);
         }
-        if(postUpdateRequestDto.getPostTag() != null){
-            List<String> paths = new ArrayList<>();
-            // ImageList to S3
-            if (postUpdateRequestDto.getPostImages() != null) {
-                // 이미지를 AWS S3에 업로드
-                List<MultipartFile> files = postUpdateRequestDto.getPostImages();
-                for (MultipartFile file : files) {
-                    paths.add(s3Uploader.upload(file, "static"));
+
+        // ImageList to S3
+        List<String> paths = new ArrayList<>();
+        if (postUpdateRequestDto.getPostImages() != null) {
+            // 이미지를 AWS S3에 업로드
+            List<MultipartFile> files = postUpdateRequestDto.getPostImages();
+            for (MultipartFile file : files) {
+                paths.add(s3Uploader.upload(file, "static"));
+            }
+            if (paths.size() < 3) {
+                while (paths.size() < 3) {
+                    paths.add(
+                        "https://dingdongbucket.s3.ap-northeast-2.amazonaws.com/static/default_post.png");
                 }
-                if (paths.size() < 3) {
-                    while (paths.size() < 3) {
-                        paths.add(
-                                "https://dingdongbucket.s3.ap-northeast-2.amazonaws.com/static/default_post.png");
-                    }
-                }
+            }
+            post.setImageUrl(paths.get(0), paths.get(1), paths.get(2));
         }
 
-        }
         postRepository.save(post);
         // 나누기 PostTag Update
         if (postUpdateRequestDto.getPostTag() != null){
@@ -347,7 +347,6 @@ public class PostService {
                 postTagRepository.save(postTag);
             }
         }
-
     }
 
     // local 정보에 기반하지 않고 제목, 카테고리 검색 기능(검색 기능)(유저의 LOCAL 정보가 기입되지 않은 경우)
