@@ -2,12 +2,14 @@ package dingdong.dingdong.controller;
 
 import dingdong.dingdong.domain.user.CurrentUser;
 import dingdong.dingdong.domain.user.User;
+import dingdong.dingdong.dto.auth.LocalResponseDto;
 import dingdong.dingdong.dto.profile.ProfileResponseDto;
 import dingdong.dingdong.dto.profile.ProfileUpdateRequestDto;
 import dingdong.dingdong.dto.profile.ReportRequestDto;
 import dingdong.dingdong.service.profile.ProfileService;
 import dingdong.dingdong.util.exception.Result;
 import dingdong.dingdong.util.exception.ResultCode;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -47,6 +49,13 @@ public class ProfileController {
         @ModelAttribute ProfileUpdateRequestDto profileUpdateRequestDto) {
         profileService.updateProfile(user, profileUpdateRequestDto);
         return Result.toResult(ResultCode.PROFILE_UPDATE_SUCCESS);
+    }
+
+    // 나의 동네 조회
+    @GetMapping("/local")
+    public ResponseEntity<Result<List<LocalResponseDto>>> getMyLocal(@CurrentUser User user) {
+        List<LocalResponseDto> data = profileService.getMyLocal(user);
+        return Result.toResult(ResultCode.LOCAL_READ_SUCCESS, data);
     }
 
     // 신고하기

@@ -12,6 +12,7 @@ import dingdong.dingdong.domain.user.Report;
 import dingdong.dingdong.domain.user.ReportRepository;
 import dingdong.dingdong.domain.user.User;
 import dingdong.dingdong.domain.user.UserRepository;
+import dingdong.dingdong.dto.auth.LocalResponseDto;
 import dingdong.dingdong.dto.profile.ProfileResponseDto;
 import dingdong.dingdong.dto.profile.ProfileUpdateRequestDto;
 import dingdong.dingdong.dto.profile.ReportRequestDto;
@@ -21,6 +22,8 @@ import dingdong.dingdong.util.exception.ForbiddenException;
 import dingdong.dingdong.util.exception.ResourceNotFoundException;
 import dingdong.dingdong.util.exception.ResultCode;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -76,6 +79,13 @@ public class ProfileService {
         profileRepository.save(profile);
     }
 
+    // 나의 동네 조회
+    @Transactional(readOnly = true)
+    public List<LocalResponseDto> getMyLocal(User user) {
+        return List.of(user.getLocal1(), user.getLocal2()).stream().map(LocalResponseDto::from)
+            .collect(Collectors.toList());
+    }
+
     // 신고하기
     @Transactional
     public void createReport(User sender, Long userId, ReportRequestDto reportRequestDto) {
@@ -100,8 +110,8 @@ public class ProfileService {
         reportRepository.save(report);
 
         long reportCount = reportRepository.countByReceiver(receiver);
-        if(reportCount > 0 && reportCount % LIMIT_REPORT_COUNT_STOPPED == 0) {
-            if(reportCount >= LIMIT_REPORT_COUNT_BLACK) {
+        if (reportCount > 0 && reportCount % LIMIT_REPORT_COUNT_STOPPED == 0) {
+            if (reportCount >= LIMIT_REPORT_COUNT_BLACK) {
                 receiver.setUnsubscribe();
                 BlackList blackList = BlackList.builder()
                     .phone(receiver.getPhone())
