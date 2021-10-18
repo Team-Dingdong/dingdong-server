@@ -53,8 +53,8 @@ public class ProfileController {
 
     // 나의 동네 조회
     @GetMapping("/local")
-    public ResponseEntity<Result<List<LocalResponseDto>>> getMyLocal(@CurrentUser User user) {
-        List<LocalResponseDto> data = profileService.getMyLocal(user);
+    public ResponseEntity<Result<List<LocalResponseDto>>> getMyLocals(@CurrentUser User user) {
+        List<LocalResponseDto> data = profileService.getMyLocals(user);
         return Result.toResult(ResultCode.LOCAL_READ_SUCCESS, data);
     }
 

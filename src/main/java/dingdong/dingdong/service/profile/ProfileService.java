@@ -80,8 +80,8 @@ public class ProfileService {
     }
 
     // 나의 동네 조회
-    @Transactional(readOnly = true)
-    public List<LocalResponseDto> getMyLocal(User user) {
+    @Transactional
+    public List<LocalResponseDto> getMyLocals(User user) {
         return List.of(user.getLocal1(), user.getLocal2()).stream().map(LocalResponseDto::from)
             .collect(Collectors.toList());
     }

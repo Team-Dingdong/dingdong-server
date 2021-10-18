@@ -18,6 +18,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dingdong.dingdong.domain.user.Auth;
 import dingdong.dingdong.domain.user.AuthRepository;
+import dingdong.dingdong.domain.user.LocalRepository;
 import dingdong.dingdong.domain.user.Profile;
 import dingdong.dingdong.domain.user.ProfileRepository;
 import dingdong.dingdong.domain.user.Role;
@@ -80,6 +81,9 @@ class ProfileControllerTest {
     @Autowired
     UserRepository userRepository;
 
+    @Autowired
+    LocalRepository localRepository;
+
     @Value("${test.server.http.scheme}")
     String scheme;
     @Value("${test.server.http.host}")
@@ -108,6 +112,8 @@ class ProfileControllerTest {
         User user1 = User.builder()
             .id(id1)
             .phone(phone1)
+            .local1(localRepository.findById(1L).get())
+            .local2(localRepository.findById(2L).get())
             .authority(Role.REGULAR)
             .build();
 
@@ -233,6 +239,31 @@ class ProfileControllerTest {
             .profileImage(profileImage)
             .nickname("testNickname2")
             .build();
+    }
+
+    @Test
+    @DisplayName("프로필 조회 테스트")
+    void getMyLocals() throws Exception {
+        TokenDto tokenDto = getTokenDto();
+        String token = "Bearer " + tokenDto.getAccessToken();
+
+        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v1/profile/local")
+            .header(HttpHeaders.AUTHORIZATION, token)
+            .accept(MediaType.APPLICATION_JSON))
+            .andDo(print()).andExpect(status().isOk()).andDo(print())
+            .andDo(document("{class-name}/{method-name}",
+                preprocessRequest(modifyUris().scheme(scheme).host(host).port(port), prettyPrint()),
+                preprocessResponse(prettyPrint()),
+                requestHeaders(
+                    headerWithName(HttpHeaders.AUTHORIZATION)
+                        .description("Bearer Type의 AccessToken 값")
+                ),
+                relaxedResponseFields(
+                    fieldWithPath("data.[].id").type(JsonFieldType.NUMBER)
+                        .description("동네의 고유한 아이디 값"),
+                    fieldWithPath("data.[].name").type("String").description("동네 이름")
+                )
+            ));
     }
 
     @Test

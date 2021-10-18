@@ -170,7 +170,20 @@ include::{snippets}/profile-controller-test/get-profile/response-body.adoc[]
 
 === 3-3. 프로필 수정
 
-=== 3-4. 프로필 신고하기
+=== 3-4. 나의 동네 조회
+CURL
+include::{snippets}/profile-controller-test/get-my-locals/curl-request.adoc[]
+Request Header
+include::{snippets}/profile-controller-test/get-my-locals/request-headers.adoc[]
+Request Http Example
+include::{snippets}/profile-controller-test/get-my-locals/http-request.adoc[]
+==== Response
+Response Fields
+include::{snippets}/profile-controller-test/get-my-locals/response-fields.adoc[]
+Response Example
+include::{snippets}/profile-controller-test/get-my-locals/response-body.adoc[]
+
+=== 3-5. 신고하기
 ==== Request
 CURL
 include::{snippets}/profile-controller-test/create-report/curl-request.adoc[]
