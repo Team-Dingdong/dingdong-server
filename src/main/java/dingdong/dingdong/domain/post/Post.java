@@ -3,6 +3,7 @@ package dingdong.dingdong.domain.post;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import dingdong.dingdong.domain.BaseTimeEntity;
+import dingdong.dingdong.domain.user.Local;
 import dingdong.dingdong.domain.user.User;
 import java.util.ArrayList;
 import java.util.List;
@@ -49,7 +50,7 @@ public class Post extends BaseTimeEntity {
     @ColumnDefault("1")
     private int gatheredPeople;
 
-    private String local;
+    private String location;
 
     private String bio;
 
@@ -95,11 +96,15 @@ public class Post extends BaseTimeEntity {
         }
     }
 
+    @ManyToOne
+    @JoinColumn(name = "local_id")
+    private Local local;
+
     public void setTitle(String title){ this.title = title; }
     public void setCost(int cost){ this.cost = cost; }
     public void setPeople(int people){ this.people = people; }
     public void setBio(String bio){ this.bio = bio; }
-    public void setLocal(String local){ this.local = local; }
+    public void setLocal(String location){ this.location = location; }
     public void setImageUrl(String imageUrl1, String imageUrl2, String imageUrl3){
         this.imageUrl1 = imageUrl1;
         this.imageUrl2 = imageUrl2;
@@ -109,7 +114,6 @@ public class Post extends BaseTimeEntity {
     @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonBackReference
     private List<PostTag> postTags = new ArrayList<>();
-
 
     public void plusUserCount() {
         this.gatheredPeople =

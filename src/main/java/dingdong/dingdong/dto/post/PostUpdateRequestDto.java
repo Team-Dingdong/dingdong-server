@@ -21,7 +21,7 @@ public class PostUpdateRequestDto {
 
     private String bio;
 
-    private String local;
+    private String location;
 
     private String postTag;
 

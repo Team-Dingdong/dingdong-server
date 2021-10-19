@@ -21,7 +21,7 @@ public class PostCreateRequestDto {
 
     private String bio;
 
-    private String local;
+    private String location;
 
     private Long categoryId;
 
