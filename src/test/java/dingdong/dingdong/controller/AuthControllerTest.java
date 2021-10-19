@@ -105,19 +105,19 @@ class AuthControllerTest {
 
         authRepository.save(auth);
 
+        Profile profile = Profile.builder()
+            .id(id)
+            .build();
+
         User user = User.builder()
             .id(id)
             .phone(phone)
             .authority(Role.REGULAR)
+            .profile(profile)
             .build();
 
-        Profile profile = Profile.builder()
-            .id(id)
-            .user(user)
-            .build();
-
-        userRepository.save(user);
         profileRepository.save(profile);
+        userRepository.save(user);
     }
 
     TokenDto getTokenDto() {
