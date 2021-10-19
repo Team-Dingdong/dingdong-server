@@ -7,6 +7,7 @@ import dingdong.dingdong.service.chat.ChatService;
 import dingdong.dingdong.service.post.PostService;
 import dingdong.dingdong.util.exception.Result;
 import dingdong.dingdong.util.exception.ResultCode;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -69,9 +70,8 @@ public class PostController {
 
     // 유저가 생성한 나누기 피드들 불러오기 (마이페이지 판매내역 조회)
     @GetMapping("/user/sell")
-    public ResponseEntity<Result<Page<PostGetResponseDto>>> findPostByUser(@CurrentUser User user,
-        @PageableDefault(size = 5, direction = Sort.Direction.DESC) Pageable pageable) {
-        Page<PostGetResponseDto> data = postService.findPostByUser(user, pageable);
+    public ResponseEntity<Result<List<PostGetResponseDto>>> findPostByUser(@CurrentUser User user){
+        List<PostGetResponseDto> data = postService.findPostByUser(user);
         return Result.toResult(ResultCode.POST_READ_SUCCESS, data);
     }
 
@@ -86,10 +86,8 @@ public class PostController {
 
     // 유저가 공동구매에 참여한 나누기 피드들 불러오기 (마이페이지 구매내역 조회)
     @GetMapping("/user/buy")
-    public ResponseEntity<Result<Page<PostGetResponseDto>>> findPostByUserIdOnChat(
-        @CurrentUser User user,
-        @PageableDefault(size = 5, direction = Sort.Direction.DESC) Pageable pageable) {
-        Page<PostGetResponseDto> data = postService.findPostByUserIdOnChatJoin(user, pageable);
+    public ResponseEntity<Result<List<PostGetResponseDto>>> findPostByUserIdOnChat(@CurrentUser User user) {
+        List<PostGetResponseDto> data = postService.findPostByUserIdOnChatJoin(user);
         return Result.toResult(ResultCode.POST_READ_SUCCESS, data);
     }
 
@@ -101,10 +99,10 @@ public class PostController {
     }
 
     // 나누기 생성
-    @PostMapping("")
-    public ResponseEntity<Result<PostResponseDto>> createPost(@CurrentUser User user,
+    @PostMapping("/{localId}")
+    public ResponseEntity<Result<PostResponseDto>> createPost(@CurrentUser User user, @PathVariable Long localId,
         @ModelAttribute @Valid PostCreateRequestDto postCreateRequestDto) {
-        Long postId = postService.createPost(user, postCreateRequestDto);
+        Long postId = postService.createPost(user, localId, postCreateRequestDto);
         PostResponseDto data = PostResponseDto.builder()
             .id(postId)
             .build();
@@ -142,16 +140,7 @@ public class PostController {
     public ResponseEntity<Result<Page<PostGetResponseDto>>> search(
         @RequestParam(value = "keyword") String keyword, @CurrentUser User user,
         @PageableDefault(size = 5, direction = Sort.Direction.DESC) Pageable pageable) {
-        Page<PostGetResponseDto> data;
-        if (user.getLocal1() == null && user.getLocal2() == null) {
-            // user가 local 정보를 설정 안 한 경우
-            data = postService.searchPosts(keyword, pageable);
-        } else {
-            // user가 local 정보를 설정한 경우(local 정보에 기반하여 나누기 get)
-            Long local1 = user.getLocal1().getId();
-            Long local2 = user.getLocal2().getId();
-            data = postService.searchPostsWithLocal(keyword, local1, local2, pageable);
-        }
+        Page<PostGetResponseDto> data = postService.searchPostsWithLocal(keyword, user, pageable);
         return Result.toResult(ResultCode.SEARCH_SUCCESS, data);
     }
 
