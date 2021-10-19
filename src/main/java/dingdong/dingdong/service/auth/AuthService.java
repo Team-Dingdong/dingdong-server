@@ -395,4 +395,13 @@ public class AuthService implements UserDetailsService {
             return null;
         }
     }
+
+    // 회원 탈퇴
+    @Transactional
+    public void unsubscribeUser(User user) {
+        user.setUnsubscribe();
+        user.getProfile().setUnsubscribe();
+        userRepository.save(user);
+        profileRepository.save(user.getProfile());
+    }
 }
