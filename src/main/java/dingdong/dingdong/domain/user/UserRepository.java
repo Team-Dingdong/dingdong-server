@@ -11,6 +11,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
     User findByPhone(String phone);
 
     @Modifying
-    @Query(value = "delete from user where deleted_date + INTERVAL 12 DAY <= now()", nativeQuery = true)
+    @Query(value = "update user set phone = null, modified_date = now() where deleted_date + INTERVAL 12 DAY <= now()", nativeQuery = true)
     void deleteUnsubUser();
+
+    @Modifying
+    @Query(value = "update user set authority = 1, modified_date = now() where authority = 2 and modified_date + INTERVAL 14 DAY <= now()", nativeQuery = true)
+    void derestrictStoppedUser();
 }

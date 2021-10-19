@@ -116,6 +116,7 @@ public enum ResultCode {
 
     /* 403 FORBIDDEN : 권한이 없는 사용자 */
     AUTH_FAIL_FORBIDDEN(FORBIDDEN, "가입할 수 없는 전화번호입니다"),
+    AUTH_FAIL_UNSUB(FORBIDDEN, "탈퇴한 회원은 14일간 재가입 할 수 없습니다"),
     CHAT_ROOM_QUIT_FAIL_OWNER(FORBIDDEN, "방장은 채팅방을 나갈 수 없습니다"),
     RATING_CREATE_FAIL_SELF(FORBIDDEN, "본인은 평가할 수 없습니다"),
     RATING_CREATE_FAIL_FORBIDDEN(FORBIDDEN, "관계 없는 사용자를 평가할 수 없습니다"),

@@ -64,4 +64,10 @@ public class ProfileController {
         profileService.createReport(user, userId, reportRequestDto);
         return Result.toResult(ResultCode.REPORT_CREATE_SUCCESS);
     }
+
+    @PostMapping("/test")
+    public ResponseEntity<Result> test() {
+        profileService.test();
+        return Result.toResult(ResultCode.LOGOUT_SUCCESS);
+    }
 }
