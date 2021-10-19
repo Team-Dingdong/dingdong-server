@@ -17,6 +17,8 @@ import dingdong.dingdong.domain.post.PostTag;
 import dingdong.dingdong.domain.post.PostTagRepository;
 import dingdong.dingdong.domain.post.Tag;
 import dingdong.dingdong.domain.post.TagRepository;
+import dingdong.dingdong.domain.user.Local;
+import dingdong.dingdong.domain.user.LocalRepository;
 import dingdong.dingdong.domain.user.User;
 import dingdong.dingdong.domain.user.UserRepository;
 import dingdong.dingdong.dto.post.PostDetailResponseDto;
@@ -46,6 +48,7 @@ public class PostService {
     private final TagRepository tagRepository;
     private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
+    private final LocalRepository localRepository;
     private final S3Uploader s3Uploader;
 
     private final ChatRoomRepository chatRoomRepository;
@@ -67,7 +70,17 @@ public class PostService {
             throw new ResourceNotFoundException(LOCAL_NOT_FOUND);
         }
 
-        return posts.map(PostGetResponseDto::from);
+        Page<PostGetResponseDto> data = posts.map(PostGetResponseDto::from);
+        for (PostGetResponseDto dto : data){
+            Post post = postRepository.findById(dto.getId()).orElseThrow(() -> new ResourceNotFoundException(POST_NOT_FOUND));
+            List<Tag> tags = postTagRepository.findTagByPost(post);
+            List<String> T = new ArrayList<>();
+            for (Tag t: tags){
+                T.add(t.getName());
+            }
+            dto.setTags(T);
+        }
+        return data;
     }
 
     // 유저의 LOCAL 정보에 기반하여 나누기 불러오기 (정렬 기준: 마감임박순)(홈화면)(유저의 local 정보 기반)
@@ -198,11 +211,20 @@ public class PostService {
 
     // 나누기 피드(post) 생성
     @Transactional
-    public Long createPost(User user, PostCreateRequestDto postCreateRequestDto) {
+    public Long createPost(User user, Long localId, PostCreateRequestDto postCreateRequestDto) {
 
         // CategoryId
         Category category = categoryRepository.findById(postCreateRequestDto.getCategoryId())
             .orElseThrow(() -> new ResourceNotFoundException(CATEGORY_NOT_FOUND));
+
+        Local local;
+        if (localId == 1L){
+            local = user.getLocal1();
+        } else if (localId == 2L){
+            local = user.getLocal2();
+        }else{
+            throw new ResourceNotFoundException(LOCAL_NOT_FOUND);
+        }
 
         List<String> paths = new ArrayList<>();
         // ImageList to S3
@@ -225,12 +247,13 @@ public class PostService {
                 .people(Integer.parseInt(postCreateRequestDto.getPeople()))
                 .cost(Integer.parseInt(postCreateRequestDto.getCost()))
                 .bio(postCreateRequestDto.getBio())
-                .local(postCreateRequestDto.getLocal())
+                .location(postCreateRequestDto.getLocation())
                 .user(user)
                 .category(category)
                 .imageUrl1(paths.get(0))
                 .imageUrl2(paths.get(1))
                 .imageUrl3(paths.get(2))
+                .local(local)
                 .build();
         postRepository.save(post);
         postRepository.flush();
@@ -298,8 +321,8 @@ public class PostService {
         if(postUpdateRequestDto.getBio() != null){
             post.setBio(postUpdateRequestDto.getBio());
         }
-        if(postUpdateRequestDto.getLocal() != null){
-            post.setLocal(postUpdateRequestDto.getLocal());
+        if(postUpdateRequestDto.getLocation() != null){
+            post.setLocation(postUpdateRequestDto.getLocation());
         }
         if(postUpdateRequestDto.getCategoryId() != null) {
             Category category = categoryRepository.findById(postUpdateRequestDto.getCategoryId())
@@ -366,16 +389,23 @@ public class PostService {
 
     // local 정보에 기반하여 제목, 카테고리 검색 기능(검색 기능)(유저의 LOCAL 정보가 기입된 경우)
     @Transactional(readOnly = true)
-    public Page<PostGetResponseDto> searchPostsWithLocal(String keyword, Long local1, Long local2,
+    public Page<PostGetResponseDto> searchPostsWithLocal(String keyword, User user,
         Pageable pageable) {
         Page<Post> posts;
-        if (keyword.contains("#")) {
-            posts = postRepository
-                .findAllSearchByTagWithLocal(keyword.substring(1), local1, local2, pageable);
-        } else {
-            posts = postRepository.findAllSearchWithLocal(keyword, local1, local2, pageable);
+        if (user.getLocal1() == null & user.getLocal2() == null){
+            if (keyword.contains("#")) {
+                posts = postRepository.findAllSearchByTag(keyword.substring(1), pageable);
+            } else {
+                posts = postRepository.findAllSearch(keyword, pageable);
+            }
+        }else{
+            if (keyword.contains("#")) {
+                posts = postRepository
+                    .findAllSearchByTagWithLocal(keyword.substring(1), user.getLocal1().getId(), user.getLocal2().getId(), pageable);
+            } else {
+                posts = postRepository.findAllSearchWithLocal(keyword, user.getLocal1().getId(), user.getLocal2().getId(), pageable);
+            }
         }
-
         return posts.map(PostGetResponseDto::from);
     }
 }

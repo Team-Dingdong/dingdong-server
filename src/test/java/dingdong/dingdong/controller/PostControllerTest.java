@@ -1,3 +1,4 @@
+/*
 package dingdong.dingdong.controller;
 
 import static dingdong.dingdong.domain.chat.PromiseType.CONFIRMED;
@@ -302,7 +303,8 @@ class PostControllerTest {
         return data.get(AuthType.LOGIN);
     }
 
-   /* @Test
+   */
+/* @Test
     @DisplayName("나누기 생성")
     void createPost() throws Exception {
         TokenDto tokenDto = getTokenDto();
@@ -335,7 +337,8 @@ class PostControllerTest {
                 )
         ));
     }
-*/
+*//*
+
 
     @Test
     @DisplayName("홈화면, 모든 나누기 불러오기(정렬방식: 최신순)")
@@ -581,6 +584,7 @@ class PostControllerTest {
                 )
         ));
     }
+*/
 /*
     @Test
     @DisplayName("나누기 수정")
@@ -616,7 +620,8 @@ class PostControllerTest {
         ));
     }
 
-*/
+*//*
+
 
 
     @Test
@@ -952,3 +957,4 @@ class PostControllerTest {
 
 }
 
+*/

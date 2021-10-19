@@ -99,10 +99,10 @@ public class PostController {
     }
 
     // 나누기 생성
-    @PostMapping("")
-    public ResponseEntity<Result<PostResponseDto>> createPost(@CurrentUser User user,
+    @PostMapping("/{localId}")
+    public ResponseEntity<Result<PostResponseDto>> createPost(@CurrentUser User user, @PathVariable Long localId,
         @ModelAttribute @Valid PostCreateRequestDto postCreateRequestDto) {
-        Long postId = postService.createPost(user, postCreateRequestDto);
+        Long postId = postService.createPost(user, localId, postCreateRequestDto);
         PostResponseDto data = PostResponseDto.builder()
             .id(postId)
             .build();
@@ -140,16 +140,7 @@ public class PostController {
     public ResponseEntity<Result<Page<PostGetResponseDto>>> search(
         @RequestParam(value = "keyword") String keyword, @CurrentUser User user,
         @PageableDefault(size = 5, direction = Sort.Direction.DESC) Pageable pageable) {
-        Page<PostGetResponseDto> data;
-        if (user.getLocal1() == null && user.getLocal2() == null) {
-            // user가 local 정보를 설정 안 한 경우
-            data = postService.searchPosts(keyword, pageable);
-        } else {
-            // user가 local 정보를 설정한 경우(local 정보에 기반하여 나누기 get)
-            Long local1 = user.getLocal1().getId();
-            Long local2 = user.getLocal2().getId();
-            data = postService.searchPostsWithLocal(keyword, local1, local2, pageable);
-        }
+        Page<PostGetResponseDto> data = postService.searchPostsWithLocal(keyword, user, pageable);
         return Result.toResult(ResultCode.SEARCH_SUCCESS, data);
     }
 

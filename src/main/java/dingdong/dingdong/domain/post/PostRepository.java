@@ -1,5 +1,6 @@
 package dingdong.dingdong.domain.post;
 
+import dingdong.dingdong.dto.post.PostGetResponseDto;
 import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -11,25 +12,23 @@ import org.springframework.transaction.annotation.Transactional;
 public interface PostRepository extends JpaRepository<Post, Long> {
 
     // 홈화면 최신순 정렬
-    @Query(value = "select * from post, user where post.user_id = user.user_id AND (user.local1 = :localId or user.local2 = :localId) ORDER BY post.created_date DESC",
+    @Query(value = "select * from post where post.local_id = :localId ORDER BY post.created_date DESC",
         countQuery = "select count(*) from post",
         nativeQuery = true)
     Page<Post> findAllByCreateDateWithLocal(Long localId, Pageable pageable);
 
     // 홈화면 마감일자순 정렬
-    @Query(value = "select * from post, user where post.user_id = user.user_id and (user.local1 = :localId or user.local2 = :localId) "
-            +
-            "order by (post.gathered_people / post.people) desc",
+    @Query(value = "select * from post where post.local_id = :localId ORDER BY (post.gathered_people / post.people) DESC",
         countQuery = "select count(*) from post",
         nativeQuery = true)
     Page<Post> findAllByEndDateWithLocal(Long localId, Pageable pageable);
 
-    @Query(value = "select * from post, user where post.user_id = user.user_id and (user.local1 = :localId or user.local2 = :localId) and post.category_id = :categoryId ORDER BY post.created_date DESC",
+    @Query(value = "select * from post where post.local_id = :localId and post.category_id = :categoryId ORDER BY post.created_date DESC",
         countQuery = "select count(*) from post",
         nativeQuery = true)
     Page<Post> findPostByCategoryIdWithLocal(Long categoryId, Long localId, Pageable pageable);
 
-    @Query(value = "select * from post, user where post.user_id = user.user_id and (user.local1 = :localId or user.local2 = :localId) and post.category_id = :categoryId order by (post.gathered_people / post.people) desc",
+    @Query(value = "select * from post where post.local_id = :localId and post.category_id = :categoryId ORDER BY (post.gathered_people / post.people) DESC",
         countQuery = "select count(*) from post",
         nativeQuery = true)
     Page<Post> findPostByCategoryIdSortByEndDateWithLocal(Long categoryId, Long localId, Pageable pageable);
@@ -47,23 +46,19 @@ public interface PostRepository extends JpaRepository<Post, Long> {
         nativeQuery = true)
     List<Post> findPostByUserIdOnChatJoin(Long userId);
 
-    @Query(value =
-        "select * from post, user, post_tag, tag where post.user_id = user.user_id AND post.post_id = post_tag.post_id AND post_tag.tag_id = tag.tag_id AND"
+    @Query(value = "select * from post, user, post_tag, tag where post.user_id = user.user_id AND post.post_id = post_tag.post_id AND post_tag.tag_id = tag.tag_id AND"
             +
             "(tag.name LIKE %:keyword% )",
         countQuery = "select count(*) from post",
         nativeQuery = true)
     Page<Post> findAllSearchByTag(String keyword, Pageable pageable);
 
-    @Query(value = "select * from post, user, category where post.user_id = user.user_id AND post.category_id = category.category_id AND (post.title LIKE %:keyword% OR  category.name LIKE %:keyword%)",
+    @Query(value = "select * from post where post.title LIKE %:keyword%",
         countQuery = "select count(*) from post",
         nativeQuery = true)
     Page<Post> findAllSearch(String keyword, Pageable pageable);
 
-    @Query(value =
-        "select * from post, user, category where post.user_id = user.user_id AND post.category_id = category.category_id AND "
-            +
-            "(post.title LIKE %:keyword% OR  category.name LIKE %:keyword%)AND (user.local1 = :local1 or user.local2 = :local2)",
+    @Query(value = "select * from post where post.title LIKE %:keyword% AND (post.local_id = :local1 or post.local_id = :local2)",
         countQuery = "select count(*) from post",
         nativeQuery = true)
     Page<Post> findAllSearchWithLocal(String keyword, Long local1, Long local2, Pageable pageable);
@@ -72,7 +67,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     @Query(value =
         "select * from post, user, post_tag, tag where post.user_id = user.user_id AND post.post_id = post_tag.post_id AND post_tag.tag_id = tag.tag_id AND "
             +
-            "(user.local1 = :local1 or user.local2 = :local2) AND (tag.name LIKE %:keyword% )",
+            "(post.local_id = :local1 or post.local_id = :local2) AND (tag.name LIKE %:keyword% )",
         countQuery = "select count(*) from post",
         nativeQuery = true)
     Page<Post> findAllSearchByTagWithLocal(String keyword, Long local1, Long local2,

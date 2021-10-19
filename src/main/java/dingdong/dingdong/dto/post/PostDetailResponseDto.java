@@ -32,7 +32,7 @@ public class PostDetailResponseDto {
 
     private String bio;
 
-    private String local;
+    private String location;
 
     private LocalDateTime createdDate;
 
@@ -66,7 +66,7 @@ public class PostDetailResponseDto {
             .people(post.getPeople())
             .gatheredPeople(post.getGatheredPeople())
             .done(post.getDone())
-            .local(post.getLocal())
+            .location(post.getLocation())
             .userId(post.getUser().getId())
             .nickname(post.getUser().getProfile().getNickname())
             .profileImageUrl(post.getUser().getProfile().getProfileImageUrl())
