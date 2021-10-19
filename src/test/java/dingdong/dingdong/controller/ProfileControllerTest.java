@@ -11,7 +11,10 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWit
 import static org.springframework.restdocs.payload.PayloadDocumentation.relaxedResponseFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.partWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
+import static org.springframework.restdocs.request.RequestDocumentation.requestParameters;
+import static org.springframework.restdocs.request.RequestDocumentation.requestParts;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -26,7 +29,6 @@ import dingdong.dingdong.domain.user.User;
 import dingdong.dingdong.domain.user.UserRepository;
 import dingdong.dingdong.dto.auth.AuthRequestDto;
 import dingdong.dingdong.dto.auth.TokenDto;
-import dingdong.dingdong.dto.profile.ProfileUpdateRequestDto;
 import dingdong.dingdong.dto.profile.ReportRequestDto;
 import dingdong.dingdong.service.auth.AuthService;
 import dingdong.dingdong.service.auth.AuthType;
@@ -49,7 +51,6 @@ import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -233,12 +234,30 @@ class ProfileControllerTest {
         TokenDto tokenDto = getTokenDto();
         String token = "Bearer " + tokenDto.getAccessToken();
 
-        MultipartFile profileImage = new MockMultipartFile("file", "profileImage.jpeg",
+        MockMultipartFile profileImage = new MockMultipartFile("profileImage", "profileImage.jpeg",
             "image/jpeg", "<<jpeg data>>".getBytes());
-        ProfileUpdateRequestDto profileUpdateRequestDto = ProfileUpdateRequestDto.builder()
-            .profileImage(profileImage)
-            .nickname("testNickname2")
-            .build();
+
+        mockMvc.perform(RestDocumentationRequestBuilders.fileUpload("/api/v1/profile")
+            .file(profileImage)
+            .param("nickname", "testNickname3")
+            .contentType(MediaType.MULTIPART_FORM_DATA)
+            .header(HttpHeaders.AUTHORIZATION, token)
+            .accept(MediaType.APPLICATION_JSON))
+            .andDo(print()).andExpect(status().isOk()).andDo(print())
+            .andDo(document("{class-name}/{method-name}",
+                preprocessRequest(modifyUris().scheme(scheme).host(host).port(port), prettyPrint()),
+                preprocessResponse(prettyPrint()),
+                requestHeaders(
+                    headerWithName(HttpHeaders.AUTHORIZATION)
+                        .description("Bearer Type의 AccessToken 값")
+                ),
+                requestParameters(
+                    parameterWithName("nickname").description("변경할 프로필 닉네임")
+                ),
+                requestParts(
+                    partWithName("profileImage").description("변경할 프로필 이미지")
+                )
+            ));
     }
 
     @Test

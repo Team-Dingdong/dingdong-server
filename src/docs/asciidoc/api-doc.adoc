@@ -44,207 +44,219 @@
 
 === 2-2. 휴대폰 인증 번호 확인(로그인, 회원가입)
 ==== Request
-CURL
+===== CURL
 include::{snippets}/auth-controller-test/auth/curl-request.adoc[]
-Request Fields
+===== Request Fields
 include::{snippets}/auth-controller-test/auth/request-fields.adoc[]
-Request Http Example
+===== Request Http Example
 include::{snippets}/auth-controller-test/auth/http-request.adoc[]
 ==== Response
-Response Fields
+===== Response Fields
 include::{snippets}/auth-controller-test/auth/response-fields.adoc[]
-Response Example
-include::{snippets}/auth-controller-test/auth/response-body.adoc[]
+===== Response Http Example
+include::{snippets}/auth-controller-test/auth/http-response.adoc[]
 
 === 2-3. 로그아웃
 ==== Request
-CURL
+===== CURL
 include::{snippets}/auth-controller-test/logout/curl-request.adoc[]
-Request Headers
+===== Request Headers
 include::{snippets}/auth-controller-test/logout/request-headers.adoc[]
-Request Http Example
+===== Request Http Example
 include::{snippets}/auth-controller-test/logout/http-request.adoc[]
 ==== Response
-Response Example
-include::{snippets}/auth-controller-test/logout/response-body.adoc[]
+===== Response Http Example
+include::{snippets}/auth-controller-test/logout/http-response.adoc[]
 
 === 2-4. 토큰 재발급
 ==== Request
-CURL
+===== CURL
 include::{snippets}/auth-controller-test/reissue/curl-request.adoc[]
-Request Fields
+===== Request Fields
 include::{snippets}/auth-controller-test/reissue/request-fields.adoc[]
-Request Http Example
+===== Request Http Example
 include::{snippets}/auth-controller-test/reissue/http-request.adoc[]
 ==== Response
-Response Fields
+===== Response Fields
 include::{snippets}/auth-controller-test/reissue/response-fields.adoc[]
-Response Example
-include::{snippets}/auth-controller-test/reissue/response-body.adoc[]
+===== Response Http Example
+include::{snippets}/auth-controller-test/reissue/http-response.adoc[]
 
 === 2-5. 닉네임 설정
 ==== Request
-CURL
+===== CURL
 include::{snippets}/auth-controller-test/nickname/curl-request.adoc[]
-Request Header
+===== Request Header
 include::{snippets}/auth-controller-test/nickname/request-headers.adoc[]
-Request Fields
+===== Request Fields
 include::{snippets}/auth-controller-test/nickname/request-fields.adoc[]
-Request Http Example
+===== Request Http Example
 include::{snippets}/auth-controller-test/nickname/http-request.adoc[]
 ==== Response
-Response Example
-include::{snippets}/auth-controller-test/nickname/response-body.adoc[]
+===== Response Http Example
+include::{snippets}/auth-controller-test/nickname/http-response.adoc[]
 
 === 2-6. 동네 목록 조회
 ==== Request
-CURL
+===== CURL
 include::{snippets}/auth-controller-test/get-locals/curl-request.adoc[]
-Request Header
+===== Request Header
 include::{snippets}/auth-controller-test/get-locals/request-headers.adoc[]
-Request Parameters
+===== Request Parameters
 include::{snippets}/auth-controller-test/get-locals/request-parameters.adoc[]
 ==== Response
-Response Fields
+===== Response Fields
 include::{snippets}/auth-controller-test/get-locals/response-fields.adoc[]
-Response Example
-include::{snippets}/auth-controller-test/get-locals/response-body.adoc[]
-
+===== Response Http Example
+include::{snippets}/auth-controller-test/get-locals/http-response.adoc[]
 
 === 2-7. 동네 인증
 ==== Request
-CURL
+===== CURL
 include::{snippets}/auth-controller-test/local/curl-request.adoc[]
-Request Header
+===== Request Header
 include::{snippets}/auth-controller-test/local/request-headers.adoc[]
-Request Fields
+===== Request Fields
 include::{snippets}/auth-controller-test/local/request-fields.adoc[]
-Request Http Example
+===== Request Http Example
 include::{snippets}/auth-controller-test/local/http-request.adoc[]
 ==== Response
-Response Example
-include::{snippets}/auth-controller-test/local/response-body.adoc[]
+===== Response Http Example
+include::{snippets}/auth-controller-test/local/http-response.adoc[]
 
 === 2-8. 회원 탈퇴
 ==== Request
-CURL
+===== CURL
 include::{snippets}/auth-controller-test/unsubscribe-user/curl-request.adoc[]
-Request Header
+===== Request Header
 include::{snippets}/auth-controller-test/unsubscribe-user/request-headers.adoc[]
-Request Http Example
+===== Request Http Example
 include::{snippets}/auth-controller-test/unsubscribe-user/http-request.adoc[]
 ==== Response
-Response Example
-include::{snippets}/auth-controller-test/unsubscribe-user/response-body.adoc[]
+===== Response Http Example
+include::{snippets}/auth-controller-test/unsubscribe-user/http-response.adoc[]
 
 == 3. 프로필
 === 3-1. 본인 프로필 조회
 ==== Request
-CURL
+===== CURL
 include::{snippets}/profile-controller-test/get-my-profile/curl-request.adoc[]
-Request Header
+===== Request Header
 include::{snippets}/profile-controller-test/get-my-profile/request-headers.adoc[]
-Request Http Example
+===== Request Http Example
 include::{snippets}/profile-controller-test/get-my-profile/http-request.adoc[]
 ==== Response
-Response Fields
+===== Response Fields
 include::{snippets}/profile-controller-test/get-my-profile/response-fields.adoc[]
-Response Example
-include::{snippets}/profile-controller-test/get-my-profile/response-body.adoc[]
+===== Response Http Example
+include::{snippets}/profile-controller-test/get-my-profile/http-response.adoc[]
 
 === 3-2. 프로필 조회
 ==== Request
-CURL
+===== CURL
 include::{snippets}/profile-controller-test/get-profile/curl-request.adoc[]
-Request Path Parameters ->
+===== Request Path Parameters
 include::{snippets}/profile-controller-test/get-profile/path-parameters.adoc[]
-Request Header
+===== Request Header
 include::{snippets}/profile-controller-test/get-profile/request-headers.adoc[]
-Request Http Example
+===== Request Http Example
 include::{snippets}/profile-controller-test/get-profile/http-request.adoc[]
 ==== Response
-Response Fields
+===== Response Fields
 include::{snippets}/profile-controller-test/get-profile/response-fields.adoc[]
-Response Example
-include::{snippets}/profile-controller-test/get-profile/response-body.adoc[]
+===== Response Http Example
+include::{snippets}/profile-controller-test/get-profile/http-response.adoc[]
 
 === 3-3. 프로필 수정
+===== CURL
+include::{snippets}/profile-controller-test/update-profile/curl-request.adoc[]
+===== Request Parameters
+include::{snippets}/profile-controller-test/update-profile/request-parameters.adoc[]
+===== Request Parts
+include::{snippets}/profile-controller-test/update-profile/request-parts.adoc[]
+===== Request Header
+include::{snippets}/profile-controller-test/update-profile/request-headers.adoc[]
+===== Request Http Example
+include::{snippets}/profile-controller-test/update-profile/http-request.adoc[]
+==== Response
+===== Response Http Example
+include::{snippets}/profile-controller-test/update-profile/http-response.adoc[]
 
 === 3-4. 나의 동네 조회
-CURL
+===== CURL
 include::{snippets}/profile-controller-test/get-my-locals/curl-request.adoc[]
-Request Header
+===== Request Header
 include::{snippets}/profile-controller-test/get-my-locals/request-headers.adoc[]
-Request Http Example
+===== Request Http Example
 include::{snippets}/profile-controller-test/get-my-locals/http-request.adoc[]
 ==== Response
-Response Fields
+===== Response Fields
 include::{snippets}/profile-controller-test/get-my-locals/response-fields.adoc[]
-Response Example
-include::{snippets}/profile-controller-test/get-my-locals/response-body.adoc[]
+===== Response Http Example
+include::{snippets}/profile-controller-test/get-my-locals/http-response.adoc[]
 
 === 3-5. 신고하기
 ==== Request
-CURL
+===== CURL
 include::{snippets}/profile-controller-test/create-report/curl-request.adoc[]
-Request Header
+===== Request Header
 include::{snippets}/profile-controller-test/create-report/request-headers.adoc[]
-Request Path Parameters ->
+===== Request Path Parameters
 include::{snippets}/profile-controller-test/create-report/path-parameters.adoc[]
-Request Fields
+===== Request Fields
 include::{snippets}/profile-controller-test/create-report/request-fields.adoc[]
-Request Http Example
+===== Request Http Example
 include::{snippets}/profile-controller-test/create-report/http-request.adoc[]
 ==== Response
-Response Example
-include::{snippets}/rating-controller-test/create-rating/response-body.adoc[]
+===== Response Http Example
+include::{snippets}/rating-controller-test/create-rating/http-response.adoc[]
 
 == 4. 평가
 === 4-1. 본인 평가 조회
 ==== Request
-CURL
+===== CURL
 include::{snippets}/rating-controller-test/get-my-rating/curl-request.adoc[]
-Request Header
+===== Request Header
 include::{snippets}/rating-controller-test/get-my-rating/request-headers.adoc[]
-Request Http Example
+===== Request Http Example
 include::{snippets}/rating-controller-test/get-my-rating/http-request.adoc[]
 ==== Response
-Response Fields
+===== Response Fields
 include::{snippets}/rating-controller-test/get-my-rating/response-fields.adoc[]
-Response Example
-include::{snippets}/rating-controller-test/get-my-rating/response-body.adoc[]
+===== Response Http Example
+include::{snippets}/rating-controller-test/get-my-rating/http-response.adoc[]
 
 === 4-2. 평가 조회
 ==== Request
-CURL
+===== CURL
 include::{snippets}/rating-controller-test/get-rating/curl-request.adoc[]
-Request Header
+===== Request Header
 include::{snippets}/rating-controller-test/get-rating/request-headers.adoc[]
-Request Path Parameters ->
+===== Request Path Parameters
 include::{snippets}/rating-controller-test/get-rating/path-parameters.adoc[]
-Request Http Example
+===== Request Http Example
 include::{snippets}/rating-controller-test/get-rating/http-request.adoc[]
 ==== Response
-Response Fields
+===== Response Fields
 include::{snippets}/rating-controller-test/get-rating/response-fields.adoc[]
-Response Example
-include::{snippets}/rating-controller-test/get-rating/response-body.adoc[]
+===== Response Http Example
+include::{snippets}/rating-controller-test/get-rating/http-response.adoc[]
 
 === 4-3. 평가 생성
 ==== Request
-CURL
+===== CURL
 include::{snippets}/rating-controller-test/create-rating/curl-request.adoc[]
-Request Header
+===== Request Header
 include::{snippets}/rating-controller-test/create-rating/request-headers.adoc[]
-Request Path Parameters ->
+===== Request Path Parameters
 include::{snippets}/rating-controller-test/create-rating/path-parameters.adoc[]
-Request Fields
+===== Request Fields
 include::{snippets}/rating-controller-test/create-rating/request-fields.adoc[]
-Request Http Example
+===== Request Http Example
 include::{snippets}/rating-controller-test/create-rating/http-request.adoc[]
 ==== Response
-Response Example
-include::{snippets}/rating-controller-test/create-rating/response-body.adoc[]
+===== Response Http Example
+include::{snippets}/rating-controller-test/create-rating/http-response.adoc[]
 
 == 5. 나누기
 === 5-1. 나누기 생성
