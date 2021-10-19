@@ -37,7 +37,7 @@ public class User extends BaseTimeEntity {
     @Column(name = "user_id", nullable = false)
     private Long id;
 
-    @Column(nullable = false, unique = true)
+    @Column(unique = true)
     private String phone;
 
     private LocalDateTime localDate;

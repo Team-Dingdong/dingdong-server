@@ -196,6 +196,16 @@ public class AuthService implements UserDetailsService {
         }
     }
 
+    // 탈퇴한 회원 확인
+    @Transactional(readOnly = true)
+    public void checkUnsub(String phone) {
+        if (userRepository.existsByPhone(phone)) {
+            if (userRepository.findByPhone(phone).getAuthority() == Role.UNSUB) {
+                throw new ForbiddenException(ResultCode.AUTH_FAIL_UNSUB);
+            }
+        }
+    }
+
     // 닉네임 중복 확인
     @Transactional(readOnly = true)
     public void checkNickname(String nickname) {
@@ -239,6 +249,7 @@ public class AuthService implements UserDetailsService {
     @Transactional
     public Map<AuthType, TokenDto> auth(AuthRequestDto authRequestDto) {
         checkBlackList(authRequestDto.getPhone());
+        checkUnsub(authRequestDto.getPhone());
 
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime requestTime = authRepository.findRequestTimeByPhone(authRequestDto.getPhone())
@@ -260,6 +271,7 @@ public class AuthService implements UserDetailsService {
     @Transactional
     public MessageResponseDto sendSms(MessageRequestDto messageRequestDto) {
         checkBlackList(messageRequestDto.getTo());
+        checkUnsub(messageRequestDto.getTo());
         try {
             Long time = Timestamp.valueOf(LocalDateTime.now()).getTime();
             String code = makeRandom();
@@ -388,6 +400,8 @@ public class AuthService implements UserDetailsService {
     @Transactional
     public void unsubscribeUser(User user) {
         user.setUnsubscribe();
+        user.getProfile().setUnsubscribe();
         userRepository.save(user);
+        profileRepository.save(user.getProfile());
     }
 }

@@ -61,4 +61,9 @@ public class Profile {
         this.good = good;
         this.bad = bad;
     }
+
+    public void setUnsubscribe() {
+        this.profileImageUrl = "https://dingdongbucket.s3.ap-northeast-2.amazonaws.com/static/default_profile.jpg";
+        this.nickname = "탈퇴한 회원";
+    }
 }

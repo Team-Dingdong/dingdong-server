@@ -6,7 +6,6 @@ import dingdong.dingdong.domain.user.BlackList;
 import dingdong.dingdong.domain.user.BlackListRepository;
 import dingdong.dingdong.domain.user.Profile;
 import dingdong.dingdong.domain.user.ProfileRepository;
-import dingdong.dingdong.domain.user.RefreshToken;
 import dingdong.dingdong.domain.user.RefreshTokenRepository;
 import dingdong.dingdong.domain.user.Report;
 import dingdong.dingdong.domain.user.ReportRepository;
@@ -26,6 +25,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,8 +41,8 @@ public class ProfileService {
     private final RefreshTokenRepository refreshTokenRepository;
     private final S3Uploader s3Uploader;
 
-    private final long LIMIT_REPORT_COUNT_STOPPED = 10;
-    private final long LIMIT_REPORT_COUNT_BLACK = 30;
+    private static final long LIMIT_REPORT_COUNT_STOPPED = 2;
+    private static final long LIMIT_REPORT_COUNT_BLACK = 4;
 
     // 프로필 조회
     @Transactional(readOnly = true)
@@ -109,10 +109,14 @@ public class ProfileService {
 
         reportRepository.save(report);
 
+        // 신고를 당한 횟수
         long reportCount = reportRepository.countByReceiver(receiver);
+        // 신고를 10번 당할 때마다 계정이 정지되게 한다
         if (reportCount > 0 && reportCount % LIMIT_REPORT_COUNT_STOPPED == 0) {
+            // 신고를 당한 횟수가 총 30번을 초과하면 해당 계정은 회원 탈퇴되고, 블랙리스트에 등록된다
             if (reportCount >= LIMIT_REPORT_COUNT_BLACK) {
                 receiver.setUnsubscribe();
+                receiver.getProfile().setUnsubscribe();
                 BlackList blackList = BlackList.builder()
                     .phone(receiver.getPhone())
                     .reason("신고 횟수 초과")
@@ -123,16 +127,25 @@ public class ProfileService {
                 receiver.setStopped();
             }
             userRepository.save(receiver);
-            RefreshToken targetRefreshToken = refreshTokenRepository.findById(receiver.getPhone())
-                .orElseThrow(() -> new ResourceNotFoundException(ResultCode.USER_NOT_FOUND));
-            refreshTokenRepository.delete(targetRefreshToken);
+            profileRepository.save(receiver.getProfile());
+
+            // 로그아웃되게 하기
+            refreshTokenRepository.findById(receiver.getPhone())
+                .ifPresent(refreshTokenRepository::delete);
         }
     }
 
     // 일정시간마다 Scheduling 작동.
-//    @Transactional
-//    @Scheduled(cron = "0 0 0 * * *", zone = "Asia/Seoul") // 1시간마다 작동
-//    public void deleteUnsubUser() {
-//        userRepository.deleteUnsubUser();
-//    }
+    @Transactional
+    @Scheduled(cron = "0 0 0 * * *", zone = "Asia/Seoul") // 1시간마다 작동
+    public void deleteUnsubUser() {
+        userRepository.deleteUnsubUser();
+        userRepository.derestrictStoppedUser();
+    }
+
+    @Transactional
+    public void test() {
+        userRepository.derestrictStoppedUser();
+        userRepository.deleteUnsubUser();
+    }
 }
