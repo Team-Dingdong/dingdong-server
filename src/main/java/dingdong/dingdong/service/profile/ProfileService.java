@@ -142,10 +142,4 @@ public class ProfileService {
         userRepository.deleteUnsubUser();
         userRepository.derestrictStoppedUser();
     }
-
-    @Transactional
-    public void test() {
-        userRepository.derestrictStoppedUser();
-        userRepository.deleteUnsubUser();
-    }
 }
