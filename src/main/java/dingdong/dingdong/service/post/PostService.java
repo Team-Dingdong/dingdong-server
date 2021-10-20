@@ -48,7 +48,6 @@ public class PostService {
     private final TagRepository tagRepository;
     private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
-    private final LocalRepository localRepository;
     private final S3Uploader s3Uploader;
 
     private final ChatRoomRepository chatRoomRepository;
@@ -95,7 +94,18 @@ public class PostService {
         }else{
             throw new ResourceNotFoundException(LOCAL_NOT_FOUND);
         }
-        return posts.map(PostGetResponseDto::from);
+
+        Page<PostGetResponseDto> data = posts.map(PostGetResponseDto::from);
+        for (PostGetResponseDto dto : data){
+            Post post = postRepository.findById(dto.getId()).orElseThrow(() -> new ResourceNotFoundException(POST_NOT_FOUND));
+            List<Tag> tags = postTagRepository.findTagByPost(post);
+            List<String> T = new ArrayList<>();
+            for (Tag t: tags){
+                T.add(t.getName());
+            }
+            dto.setTags(T);
+        }
+        return data;
     }
 
     // 유저의 LOCAL 정보에 기반하여 카테고리별로 나누기 불러오기 (정렬 기준: 최신순)(카테고리 화면)(유저의 local 정보 기반)
@@ -113,7 +123,17 @@ public class PostService {
             throw new ResourceNotFoundException(LOCAL_NOT_FOUND);
         }
 
-        return posts.map(PostGetResponseDto::from);
+        Page<PostGetResponseDto> data = posts.map(PostGetResponseDto::from);
+        for (PostGetResponseDto dto : data){
+            Post post = postRepository.findById(dto.getId()).orElseThrow(() -> new ResourceNotFoundException(POST_NOT_FOUND));
+            List<Tag> tags = postTagRepository.findTagByPost(post);
+            List<String> T = new ArrayList<>();
+            for (Tag t: tags){
+                T.add(t.getName());
+            }
+            dto.setTags(T);
+        }
+        return data;
     }
 
     // 유저의 LOCAL 정보에 기반하여 카테고리별 나누기 불러오기 (정렬 기준: 마감임박순)(카테고리 화면)(유저의 local 정보 기반)
@@ -133,7 +153,17 @@ public class PostService {
             throw new ResourceNotFoundException(LOCAL_NOT_FOUND);
         }
 
-        return posts.map(PostGetResponseDto::from);
+        Page<PostGetResponseDto> data = posts.map(PostGetResponseDto::from);
+        for (PostGetResponseDto dto : data){
+            Post post = postRepository.findById(dto.getId()).orElseThrow(() -> new ResourceNotFoundException(POST_NOT_FOUND));
+            List<Tag> tags = postTagRepository.findTagByPost(post);
+            List<String> T = new ArrayList<>();
+            for (Tag t: tags){
+                T.add(t.getName());
+            }
+            dto.setTags(T);
+        }
+        return data;
     }
 
     // 원하는 나누기 피드 상세보기
@@ -151,7 +181,17 @@ public class PostService {
     public List<PostGetResponseDto> findPostByUser(User user) {
         List<Post> posts = postRepository.findByUserId(user.getId());
 
-        return posts.stream().map(PostGetResponseDto::from).collect(Collectors.toList());
+        List<PostGetResponseDto> data = posts.stream().map(PostGetResponseDto::from).collect(Collectors.toList());
+        for (PostGetResponseDto dto : data){
+            Post post = postRepository.findById(dto.getId()).orElseThrow(() -> new ResourceNotFoundException(POST_NOT_FOUND));
+            List<Tag> tags = postTagRepository.findTagByPost(post);
+            List<String> T = new ArrayList<>();
+            for (Tag t: tags){
+                T.add(t.getName());
+            }
+            dto.setTags(T);
+        }
+        return data;
     }
 
     // 특정 유저(본인 제외)가 생성한 나누기 피드들 불러오기
@@ -160,7 +200,17 @@ public class PostService {
         User user = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(USER_NOT_FOUND));
         Page<Post> posts = postRepository.findByUserIdPaging(user.getId(), pageable);
 
-        return posts.map(PostGetResponseDto::from);
+        Page<PostGetResponseDto> data = posts.map(PostGetResponseDto::from);
+        for (PostGetResponseDto dto : data){
+            Post post = postRepository.findById(dto.getId()).orElseThrow(() -> new ResourceNotFoundException(POST_NOT_FOUND));
+            List<Tag> tags = postTagRepository.findTagByPost(post);
+            List<String> T = new ArrayList<>();
+            for (Tag t: tags){
+                T.add(t.getName());
+            }
+            dto.setTags(T);
+        }
+        return data;
     }
 
     // 유저의 구매내역 리스트 (GET: 유저별로 출력되는 나누기 피드)
@@ -168,15 +218,35 @@ public class PostService {
     public List<PostGetResponseDto> findPostByUserIdOnChatJoin(User user) {
         List<Post> posts = postRepository.findPostByUserIdOnChatJoin(user.getId());
 
-        return posts.stream().map(PostGetResponseDto::from).collect(Collectors.toList());
+        List<PostGetResponseDto> data = posts.stream().map(PostGetResponseDto::from).collect(Collectors.toList());
+        for (PostGetResponseDto dto : data){
+            Post post = postRepository.findById(dto.getId()).orElseThrow(() -> new ResourceNotFoundException(POST_NOT_FOUND));
+            List<Tag> tags = postTagRepository.findTagByPost(post);
+            List<String> T = new ArrayList<>();
+            for (Tag t: tags){
+                T.add(t.getName());
+            }
+            dto.setTags(T);
+        }
+        return data;
     }
 
     // 유저의 LOCAL 정보에 기반하지 않고 전체 나누기 불러오기 (정렬 기준: 최신순)(홈화면)(local 정보를 무시)
     @Transactional(readOnly = true)
     public Page<PostGetResponseDto> findPostsSortByCreatedDateNotLocal(Pageable pageable) {
-        Page<Post> postList = postRepository.findPostsSortByCreatedDateNotLocal(pageable);
+        Page<Post> posts = postRepository.findPostsSortByCreatedDateNotLocal(pageable);
 
-        return postList.map(PostGetResponseDto::from);
+        Page<PostGetResponseDto> data = posts.map(PostGetResponseDto::from);
+        for (PostGetResponseDto dto : data){
+            Post post = postRepository.findById(dto.getId()).orElseThrow(() -> new ResourceNotFoundException(POST_NOT_FOUND));
+            List<Tag> tags = postTagRepository.findTagByPost(post);
+            List<String> T = new ArrayList<>();
+            for (Tag t: tags){
+                T.add(t.getName());
+            }
+            dto.setTags(T);
+        }
+        return data;
     }
 
     // 유저의 LOCAL 정보에 기반하지 않고 전체 나누기 불러오기 (정렬 기준: 마감임박순)(홈화면)(local 정보를 무시)
@@ -184,7 +254,17 @@ public class PostService {
     public Page<PostGetResponseDto> findPostsSortByEndDateNotLocal(Pageable pageable) {
         Page<Post> posts = postRepository.findPostsSortByEndDateNotLocal(pageable);
 
-        return posts.map(PostGetResponseDto::from);
+        Page<PostGetResponseDto> data = posts.map(PostGetResponseDto::from);
+        for (PostGetResponseDto dto : data){
+            Post post = postRepository.findById(dto.getId()).orElseThrow(() -> new ResourceNotFoundException(POST_NOT_FOUND));
+            List<Tag> tags = postTagRepository.findTagByPost(post);
+            List<String> T = new ArrayList<>();
+            for (Tag t: tags){
+                T.add(t.getName());
+            }
+            dto.setTags(T);
+        }
+        return data;
     }
 
     // 유저의 LOCAL 정보에 기반하여 카테고리별 나누기 불러오기 (정렬 기준: 최신순)(카테고리 화면)(local 정보를 무시)
@@ -194,7 +274,17 @@ public class PostService {
             .orElseThrow(() -> new ResourceNotFoundException(CATEGORY_NOT_FOUND));
         Page<Post> posts = postRepository.findPostByCategoryIdSortByCreatedDateNotLocal(category.getId(), pageable);
 
-        return posts.map(PostGetResponseDto::from);
+        Page<PostGetResponseDto> data = posts.map(PostGetResponseDto::from);
+        for (PostGetResponseDto dto : data){
+            Post post = postRepository.findById(dto.getId()).orElseThrow(() -> new ResourceNotFoundException(POST_NOT_FOUND));
+            List<Tag> tags = postTagRepository.findTagByPost(post);
+            List<String> T = new ArrayList<>();
+            for (Tag t: tags){
+                T.add(t.getName());
+            }
+            dto.setTags(T);
+        }
+        return data;
     }
 
     // 유저의 LOCAL 정보에 기반하지 않고 카테고리별 나누기 불러오기 (정렬 기준: 마감임박순)(카테고리 화면)(local 정보를 무시)
@@ -206,7 +296,17 @@ public class PostService {
         Page<Post> posts = postRepository
             .findPostByCategoryIdSortByEndDateNotLocal(category.getId(), pageable);
 
-        return posts.map(PostGetResponseDto::from);
+        Page<PostGetResponseDto> data = posts.map(PostGetResponseDto::from);
+        for (PostGetResponseDto dto : data){
+            Post post = postRepository.findById(dto.getId()).orElseThrow(() -> new ResourceNotFoundException(POST_NOT_FOUND));
+            List<Tag> tags = postTagRepository.findTagByPost(post);
+            List<String> T = new ArrayList<>();
+            for (Tag t: tags){
+                T.add(t.getName());
+            }
+            dto.setTags(T);
+        }
+        return data;
     }
 
     // 나누기 피드(post) 생성
@@ -384,7 +484,17 @@ public class PostService {
             posts = postRepository.findAllSearch(keyword, pageable);
         }
 
-        return posts.map(PostGetResponseDto::from);
+        Page<PostGetResponseDto> data = posts.map(PostGetResponseDto::from);
+        for (PostGetResponseDto dto : data){
+            Post post = postRepository.findById(dto.getId()).orElseThrow(() -> new ResourceNotFoundException(POST_NOT_FOUND));
+            List<Tag> tags = postTagRepository.findTagByPost(post);
+            List<String> T = new ArrayList<>();
+            for (Tag t: tags){
+                T.add(t.getName());
+            }
+            dto.setTags(T);
+        }
+        return data;
     }
 
     // local 정보에 기반하여 제목, 카테고리 검색 기능(검색 기능)(유저의 LOCAL 정보가 기입된 경우)
@@ -406,6 +516,17 @@ public class PostService {
                 posts = postRepository.findAllSearchWithLocal(keyword, user.getLocal1().getId(), user.getLocal2().getId(), pageable);
             }
         }
-        return posts.map(PostGetResponseDto::from);
+
+        Page<PostGetResponseDto> data = posts.map(PostGetResponseDto::from);
+        for (PostGetResponseDto dto : data){
+            Post post = postRepository.findById(dto.getId()).orElseThrow(() -> new ResourceNotFoundException(POST_NOT_FOUND));
+            List<Tag> tags = postTagRepository.findTagByPost(post);
+            List<String> T = new ArrayList<>();
+            for (Tag t: tags){
+                T.add(t.getName());
+            }
+            dto.setTags(T);
+        }
+        return data;
     }
 }
