@@ -448,3 +448,147 @@ Response Fields
 include::{snippets}/post-controller-test/search/response-fields.adoc[]
 Response Example
 include::{snippets}/post-controller-test/search/response-body.adoc[]
+
+== 6. 채팅
+=== 6-1. 채팅방 목록 조회
+==== Request
+===== CURL
+include::{snippets}/chat-room-controller-test/find-chat-rooms/curl-request.adoc[]
+===== Request Header
+include::{snippets}/chat-room-controller-test/find-chat-rooms/request-headers.adoc[]
+===== Request Http Example
+include::{snippets}/chat-room-controller-test/find-chat-rooms/http-request.adoc[]
+==== Response
+===== Response Fields
+include::{snippets}/chat-room-controller-test/find-chat-rooms/response-fields.adoc[]
+===== Response Http Example
+include::{snippets}/chat-room-controller-test/find-chat-rooms/http-response.adoc[]
+
+=== 6-2. 채팅방 정보 조회
+===== CURL
+include::{snippets}/chat-room-controller-test/find-chat-room-by-room-id/curl-request.adoc[]
+===== Request Header
+include::{snippets}/chat-room-controller-test/find-chat-room-by-room-id/request-headers.adoc[]
+===== Request Path Parameters
+include::{snippets}/chat-room-controller-test/find-chat-room-by-room-id/path-parameters.adoc[]
+===== Request Http Example
+include::{snippets}/chat-room-controller-test/find-chat-room-by-room-id/http-request.adoc[]
+==== Response
+===== Response Fields
+include::{snippets}/chat-room-controller-test/find-chat-room-by-room-id/response-fields.adoc[]
+===== Response Http Example
+include::{snippets}/chat-room-controller-test/find-chat-room-by-room-id/http-response.adoc[]
+
+=== 6-3. 채팅방 사용자 목록 조회
+===== CURL
+include::{snippets}/chat-room-controller-test/find-users-by-room-id/curl-request.adoc[]
+===== Request Header
+include::{snippets}/chat-room-controller-test/find-users-by-room-id/request-headers.adoc[]
+===== Request Path Parameters
+include::{snippets}/chat-room-controller-test/find-users-by-room-id/path-parameters.adoc[]
+===== Request Http Example
+include::{snippets}/chat-room-controller-test/find-users-by-room-id/http-request.adoc[]
+==== Response
+===== Response Fields
+include::{snippets}/chat-room-controller-test/find-users-by-room-id/response-fields.adoc[]
+===== Response Http Example
+include::{snippets}/chat-room-controller-test/find-users-by-room-id/http-response.adoc[]
+
+=== 6-4. 채팅방 입장
+===== CURL
+include::{snippets}/chat-room-controller-test/enter-chat-room/curl-request.adoc[]
+===== Request Header
+include::{snippets}/chat-room-controller-test/enter-chat-room/request-headers.adoc[]
+===== Request Path Parameters
+include::{snippets}/chat-room-controller-test/enter-chat-room/path-parameters.adoc[]
+===== Request Http Example
+include::{snippets}/chat-room-controller-test/enter-chat-room/http-request.adoc[]
+==== Response
+===== Response Http Example
+include::{snippets}/chat-room-controller-test/enter-chat-room/http-response.adoc[]
+
+=== 6-5. 채팅방 나가기
+===== CURL
+include::{snippets}/chat-room-controller-test/quit-chat-room/curl-request.adoc[]
+===== Request Header
+include::{snippets}/chat-room-controller-test/quit-chat-room/request-headers.adoc[]
+===== Request Path Parameters
+include::{snippets}/chat-room-controller-test/quit-chat-room/path-parameters.adoc[]
+===== Request Http Example
+include::{snippets}/chat-room-controller-test/quit-chat-room/http-request.adoc[]
+==== Response
+===== Response Http Example
+include::{snippets}/chat-room-controller-test/quit-chat-room/http-response.adoc[]
+
+=== 6-6. 채팅 메세지 조회
+===== CURL
+include::{snippets}/chat-room-controller-test/find-chat-messages-by-room-id/curl-request.adoc[]
+===== Request Header
+include::{snippets}/chat-room-controller-test/find-chat-messages-by-room-id/request-headers.adoc[]
+===== Request Path Parameters
+include::{snippets}/chat-room-controller-test/find-chat-messages-by-room-id/path-parameters.adoc[]
+===== Request Http Example
+include::{snippets}/chat-room-controller-test/find-chat-messages-by-room-id/http-request.adoc[]
+==== Response
+===== Response Fields
+include::{snippets}/chat-room-controller-test/find-chat-messages-by-room-id/response-fields.adoc[]
+===== Response Http Example
+include::{snippets}/chat-room-controller-test/find-chat-messages-by-room-id/http-response.adoc[]
+
+=== 6-7. 채팅 약속 생성
+===== CURL
+include::{snippets}/chat-room-controller-test/create-chat-promise/curl-request.adoc[]
+===== Request Header
+include::{snippets}/chat-room-controller-test/create-chat-promise/request-headers.adoc[]
+===== Request Path Parameters
+include::{snippets}/chat-room-controller-test/create-chat-promise/path-parameters.adoc[]
+===== Request Fields
+include::{snippets}/chat-room-controller-test/create-chat-promise/request-fields.adoc[]
+===== Request Http Example
+include::{snippets}/chat-room-controller-test/create-chat-promise/http-request.adoc[]
+==== Response
+===== Response Http Example
+include::{snippets}/chat-room-controller-test/create-chat-promise/http-response.adoc[]
+
+=== 6-8. 채팅 약속 수정
+===== CURL
+include::{snippets}/chat-room-controller-test/update-chat-promise/curl-request.adoc[]
+===== Request Header
+include::{snippets}/chat-room-controller-test/update-chat-promise/request-headers.adoc[]
+===== Request Path Parameters
+include::{snippets}/chat-room-controller-test/update-chat-promise/path-parameters.adoc[]
+===== Request Fields
+include::{snippets}/chat-room-controller-test/update-chat-promise/request-fields.adoc[]
+===== Request Http Example
+include::{snippets}/chat-room-controller-test/update-chat-promise/http-request.adoc[]
+==== Response
+===== Response Http Example
+include::{snippets}/chat-room-controller-test/update-chat-promise/http-response.adoc[]
+
+=== 6-9. 채팅 약속 조회
+===== CURL
+include::{snippets}/chat-room-controller-test/find-chat-promise-by-post-id/curl-request.adoc[]
+===== Request Header
+include::{snippets}/chat-room-controller-test/find-chat-promise-by-post-id/request-headers.adoc[]
+===== Request Path Parameters
+include::{snippets}/chat-room-controller-test/find-chat-promise-by-post-id/path-parameters.adoc[]
+===== Request Http Example
+include::{snippets}/chat-room-controller-test/find-chat-promise-by-post-id/http-request.adoc[]
+==== Response
+===== Response Fields
+include::{snippets}/chat-room-controller-test/find-chat-promise-by-post-id/response-fields.adoc[]
+===== Response Http Example
+include::{snippets}/chat-room-controller-test/find-chat-promise-by-post-id/http-response.adoc[]
+
+=== 6-10. 채팅 약속 투표
+===== CURL
+include::{snippets}/chat-room-controller-test/create-vote-promise/curl-request.adoc[]
+===== Request Header
+include::{snippets}/chat-room-controller-test/create-vote-promise/request-headers.adoc[]
+===== Request Path Parameters
+include::{snippets}/chat-room-controller-test/create-vote-promise/path-parameters.adoc[]
+===== Request Http Example
+include::{snippets}/chat-room-controller-test/create-vote-promise/http-request.adoc[]
+==== Response
+===== Response Http Example
+include::{snippets}/chat-room-controller-test/create-vote-promise/http-response.adoc[]
