@@ -103,7 +103,7 @@ public class ChatRoomController {
 
     // 채팅 약속 투표 생성
     @PostMapping("/promise/vote/{roomId}")
-    public ResponseEntity<Result> createVotePromsie(@CurrentUser User user,
+    public ResponseEntity<Result> createVotePromise(@CurrentUser User user,
         @PathVariable Long roomId) {
         chatService.createVotePromise(user, roomId);
         return Result.toResult(ResultCode.CHAT_PROMISE_VOTE_CREATE_SUCCESS);

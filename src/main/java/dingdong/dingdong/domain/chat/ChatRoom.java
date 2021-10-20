@@ -31,6 +31,7 @@ public class ChatRoom {
 
     private LocalDateTime lastChatTime;
 
+    @Builder.Default
     @OneToMany(mappedBy = "chatRoom")
     private List<ChatMessage> messages = new ArrayList<>();
 
@@ -40,5 +41,9 @@ public class ChatRoom {
     public void setInfo(ChatMessage chatMessage) {
         this.lastChatMessage = chatMessage.getMessage();
         this.lastChatTime = chatMessage.getSendTime();
+    }
+
+    public void addMessages(ChatMessage chatMessage) {
+        this.getMessages().add(chatMessage);
     }
 }
