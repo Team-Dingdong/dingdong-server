@@ -172,7 +172,7 @@ class RatingControllerTest {
             .id(1L)
             .user(user1)
             .category(category)
-            .local("test local")
+            .location("test location")
             .people(2)
             .title("test title")
             .bio("test bio")
