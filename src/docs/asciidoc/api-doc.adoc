@@ -261,191 +261,191 @@ include::{snippets}/rating-controller-test/create-rating/http-response.adoc[]
 == 5. 나누기
 === 5-1. 나누기 생성
 ==== Request
-CURL
+===== CURL
 include::{snippets}/post-controller-test/create-post/curl-request.adoc[]
-Request Header
+===== Request Header
 include::{snippets}/post-controller-test/create-post/request-headers.adoc[]
-Request Http Example
+===== Request Http Example
 include::{snippets}/post-controller-test/create-post/http-request.adoc[]
 ==== Response
-Response Fields
+===== Response Fields
 include::{snippets}/post-controller-test/create-post/response-fields.adoc[]
-Response Example
-include::{snippets}/post-controller-test/create-post/response-body.adoc[]
+===== Response Http Example
+include::{snippets}/post-controller-test/create-post/http-response.adoc[]
 
 === 5-2. 홈화면, 모든 나누기 불러오기(정렬방식: 최신순)
 ==== Request
-CURL
+===== CURL
 include::{snippets}/post-controller-test/find-posts-sort-by-created-date/curl-request.adoc[]
-Request Header
+===== Request Header
 include::{snippets}/post-controller-test/find-posts-sort-by-created-date/request-headers.adoc[]
-Request Http Example
+===== Request Http Example
 include::{snippets}/post-controller-test/find-posts-sort-by-created-date/http-request.adoc[]
 ==== Response
-Response Fields
+===== Response Fields
 include::{snippets}/post-controller-test/find-posts-sort-by-created-date/response-fields.adoc[]
-Response Example
-include::{snippets}/post-controller-test/find-posts-sort-by-created-date/response-body.adoc[]
+===== Response Http Example
+include::{snippets}/post-controller-test/find-posts-sort-by-created-date/http-response.adoc[]
 
 === 5-3. 홈화면, 모든 나누기 불러오기(정렬방식: 마감임박순)
 ==== Request
-CURL
+===== CURL
 include::{snippets}/post-controller-test/find-posts-sort-by-end-date/curl-request.adoc[]
-Request Header
+===== Request Header
 include::{snippets}/post-controller-test/find-posts-sort-by-end-date/request-headers.adoc[]
-Request Http Example
+===== Request Http Example
 include::{snippets}/post-controller-test/find-posts-sort-by-end-date/http-request.adoc[]
 ==== Response
-Response Fields
+===== Response Fields
 include::{snippets}/post-controller-test/find-posts-sort-by-end-date/response-fields.adoc[]
-Response Example
-include::{snippets}/post-controller-test/find-posts-sort-by-end-date/response-body.adoc[]
+===== Response Http Example
+include::{snippets}/post-controller-test/find-posts-sort-by-end-date/http-response.adoc[]
 
 === 5-4. 카테고리별 나누기 피드들 불러오기(카테고리 화면)(정렬 방식: 최신순)
 ==== Request
-CURL
+===== CURL
 include::{snippets}/post-controller-test/find-post-by-category-id-sort-by-created-date/curl-request.adoc[]
-Request Header
+===== Request Header
 include::{snippets}/post-controller-test/find-post-by-category-id-sort-by-created-date/request-headers.adoc[]
-Request Path Parameters ->
+===== Request Path Parameters
 include::{snippets}/post-controller-test/find-post-by-category-id-sort-by-created-date/path-parameters.adoc[]
-Request Http Example
+===== Request Http Example
 include::{snippets}/post-controller-test/find-post-by-category-id-sort-by-created-date/http-request.adoc[]
 ==== Response
-Response Fields
+===== Response Fields
 include::{snippets}/post-controller-test/find-post-by-category-id-sort-by-created-date/response-fields.adoc[]
-Response Example
-include::{snippets}/post-controller-test/find-post-by-category-id-sort-by-created-date/response-body.adoc[]
+===== Response Http Example
+include::{snippets}/post-controller-test/find-post-by-category-id-sort-by-created-date/http-response.adoc[]
 
 === 5-5. 카테고리별 나누기 피드들 불러오기(카테고리 화면)(정렬 방식: 마감임박순)
 ==== Request
-CURL
+===== CURL
 include::{snippets}/post-controller-test/find-post-by-category-id-sort-by-end-date/curl-request.adoc[]
-Request Header
+===== Request Header
 include::{snippets}/post-controller-test/find-post-by-category-id-sort-by-end-date/request-headers.adoc[]
-Request Path Parameters ->
+===== Request Path Parameters
 include::{snippets}/post-controller-test/find-post-by-category-id-sort-by-end-date/path-parameters.adoc[]
-Request Http Example
+===== Request Http Example
 include::{snippets}/post-controller-test/find-post-by-category-id-sort-by-end-date/http-request.adoc[]
 ==== Response
-Response Fields
+===== Response Fields
 include::{snippets}/post-controller-test/find-post-by-category-id-sort-by-end-date/response-fields.adoc[]
-Response Example
-include::{snippets}/post-controller-test/find-post-by-category-id-sort-by-end-date/response-body.adoc[]
+===== Response Http Example
+include::{snippets}/post-controller-test/find-post-by-category-id-sort-by-end-date/http-response.adoc[]
 
 === 5-6. 나누기 상세 보기
 ==== Request
-CURL
+===== CURL
 include::{snippets}/post-controller-test/find-post-by-id/curl-request.adoc[]
-Request Header
+===== Request Header
 include::{snippets}/post-controller-test/find-post-by-id/request-headers.adoc[]
-Request Path Parameters ->
+===== Request Path Parameters
 include::{snippets}/post-controller-test/find-post-by-id/path-parameters.adoc[]
-Request Http Example
+===== Request Http Example
 include::{snippets}/post-controller-test/find-post-by-id/http-request.adoc[]
 ==== Response
-Response Fields
+===== Response Fields
 include::{snippets}/post-controller-test/find-post-by-id/response-fields.adoc[]
-Response Example
-include::{snippets}/post-controller-test/find-post-by-id/response-body.adoc[]
+===== Response Http Example
+include::{snippets}/post-controller-test/find-post-by-id/http-response.adoc[]
 
 === 5-7. 나누기 삭제
 ==== Request
-CURL
+===== CURL
 include::{snippets}/post-controller-test/delete-post/curl-request.adoc[]
-Request Header
+===== Request Header
 include::{snippets}/post-controller-test/delete-post/request-headers.adoc[]
-Request Path Parameters ->
+===== Request Path Parameters
 include::{snippets}/post-controller-test/delete-post/path-parameters.adoc[]
-Request Http Example
+===== Request Http Example
 include::{snippets}/post-controller-test/delete-post/http-request.adoc[]
 ==== Response
-Response Example
-include::{snippets}/post-controller-test/delete-post/response-body.adoc[]
+===== Response Http Example
+include::{snippets}/post-controller-test/delete-post/http-response.adoc[]
 
 === 5-8. 나누기 수정
 ==== Request
-CURL
+===== CURL
 include::{snippets}/post-controller-test/update-post/curl-request.adoc[]
-Request Header
+===== Request Header
 include::{snippets}/post-controller-test/update-post/request-headers.adoc[]
-Request Path Parameters ->
+===== Request Path Parameters
 include::{snippets}/post-controller-test/update-post/path-parameters.adoc[]
-Request Http Example
+===== Request Http Example
 include::{snippets}/post-controller-test/update-post/http-request.adoc[]
 ==== Response
-Response Example
-include::{snippets}/post-controller-test/update-post/response-body.adoc[]
+===== Response Http Example
+include::{snippets}/post-controller-test/update-post/http-response.adoc[]
 
 === 5-9. 현재 유저가 올린 나누기 목록 보기(프로필 판매내역 보기 화면)
 ==== Request
-CURL
+===== CURL
 include::{snippets}/post-controller-test/find-post-by-user/curl-request.adoc[]
-Request Header
+===== Request Header
 include::{snippets}/post-controller-test/find-post-by-user/request-headers.adoc[]
-Request Http Example
+===== Request Http Example
 include::{snippets}/post-controller-test/find-post-by-user/http-request.adoc[]
 ==== Response
-Response Fields
+===== Response Fields
 include::{snippets}/post-controller-test/find-post-by-user/response-fields.adoc[]
-Response Example
-include::{snippets}/post-controller-test/find-post-by-user/response-body.adoc[]
+===== Response Http Example
+include::{snippets}/post-controller-test/find-post-by-user/http-response.adoc[]
 
 === 5-10. 현재 유저가 올린 나누기 목록 보기(프로필 판매내역 보기 화면)
 ==== Request
-CURL
+===== CURL
 include::{snippets}/post-controller-test/find-post-by-user/curl-request.adoc[]
-Request Header
+===== Request Header
 include::{snippets}/post-controller-test/find-post-by-user/request-headers.adoc[]
-Request Http Example
+===== Request Http Example
 include::{snippets}/post-controller-test/find-post-by-user/http-request.adoc[]
 ==== Response
-Response Fields
+===== Response Fields
 include::{snippets}/post-controller-test/find-post-by-user/response-fields.adoc[]
-Response Example
-include::{snippets}/post-controller-test/find-post-by-user/response-body.adoc[]
+===== Response Http Example
+include::{snippets}/post-controller-test/find-post-by-user/http-response.adoc[]
 
 === 5-11. 특정 유저(본인 제외)가 생성한 나누기 피드들 불러오기
 ==== Request
-CURL
+===== CURL
 include::{snippets}/post-controller-test/find-post-by-user-id/curl-request.adoc[]
-Request Header
+===== Request Header
 include::{snippets}/post-controller-test/find-post-by-user-id/request-headers.adoc[]
-Request Path Parameters ->
+===== Request Path Parameters
 include::{snippets}/post-controller-test/find-post-by-user-id/http-request.adoc[]
 ==== Response
-Response Fields
+===== Response Fields
 include::{snippets}/post-controller-test/find-post-by-user-id/response-fields.adoc[]
-Response Example
-include::{snippets}/post-controller-test/find-post-by-user-id/response-body.adoc[]
+===== Response Http Example
+include::{snippets}/post-controller-test/find-post-by-user-id/http-response.adoc[]
 
 === 5-12. 나누기 거래 확정
 ==== Request
-CURL
+===== CURL
 include::{snippets}/post-controller-test/confirmed/curl-request.adoc[]
-Request Header
+===== Request Header
 include::{snippets}/post-controller-test/confirmed/request-headers.adoc[]
-Request Path Parameters ->
+===== Request Path Parameters
 include::{snippets}/post-controller-test/confirmed/path-parameters.adoc[]
-Request Fields
+===== Request Fields
 include::{snippets}/post-controller-test/confirmed/http-request.adoc[]
 ==== Response
-Response Example
-include::{snippets}/post-controller-test/confirmed/response-body.adoc[]
+===== Response Http Example
+include::{snippets}/post-controller-test/confirmed/http-response.adoc[]
 
 === 5-13. 나누기 검색
 ==== Request
-CURL
+===== CURL
 include::{snippets}/post-controller-test/search/curl-request.adoc[]
-Request Header
+===== Request Header
 include::{snippets}/post-controller-test/search/request-headers.adoc[]
-Request Http Example
+===== Request Http Example
 include::{snippets}/post-controller-test/search/http-request.adoc[]
 ==== Response
-Response Fields
+===== Response Fields
 include::{snippets}/post-controller-test/search/response-fields.adoc[]
-Response Example
-include::{snippets}/post-controller-test/search/response-body.adoc[]
+===== Response Example
+include::{snippets}/post-controller-test/search/http-response.adoc[]
 
 == 6. 채팅
 === 6-1. 채팅방 목록 조회
