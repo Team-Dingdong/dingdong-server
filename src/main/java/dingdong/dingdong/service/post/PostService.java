@@ -337,7 +337,7 @@ public class PostService {
         if (paths.size() < 3) {
             while (paths.size() < 3) {
                 paths.add(
-                        "https://dingdongbucket.s3.ap-northeast-2.amazonaws.com/static/postImage.png");
+                        "https://dingdongbucket.s3.ap-northeast-2.amazonaws.com/static/default_post.png");
             }
         }
 
@@ -441,7 +441,7 @@ public class PostService {
             if (paths.size() < 3) {
                 while (paths.size() < 3) {
                     paths.add(
-                        "https://dingdongbucket.s3.ap-northeast-2.amazonaws.com/static/postImage.png");
+                        "https://dingdongbucket.s3.ap-northeast-2.amazonaws.com/static/default_post.png");
                 }
             }
             post.setImageUrl(paths.get(0), paths.get(1), paths.get(2));
