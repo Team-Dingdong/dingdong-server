@@ -267,9 +267,23 @@ public class AuthService implements UserDetailsService {
         }
     }
 
+    // 테스트 전화번호 추가
+    @Transactional
+    public boolean checkTest(String phone) {
+        if (phone.equals("01011111111") || phone.equals("01022222222") || phone
+            .equals("01033333333") || phone.equals("01044444444") || phone.equals("01055555555")) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     // 휴대폰 인증 번호 전송
     @Transactional
     public MessageResponseDto sendSms(MessageRequestDto messageRequestDto) {
+        if (checkTest(messageRequestDto.getTo())) {
+            return null;
+        }
         checkBlackList(messageRequestDto.getTo());
         checkUnsub(messageRequestDto.getTo());
         try {
