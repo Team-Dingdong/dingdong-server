@@ -474,29 +474,6 @@ public class PostService {
         }
     }
 
-    // local 정보에 기반하지 않고 제목, 카테고리 검색 기능(검색 기능)(유저의 LOCAL 정보가 기입되지 않은 경우)
-    @Transactional(readOnly = true)
-    public Page<PostGetResponseDto> searchPosts(String keyword, Pageable pageable) {
-        Page<Post> posts;
-        if (keyword.contains("#")) {
-            posts = postRepository.findAllSearchByTag(keyword.substring(1), pageable);
-        } else {
-            posts = postRepository.findAllSearch(keyword, pageable);
-        }
-
-        Page<PostGetResponseDto> data = posts.map(PostGetResponseDto::from);
-        for (PostGetResponseDto dto : data){
-            Post post = postRepository.findById(dto.getId()).orElseThrow(() -> new ResourceNotFoundException(POST_NOT_FOUND));
-            List<Tag> tags = postTagRepository.findTagByPost(post);
-            List<String> T = new ArrayList<>();
-            for (Tag t: tags){
-                T.add(t.getName());
-            }
-            dto.setTags(T);
-        }
-        return data;
-    }
-
     // local 정보에 기반하여 제목, 카테고리 검색 기능(검색 기능)(유저의 LOCAL 정보가 기입된 경우)
     @Transactional(readOnly = true)
     public Page<PostGetResponseDto> searchPostsWithLocal(String keyword, User user,

@@ -268,6 +268,8 @@ include::{snippets}/post-controller-test/create-post/request-headers.adoc[]
 Request Http Example
 include::{snippets}/post-controller-test/create-post/http-request.adoc[]
 ==== Response
+Response Fields
+include::{snippets}/post-controller-test/create-post/response-fields.adoc[]
 Response Example
 include::{snippets}/post-controller-test/create-post/response-body.adoc[]
 
@@ -358,8 +360,6 @@ include::{snippets}/post-controller-test/delete-post/path-parameters.adoc[]
 Request Http Example
 include::{snippets}/post-controller-test/delete-post/http-request.adoc[]
 ==== Response
-Response Fields
-include::{snippets}/post-controller-test/delete-post/response-fields.adoc[]
 Response Example
 include::{snippets}/post-controller-test/delete-post/response-body.adoc[]
 
@@ -374,8 +374,6 @@ include::{snippets}/post-controller-test/update-post/path-parameters.adoc[]
 Request Http Example
 include::{snippets}/post-controller-test/update-post/http-request.adoc[]
 ==== Response
-Response Fields
-include::{snippets}/post-controller-test/update-post/response-fields.adoc[]
 Response Example
 include::{snippets}/post-controller-test/update-post/response-body.adoc[]
 

@@ -53,12 +53,14 @@ public interface PostRepository extends JpaRepository<Post, Long> {
         nativeQuery = true)
     Page<Post> findAllSearchByTag(String keyword, Pageable pageable);
 
-    @Query(value = "select * from post where post.title LIKE %:keyword%",
+    @Query(value = "select * from post, category where post.title LIKE %:keyword% "
+        + "OR (post.category_id = category.category_id and category.name LIKE %:keyword%)",
         countQuery = "select count(*) from post",
         nativeQuery = true)
     Page<Post> findAllSearch(String keyword, Pageable pageable);
 
-    @Query(value = "select * from post where post.title LIKE %:keyword% AND (post.local_id = :local1 or post.local_id = :local2)",
+    @Query(value = "select * from post, category where post.title LIKE %:keyword% "
+        + "OR (post.category_id = category.category_id and category.name LIKE %:keyword%) AND (post.local_id = :local1 or post.local_id = :local2)",
         countQuery = "select count(*) from post",
         nativeQuery = true)
     Page<Post> findAllSearchWithLocal(String keyword, Long local1, Long local2, Pageable pageable);
