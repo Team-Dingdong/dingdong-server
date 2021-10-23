@@ -268,7 +268,7 @@ public class AuthService implements UserDetailsService {
         }
     }
 
-    // 테스트 전화번호 추가
+    // 테스트 전화번호 제외하도록 추가(테스트 기간 이후 삭제 예정)
     @Transactional(readOnly = true)
     public boolean checkTest(String phone) {
         if (phone.equals("01011111111") || phone.equals("01022222222") ||
@@ -282,8 +282,7 @@ public class AuthService implements UserDetailsService {
     // 휴대폰 인증 번호 전송
     @Transactional
     public MessageResponseDto sendSms(MessageRequestDto messageRequestDto) {
-        checkBlackList(messageRequestDto.getTo());
-        checkUnsub(messageRequestDto.getTo());
+        // 테스트 전화번호 제외하도록 추가(테스트 기간 이후 삭제 예정)
         if(checkTest(messageRequestDto.getTo())) {
             SendSmsResponseDto sendSmsResponseDto = SendSmsResponseDto.builder()
                 .statusCode("202")
@@ -294,6 +293,9 @@ public class AuthService implements UserDetailsService {
 
             return MessageResponseDto.from(sendSmsResponseDto);
         }
+
+        checkBlackList(messageRequestDto.getTo());
+        checkUnsub(messageRequestDto.getTo());
         try {
             Long time = Timestamp.valueOf(LocalDateTime.now()).getTime();
             String code = makeRandom();
