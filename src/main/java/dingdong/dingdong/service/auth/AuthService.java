@@ -271,7 +271,9 @@ public class AuthService implements UserDetailsService {
 
         // 인증 번호가 옳지 않을 경우
         // 인증 시도 횟수가 초과되었을 경우
-        if(!auth.getAuthNumber().equals(authRequestDto.getAuthNumber())) {
+        String encAuthNumber = auth.getAuthNumber();
+        String authNumber = authRequestDto.getAuthNumber();
+        if(!passwordEncoder.matches(authNumber, encAuthNumber)) {
             auth.plusAttemptCount();
 
             // 인증 시도 제한 횟수
