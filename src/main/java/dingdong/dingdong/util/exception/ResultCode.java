@@ -76,8 +76,7 @@ public enum ResultCode {
 
     /* 400 BAD_REQUEST : 잘못된 요청 */
     AUTH_NOT_FOUND(BAD_REQUEST, "해당 사용자의 인증 정보를 찾을 수 없습니다"),
-    AUTH_FAIL(BAD_REQUEST, "인증 번호가 옳지 않습니다"),
-    AUTH_TIME_ERROR(BAD_REQUEST, "인증 시간을 초과하였습니"),
+    AUTH_FAIL(BAD_REQUEST, "전화 번호나 인증 번호가 옳지 않습니다"),
 
     INVALID_REFRESH_TOKEN(BAD_REQUEST, "리프레시 토큰이 유효하지 않습니다"),
     MISMATCH_REFRESH_TOKEN(BAD_REQUEST, "리프레시 토큰의 유저 정보가 일치하지 않습니다"),
@@ -109,10 +108,8 @@ public enum ResultCode {
     INVALID_AUTH_TOKEN(UNAUTHORIZED, "올바른 토큰이 아닙니다"),
     INVALID_JWT_SIGN(UNAUTHORIZED, "잘못된 JWT 서명입니다"),
     INVALID_JWT_EXPIRED(UNAUTHORIZED, "만료된 JWT 토큰입니다"),
-    INVALID_AUTH_INFO(UNAUTHORIZED, "전화번호나 인증번호가 맞지 않습니다"),
     INVALID_ACCOUNT(UNAUTHORIZED, "계정이 비활성화 되었습니다"),
     CREDENTIALS_EXPIRED(UNAUTHORIZED, "비밀번호 유효기간이 만료되었습니다"),
-    UNKNOWN_AUTHENTICATION_ERROR(UNAUTHORIZED, "알 수 없는 이유로 인에 실패했습니다"),
 
     /* 403 FORBIDDEN : 권한이 없는 사용자 */
     AUTH_FAIL_FORBIDDEN(FORBIDDEN, "가입할 수 없는 전화번호입니다"),
@@ -122,6 +119,10 @@ public enum ResultCode {
     RATING_CREATE_FAIL_FORBIDDEN(FORBIDDEN, "관계 없는 사용자를 평가할 수 없습니다"),
     REPORT_CREATE_FAIL_SELF(FORBIDDEN, "본인은 신고할 수 없습니다"),
     FORBIDDEN_MEMBER(FORBIDDEN, "해당 권한이 없습니다."),
+
+    AUTH_COOL_TIME_LIMIT(FORBIDDEN, "정회원 인증 제한 - 5분 후에 시도해주세요"),
+    AUTH_TIME_OUT(FORBIDDEN, "인증 시간을 초과하였습니다"),
+    AUTH_ATTEMPT_COUNT_LIMIT(FORBIDDEN, "정회원 인증 제한 - 인증 시도 횟수 초과"),
 
     /* 404 NOT_FOUND : Resource 를 찾을 수 없음 */
     USER_NOT_FOUND(NOT_FOUND, "해당 유저 정보를 찾을 수 없습니다"),
@@ -151,7 +152,6 @@ public enum ResultCode {
     REPORT_DUPLICATION(CONFLICT, "이미 신고한 사용자입니다"),
 
     /* 500 CONFLICT */
-    AUTH_ERROR(INTERNAL_SERVER_ERROR, "인증 오류 발생"),
     INTER_SERVER_ERROR(INTERNAL_SERVER_ERROR, "서버 오류 발생"),
     ;
 
