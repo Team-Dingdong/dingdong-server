@@ -119,6 +119,7 @@ class RatingControllerTest {
             .authNumber(passwordEncoder.encode(authNumber))
             .requestId(requestId)
             .requestTime(requestTime)
+            .attemptCount(0)
             .build();
 
         authRepository.save(auth);
