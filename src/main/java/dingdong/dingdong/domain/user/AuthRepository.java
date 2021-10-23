@@ -10,7 +10,7 @@ public interface AuthRepository extends JpaRepository<Auth, Long> {
 
     boolean existsByPhone(String phone);
 
-    Auth findByPhone(String phone);
+    Optional<Auth> findByPhone(String phone);
 
     @Query("select a.requestTime from Auth a where a.phone = ?1")
     Optional<LocalDateTime> findRequestTimeByPhone(String phone);

@@ -1,5 +1,6 @@
 package dingdong.dingdong.util.exception;
 
+import dingdong.dingdong.dto.auth.AuthResponseDto;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,7 +28,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return Result.toResult(e.getResultCode());
     }
 
-    @ExceptionHandler(value = {ResourceNotFoundException.class})
+    @ExceptionHandler(ResourceNotFoundException.class)
     protected ResponseEntity<Result> handleResourceNotFoundException(ResourceNotFoundException e) {
         log.error("handleResourceNotFoundException : {}", e.getResultCode());
         return Result.toResult(e.getResultCode());
@@ -55,7 +56,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     protected ResponseEntity<Result> handleBadCredentialsException(
         BadCredentialsException e) {
         log.error("handleBadCredentialsException : {}", e.getMessage());
-        return Result.toResult(ResultCode.INVALID_AUTH_INFO);
+        return Result.toResult(ResultCode.AUTH_FAIL);
     }
 
     @ExceptionHandler(DisabledException.class)
@@ -71,11 +72,13 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return Result.toResult(ResultCode.CREDENTIALS_EXPIRED);
     }
 
-    @ExceptionHandler(UnknownAuthenticationException.class)
-    protected ResponseEntity<Result> handleUnknownAuthenticationException(
-        UnknownAuthenticationException e) {
-        log.error("handleUnknownAuthenticationException : {}", e.getResultCode());
-        return Result.toResult(e.getResultCode());
+    @ExceptionHandler(AuthenticationException.class)
+    protected ResponseEntity<Result<AuthResponseDto>> handleAuthenticationException(AuthenticationException e) {
+        log.error("handleAuthenticationException : {}", e.getResultCode());
+        if (e.getResultCode() == ResultCode.AUTH_FAIL) {
+            return Result.toResult(e.getResultCode(), e.getAuthResponseDto());
+        }
+        return Result.toResult(e.getResultCode(), null);
     }
 
     @Override
