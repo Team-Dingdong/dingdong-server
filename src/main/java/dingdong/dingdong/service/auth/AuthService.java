@@ -41,6 +41,7 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.sql.Timestamp;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -255,10 +256,10 @@ public class AuthService implements UserDetailsService {
         LocalDateTime requestTime = authRepository.findRequestTimeByPhone(authRequestDto.getPhone())
             .orElseThrow(() -> new UsernameNotFoundException(authRequestDto.getPhone()));
 
-//        Duration duration = Duration.between(requestTime, now);
-//        if(duration.getSeconds() > 300) {
-//            throw new JwtAuthException(ResultCode.AUTH_TIME_ERROR);
-//        }
+        Duration duration = Duration.between(requestTime, now);
+        if(duration.getSeconds() > 300) {
+            throw new JwtAuthException(ResultCode.AUTH_TIME_ERROR);
+        }
 
         if (userRepository.existsByPhone(authRequestDto.getPhone())) {
             return Map.of(AuthType.LOGIN, login(authRequestDto));
@@ -268,10 +269,10 @@ public class AuthService implements UserDetailsService {
     }
 
     // 테스트 전화번호 추가
-    @Transactional
+    @Transactional(readOnly = true)
     public boolean checkTest(String phone) {
-        if (phone.equals("01011111111") || phone.equals("01022222222") || phone
-            .equals("01033333333") || phone.equals("01044444444") || phone.equals("01055555555")) {
+        if (phone.equals("01011111111") || phone.equals("01022222222") ||
+            phone.equals("01033333333") || phone.equals("01044444444") || phone.equals("01055555555")) {
             return true;
         } else {
             return false;
@@ -281,11 +282,18 @@ public class AuthService implements UserDetailsService {
     // 휴대폰 인증 번호 전송
     @Transactional
     public MessageResponseDto sendSms(MessageRequestDto messageRequestDto) {
-        if (checkTest(messageRequestDto.getTo())) {
-            return null;
-        }
         checkBlackList(messageRequestDto.getTo());
         checkUnsub(messageRequestDto.getTo());
+        if(checkTest(messageRequestDto.getTo())) {
+            SendSmsResponseDto sendSmsResponseDto = SendSmsResponseDto.builder()
+                .statusCode("202")
+                .statusName("test status name")
+                .requestId("test request id")
+                .requestTime(LocalDateTime.now())
+                .build();
+
+            return MessageResponseDto.from(sendSmsResponseDto);
+        }
         try {
             Long time = Timestamp.valueOf(LocalDateTime.now()).getTime();
             String code = makeRandom();
