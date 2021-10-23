@@ -130,6 +130,7 @@ class ChatRoomControllerTest {
             .authNumber(passwordEncoder.encode(authNumber))
             .requestId(requestId1)
             .requestTime(requestTime)
+            .attemptCount(0)
             .build();
 
         Long id2 = 2L;
@@ -141,6 +142,7 @@ class ChatRoomControllerTest {
             .authNumber(passwordEncoder.encode(authNumber))
             .requestId(requestId2)
             .requestTime(requestTime)
+            .attemptCount(0)
             .build();
 
         authRepository.save(auth1);
