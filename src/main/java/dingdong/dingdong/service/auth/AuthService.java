@@ -221,7 +221,8 @@ public class AuthService implements UserDetailsService {
     // 닉네임 설정
     @Transactional
     public void setNickname(User user, NicknameRequestDto nicknameRequestDto) {
-        if(user.getProfile().getNickname().equals(nicknameRequestDto.getNickname())) {
+        if (user.getProfile().getNickname() != null && user.getProfile().getNickname()
+            .equals(nicknameRequestDto.getNickname())) {
             return;
         }
         checkNickname(nicknameRequestDto.getNickname());
@@ -276,7 +277,7 @@ public class AuthService implements UserDetailsService {
         // 인증 시도 횟수가 초과되었을 경우
         String encAuthNumber = auth.getAuthNumber();
         String authNumber = authRequestDto.getAuthNumber();
-        if(!passwordEncoder.matches(authNumber, encAuthNumber)) {
+        if (!passwordEncoder.matches(authNumber, encAuthNumber)) {
             auth.plusAttemptCount();
 
             // 인증 시도 제한 횟수
