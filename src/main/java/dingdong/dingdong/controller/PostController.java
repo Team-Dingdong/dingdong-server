@@ -125,8 +125,8 @@ public class PostController {
 
     // 나누기 삭제
     @DeleteMapping("/{postId}")
-    public ResponseEntity<Result> deletePost(@PathVariable Long postId) {
-        postService.deletePost(postId);
+    public ResponseEntity<Result> deletePost(@CurrentUser User user, @PathVariable Long postId) {
+        postService.deletePost(user, postId);
         return Result.toResult(ResultCode.POST_DELETE_SUCCESS);
     }
 
