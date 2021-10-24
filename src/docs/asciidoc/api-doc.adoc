@@ -265,8 +265,6 @@ include::{snippets}/rating-controller-test/create-rating/http-response.adoc[]
 include::{snippets}/post-controller-test/create-post/curl-request.adoc[]
 ===== Request Header
 include::{snippets}/post-controller-test/create-post/request-headers.adoc[]
-===== Request Http Example
-include::{snippets}/post-controller-test/create-post/http-request.adoc[]
 ==== Response
 ===== Response Fields
 include::{snippets}/post-controller-test/create-post/response-fields.adoc[]
@@ -371,8 +369,6 @@ include::{snippets}/post-controller-test/update-post/curl-request.adoc[]
 include::{snippets}/post-controller-test/update-post/request-headers.adoc[]
 ===== Request Path Parameters
 include::{snippets}/post-controller-test/update-post/path-parameters.adoc[]
-===== Request Http Example
-include::{snippets}/post-controller-test/update-post/http-request.adoc[]
 ==== Response
 ===== Response Http Example
 include::{snippets}/post-controller-test/update-post/http-response.adoc[]
