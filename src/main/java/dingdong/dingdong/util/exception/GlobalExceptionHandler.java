@@ -81,6 +81,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return Result.toResult(e.getResultCode(), null);
     }
 
+    @ExceptionHandler(IllegalStateException.class)
+    protected ResponseEntity<Result> handleIllegalStateException(IllegalStateException e) {
+        log.error("handleIllegalStateException : {}", e.getMessage());
+        return Result.toResult(ResultCode.INTER_SERVER_ERROR);
+    }
+
     @Override
     protected ResponseEntity handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
         HttpHeaders headers, HttpStatus status, WebRequest request) {
