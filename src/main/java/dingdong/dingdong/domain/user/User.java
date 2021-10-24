@@ -75,4 +75,8 @@ public class User extends BaseTimeEntity {
     public void setStopped() {
         this.authority = Role.STOPPED;
     }
+
+    public void setProfile(Profile profile) {
+        this.profile = profile;
+    }
 }

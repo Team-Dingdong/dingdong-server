@@ -108,6 +108,7 @@ class AuthControllerTest {
 
         Profile profile = Profile.builder()
             .id(id)
+            .nickname("testNickname1")
             .build();
 
         User user = User.builder()
@@ -256,7 +257,7 @@ class AuthControllerTest {
         TokenDto tokenDto = getTokenDto();
         String token = "Bearer " + tokenDto.getAccessToken();
         NicknameRequestDto nicknameRequestDto = NicknameRequestDto.builder()
-            .nickname("testNickname")
+            .nickname("testNickname2")
             .build();
 
         mockMvc.perform(RestDocumentationRequestBuilders.patch("/api/v1/auth/nickname")

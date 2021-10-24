@@ -72,6 +72,9 @@ public class ProfileService {
             profile.setProfileImageUrl(path);
         }
         if (profileUpdateRequestDto.getNickname() != null) {
+            if(user.getProfile().getNickname().equals(profileUpdateRequestDto.getNickname())) {
+                return;
+            }
             checkNickname(profileUpdateRequestDto.getNickname());
             profile.setNickname(profileUpdateRequestDto.getNickname());
         }
