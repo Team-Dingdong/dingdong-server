@@ -6,6 +6,7 @@ import static dingdong.dingdong.util.exception.ResultCode.POST_DELETE_FAIL_DONE;
 import static dingdong.dingdong.util.exception.ResultCode.POST_NOT_FOUND;
 import static dingdong.dingdong.util.exception.ResultCode.USER_NOT_FOUND;
 
+import dingdong.dingdong.domain.chat.ChatJoin;
 import dingdong.dingdong.domain.chat.ChatJoinRepository;
 import dingdong.dingdong.domain.chat.ChatPromiseRepository;
 import dingdong.dingdong.domain.chat.ChatRoom;
@@ -36,7 +37,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -428,16 +428,12 @@ public class PostService {
             throw new LimitException(POST_DELETE_FAIL_DONE);
         }
 
-        postTagRepository.deleteByPostId(post.getId());
-
-        if (chatPromiseRepository.existsById(id)) {
-            chatPromiseRepository.deleteById(id);
-        }
-        if (chatRoomRepository.existsByPostId(id)) {
-            chatJoinRepository.deleteByPostId(id);
-            chatRoomRepository.deleteById(id);
-        }
-        postRepository.deletePostById(post.getId());
+        postTagRepository.deleteByPostId(id);
+        chatPromiseRepository.findByChatRoomId(id).ifPresent(chatPromise -> chatPromiseRepository.delete(chatPromise));
+        List<ChatJoin> chatJoins = chatJoinRepository.findAllByChatRoom(chatRoom);
+        chatJoins.stream().forEach(chatJoin -> chatJoinRepository.delete(chatJoin));
+        chatRoomRepository.delete(chatRoom);
+        postRepository.delete(post);
     }
 
     // 나누기 피드(post) 수정
