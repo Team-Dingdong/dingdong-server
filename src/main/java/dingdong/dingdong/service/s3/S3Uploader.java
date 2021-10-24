@@ -27,6 +27,7 @@ public class S3Uploader {
 
     // MultiFile을 File로 전환
     public String upload(MultipartFile multipartFile, String dirName) {
+        log.info("s3.upload ===========================");
         try {
             File uploadFile = convert(multipartFile)
                     .orElseThrow(() -> new IllegalArgumentException("MultipartFile -> File로 전환이 실패했습니다."));
@@ -39,6 +40,7 @@ public class S3Uploader {
 
     // File 업로드 주소 생성
     private String upload(File uploadFile, String dirName) {
+        log.info("s3.fileupload ===========================");
         String fileName = dirName + "/" + uploadFile.getName();
         String uploadImageUrl = putS3(uploadFile, fileName);
         removeNewFile(uploadFile);
@@ -47,12 +49,14 @@ public class S3Uploader {
 
     // 이미지 S3에 업로드
     private String putS3(File uploadFile, String fileName) {
+        log.info("s3.puts3 ===========================");
         amazonS3Client.putObject(new PutObjectRequest(bucket, fileName, uploadFile)
             .withCannedAcl(CannedAccessControlList.PublicRead));
         return amazonS3Client.getUrl(bucket, fileName).toString();
     }
 
     private void removeNewFile(File targetFile) {
+        log.info("s3.removefile ===========================");
         if(targetFile.delete()) {
             log.error("파일 삭제 성공");
         } else {
@@ -61,6 +65,7 @@ public class S3Uploader {
     }
 
     private Optional<File> convert(MultipartFile file) throws IOException {
+        log.info("s3.convert ===========================");
         File convertFile = new File(file.getOriginalFilename());
         if (convertFile.createNewFile()) {
             try (FileOutputStream fos = new FileOutputStream(convertFile)) {
