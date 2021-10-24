@@ -60,7 +60,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     Page<Post> findAllSearch(String keyword, Pageable pageable);
 
     @Query(value = "select * from post, category where post.title LIKE %:keyword% "
-        + "OR (post.category_id = category.category_id and category.name LIKE %:keyword%) AND (post.local_id = :local1 or post.local_id = :local2)",
+        + "OR (post.category_id = category.category_id and category.name LIKE %:keyword%) AND (post.local_id = :local1 or post.local_id = :local2) GROUP BY post.post_id",
         countQuery = "select count(*) from post",
         nativeQuery = true)
     Page<Post> findAllSearchWithLocal(String keyword, Long local1, Long local2, Pageable pageable);
@@ -69,7 +69,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     @Query(value =
         "select * from post, user, post_tag, tag where post.user_id = user.user_id AND post.post_id = post_tag.post_id AND post_tag.tag_id = tag.tag_id AND "
             +
-            "(post.local_id = :local1 or post.local_id = :local2) AND (tag.name LIKE %:keyword% )",
+            "(post.local_id = :local1 or post.local_id = :local2) AND (tag.name LIKE %:keyword% ) GROUP BY post.post_id",
         countQuery = "select count(*) from post",
         nativeQuery = true)
     Page<Post> findAllSearchByTagWithLocal(String keyword, Long local1, Long local2,
