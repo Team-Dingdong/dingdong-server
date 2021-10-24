@@ -324,12 +324,25 @@ class PostControllerTest {
                 .totalPeople(3)
                 .votingPeople(3)
                 .promiseEndTime(LocalDateTime.now())
-                .type(PROGRESS)
+                .type(CONFIRMED)
                 .build();
         chatPromiseRepository.save(chatPromise1);
 
-        ChatPromiseVote chatPromiseVote1 = ChatPromiseVote.builder()
+        ChatPromise chatPromise2 = ChatPromise.builder()
             .id(2L)
+            .chatRoom(chatRoom2)
+            .promiseDate(LocalDate.now())
+            .promiseTime(LocalTime.now().minusHours(5))
+            .promiseLocal("test")
+            .totalPeople(3)
+            .votingPeople(3)
+            .promiseEndTime(LocalDateTime.now())
+            .type(PROGRESS)
+            .build();
+        chatPromiseRepository.save(chatPromise2);
+
+        ChatPromiseVote chatPromiseVote1 = ChatPromiseVote.builder()
+            .id(1L)
             .chatRoom(chatRoom1)
             .user(user1)
             .build();
