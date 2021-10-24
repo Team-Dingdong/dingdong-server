@@ -221,6 +221,9 @@ public class AuthService implements UserDetailsService {
     // 닉네임 설정
     @Transactional
     public void setNickname(User user, NicknameRequestDto nicknameRequestDto) {
+        if(user.getProfile().getNickname().equals(nicknameRequestDto.getNickname())) {
+            return;
+        }
         checkNickname(nicknameRequestDto.getNickname());
         Profile profile = profileRepository.findById(user.getId())
             .orElseThrow(() -> new ResourceNotFoundException(ResultCode.PROFILE_NOT_FOUND));

@@ -130,6 +130,8 @@ class ProfileControllerTest {
             .bad(0L)
             .build();
 
+        user1.setProfile(profile1);
+
         userRepository.save(user1);
         profileRepository.save(profile1);
 
@@ -153,6 +155,8 @@ class ProfileControllerTest {
             .good(0L)
             .bad(0L)
             .build();
+
+        user2.setProfile(profile2);
 
         userRepository.save(user2);
         profileRepository.save(profile2);
