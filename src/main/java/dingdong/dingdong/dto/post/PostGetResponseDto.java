@@ -41,6 +41,7 @@ public class PostGetResponseDto {
             .id(post.getId())
             .title(post.getTitle())
             .people(post.getPeople())
+            .gatheredPeople(post.getGatheredPeople())
             .cost(post.getCost())
             .bio(post.getBio())
             .location(post.getLocation())

@@ -84,11 +84,11 @@ public enum ResultCode {
 
     VALID_ERROR(BAD_REQUEST, "유효성 검사 실패"),
     POST_CREATE_FAIL(BAD_REQUEST, "포스트 생성 실패"),
-    POST_DELETE_FAIL(BAD_REQUEST, "포스트 삭제 실패"),
     POST_UPDATE_FAIL(BAD_REQUEST, "포스트 수정 실패"),
 
     POST_NUMBER_NOT_FOUND(BAD_REQUEST, "해당 나누기를 업로드 할 수 없습니다."),
-    POST_DELETE_FAIL_DONE(BAD_REQUEST,"해당 나누기가 아직 거래가 완료되지 않았습니다."),
+    POST_DELETE_FAIL_PROMISE(BAD_REQUEST, "해당 나누기의 약속이 진행중입니다"),
+    POST_DELETE_FAIL_DONE(BAD_REQUEST,"해당 나누기가 아직 거래 확정되지 않았습니다."),
 
     TAG_UPDATE_FAIL(BAD_REQUEST, "태그 업로드 실패"),
 

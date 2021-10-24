@@ -1,6 +1,7 @@
 package dingdong.dingdong.controller;
 
 import static dingdong.dingdong.domain.chat.PromiseType.CONFIRMED;
+import static dingdong.dingdong.domain.chat.PromiseType.END;
 import static dingdong.dingdong.domain.chat.PromiseType.PROGRESS;
 import static dingdong.dingdong.util.exception.ResultCode.POST_NOT_FOUND;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
@@ -321,14 +322,14 @@ class PostControllerTest {
                 .promiseTime(LocalTime.now().minusHours(5))
                 .promiseLocal("test")
                 .totalPeople(3)
-                .votingPeople(1)
+                .votingPeople(3)
                 .promiseEndTime(LocalDateTime.now())
                 .type(PROGRESS)
                 .build();
         chatPromiseRepository.save(chatPromise1);
 
         ChatPromiseVote chatPromiseVote1 = ChatPromiseVote.builder()
-            .id(1L)
+            .id(2L)
             .chatRoom(chatRoom1)
             .user(user1)
             .build();
@@ -399,7 +400,7 @@ class PostControllerTest {
     }
 
     @Test
-    @DisplayName("홈화면, 모든 나누기 불러오기(정렬방식: 최신순)")
+    @DisplayName("지역별 모든 나누기 불러오기(정렬방식: 최신순)")
     void findPostsSortByCreatedDate() throws Exception {
         TokenDto tokenDto = getTokenDto();
         String token = "Bearer " + tokenDto.getAccessToken();
@@ -443,7 +444,7 @@ class PostControllerTest {
 
 
     @Test
-    @DisplayName("홈화면, 모든 나누기 불러오기(정렬방식: 마감임박순)")
+    @DisplayName("지역별 모든 나누기 불러오기(정렬방식: 마감임박순)")
     void findPostsSortByEndDate() throws Exception {
         TokenDto tokenDto = getTokenDto();
         String token = "Bearer " + tokenDto.getAccessToken();
@@ -628,7 +629,7 @@ class PostControllerTest {
         TokenDto tokenDto = getTokenDto();
         String token = "Bearer " + tokenDto.getAccessToken();
 
-        mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/v1/post/{postId}", 2L)
+        mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/v1/post/{postId}", 1L)
                 .header(HttpHeaders.AUTHORIZATION, token)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
