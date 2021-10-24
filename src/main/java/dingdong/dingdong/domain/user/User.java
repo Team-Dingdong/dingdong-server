@@ -59,6 +59,7 @@ public class User extends BaseTimeEntity {
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonManagedReference
+    @Builder.Default
     private List<Post> posts = new ArrayList<>();
 
     public void setLocal(Local local1, Local local2) {

@@ -198,6 +198,8 @@ class PostControllerTest {
             .id(id2)
             .phone(phone2)
             .authority(Role.REGULAR)
+            .local1(local1)
+            .local2(local2)
             .build();
 
         String nickname2 = "testNickname2";
@@ -221,7 +223,16 @@ class PostControllerTest {
             .build();
         tagRepository.save(tag1);
 
-        Category category = categoryRepository.findById(1L).get();
+        Category category1 = Category.builder()
+            .id(1L)
+            .name("야채")
+            .build();
+
+        Category category2 = Category.builder()
+            .id(2L)
+            .name("과일")
+            .build();
+
         Post post1 = Post.builder()
             .id(1L)
             .title("title")
@@ -234,7 +245,7 @@ class PostControllerTest {
             .imageUrl2("imageUrl2")
             .imageUrl3("imageUrl3")
             .user(user1)
-            .category(category)
+            .category(category1)
             .local(local1)
             .done(Boolean.FALSE)
             .build();
@@ -253,7 +264,7 @@ class PostControllerTest {
             .imageUrl3("imageUrl3")
             .user(user2)
             .local(local2)
-            .category(category)
+            .category(category2)
             .done(Boolean.TRUE)
             .build();
         postRepository.save(post2);
@@ -523,7 +534,7 @@ class PostControllerTest {
         String token = "Bearer " + tokenDto.getAccessToken();
 
         mockMvc.perform(RestDocumentationRequestBuilders
-            .get("/api/v1/post/sort=desc&sortby=category&endDate&local/{categoryId}/{localId}", 1L, 1L)
+            .get("/api/v1/post/sort=desc&sortby=category&endDate&local/{categoryId}/{localId}", 3L, 1L)
             .param("page", "1")
             .header(HttpHeaders.AUTHORIZATION, token)
             .contentType(MediaType.APPLICATION_JSON)
@@ -649,7 +660,7 @@ class PostControllerTest {
             .param("cost", "1000")
             .param("bio", "test_bio")
             .param("location", "test_location")
-            .param("categoryId", "1")
+            .param("categoryId", "2")
             .param("postTag","#test")
             .contentType(MediaType.MULTIPART_FORM_DATA)
             .header(HttpHeaders.AUTHORIZATION, token)
