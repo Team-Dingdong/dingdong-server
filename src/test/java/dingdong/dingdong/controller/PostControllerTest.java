@@ -1,6 +1,7 @@
 package dingdong.dingdong.controller;
 
 import static dingdong.dingdong.domain.chat.PromiseType.CONFIRMED;
+import static dingdong.dingdong.domain.chat.PromiseType.PROGRESS;
 import static dingdong.dingdong.util.exception.ResultCode.POST_NOT_FOUND;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
@@ -322,7 +323,7 @@ class PostControllerTest {
                 .totalPeople(3)
                 .votingPeople(1)
                 .promiseEndTime(LocalDateTime.now())
-                .type(CONFIRMED)
+                .type(PROGRESS)
                 .build();
         chatPromiseRepository.save(chatPromise1);
 

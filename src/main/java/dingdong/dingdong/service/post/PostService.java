@@ -388,7 +388,7 @@ public class PostService {
         Post post = postRepository.findById(id)
             .orElseThrow(() -> new ResourceNotFoundException(POST_NOT_FOUND));
 
-        if(post.getDone() == Boolean.TRUE){
+        if(post.getDone() == Boolean.TRUE ){
             postTagRepository.deleteByPostId(post.getId());
 
             if (chatPromiseRepository.existsById(id)) {
