@@ -113,6 +113,7 @@ public class Post extends BaseTimeEntity {
 
     @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonBackReference
+    @Builder.Default
     private List<PostTag> postTags = new ArrayList<>();
 
     public void plusUserCount() {

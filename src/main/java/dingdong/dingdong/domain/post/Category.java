@@ -23,6 +23,7 @@ public class Category {
 
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
     @JsonManagedReference
+    @Builder.Default
     private List<Post> posts = new ArrayList<>();
 
     public void addPost(Post post) {
