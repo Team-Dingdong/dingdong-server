@@ -6,6 +6,7 @@ import java.util.List;
 import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 
+@ToString
 @Getter
 @Setter
 @Builder
@@ -29,5 +30,7 @@ public class PostCreateRequestDto {
 
     @JsonIgnore
     private List<MultipartFile> postImages;
+
+
 
 }

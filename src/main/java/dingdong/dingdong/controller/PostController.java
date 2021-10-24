@@ -9,6 +9,7 @@ import dingdong.dingdong.util.exception.Result;
 import dingdong.dingdong.util.exception.ResultCode;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
+@Slf4j
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/post")
 @RestController
@@ -102,6 +104,7 @@ public class PostController {
     @PostMapping("/{localId}")
     public ResponseEntity<Result<PostResponseDto>> createPost(@CurrentUser User user, @PathVariable Long localId,
         @ModelAttribute @Valid PostCreateRequestDto postCreateRequestDto) {
+        log.info("postcontroller create ===========================");
         Long postId = postService.createPost(user, localId, postCreateRequestDto);
         PostResponseDto data = PostResponseDto.builder()
             .id(postId)
