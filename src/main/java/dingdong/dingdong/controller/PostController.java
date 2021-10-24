@@ -110,7 +110,7 @@ public class PostController {
     }
 
     // 나누기 수정
-    @PatchMapping("/{postId}")
+    @PostMapping("/edit/{postId}")
     public ResponseEntity<Result<PostResponseDto>> updatePost(@PathVariable Long postId,
         @ModelAttribute @Valid PostUpdateRequestDto postUpdateRequestDto) {
         postService.updatePost(postId, postUpdateRequestDto);
