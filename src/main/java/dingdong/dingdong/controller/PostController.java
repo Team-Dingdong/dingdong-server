@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
-@Slf4j
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/post")
 @RestController
@@ -104,7 +103,6 @@ public class PostController {
     @PostMapping("/{localId}")
     public ResponseEntity<Result<PostResponseDto>> createPost(@CurrentUser User user, @PathVariable Long localId,
         @ModelAttribute @Valid PostCreateRequestDto postCreateRequestDto) {
-        log.info("postcontroller create ===========================");
         Long postId = postService.createPost(user, localId, postCreateRequestDto);
         PostResponseDto data = PostResponseDto.builder()
             .id(postId)
