@@ -32,6 +32,8 @@
 - [DingDong REST API](http://3.38.61.13:8080/docs/api-doc.html)
 
 ### ERD
+![dingdong](https://user-images.githubusercontent.com/46434694/138575222-d4f84727-7433-4788-b115-a2970aabc5a4.png)
+
 ### Architecture
 <img width="1173" alt="스크린샷 2021-10-19 오후 1 12 26" src="https://user-images.githubusercontent.com/46434694/137842786-281915ab-6794-4214-ab87-98ccbe219ebd.png">  
 
