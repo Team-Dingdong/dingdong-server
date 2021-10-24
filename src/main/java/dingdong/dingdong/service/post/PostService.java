@@ -43,7 +43,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-@Slf4j
 @RequiredArgsConstructor
 @Service
 public class PostService {
@@ -338,7 +337,6 @@ public class PostService {
     @Transactional
     public Long createPost(User user, Long localId, PostCreateRequestDto postCreateRequestDto) {
 
-        log.info("createPost1 user : {}, localId : {} ", user.getId(), localId);
         // CategoryId
         Category category = categoryRepository.findById(postCreateRequestDto.getCategoryId())
             .orElseThrow(() -> new ResourceNotFoundException(CATEGORY_NOT_FOUND));
@@ -352,7 +350,6 @@ public class PostService {
             throw new ResourceNotFoundException(LOCAL_NOT_FOUND);
         }
 
-        log.info("createPost1 postCreateRequestDto : {}", postCreateRequestDto.toString());
         List<String> paths = new ArrayList<>();
         // ImageList to S3
         if (postCreateRequestDto.getPostImages() != null) {
