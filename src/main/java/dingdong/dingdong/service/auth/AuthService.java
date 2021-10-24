@@ -18,6 +18,7 @@ import dingdong.dingdong.domain.user.UserAccount;
 import dingdong.dingdong.domain.user.UserRepository;
 import dingdong.dingdong.dto.auth.ApplicationNaverSENS;
 import dingdong.dingdong.dto.auth.AuthRequestDto;
+import dingdong.dingdong.dto.auth.AuthResponseDto;
 import dingdong.dingdong.dto.auth.LocalRequestDto;
 import dingdong.dingdong.dto.auth.LocalResponseDto;
 import dingdong.dingdong.dto.auth.MessageRequestDto;
@@ -29,6 +30,7 @@ import dingdong.dingdong.dto.auth.SendSmsResponseDto;
 import dingdong.dingdong.dto.auth.TokenDto;
 import dingdong.dingdong.dto.auth.TokenRequestDto;
 import dingdong.dingdong.util.SecurityUtil;
+import dingdong.dingdong.util.exception.AuthenticationException;
 import dingdong.dingdong.util.exception.DuplicateException;
 import dingdong.dingdong.util.exception.ForbiddenException;
 import dingdong.dingdong.util.exception.JwtAuthException;
@@ -41,6 +43,7 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.sql.Timestamp;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -92,7 +95,8 @@ public class AuthService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String phone) throws UsernameNotFoundException {
-        Auth auth = authRepository.findByPhone(phone);
+        Auth auth = authRepository.findByPhone(phone)
+            .orElseThrow(() -> new ResourceNotFoundException(ResultCode.AUTH_NOT_FOUND));
         User user = userRepository.findByPhone(phone);
 
         if (auth == null || user == null) {
@@ -246,19 +250,48 @@ public class AuthService implements UserDetailsService {
     }
 
     // 휴대폰 인증 번호 확인
-    @Transactional
+    @Transactional(noRollbackFor = {AuthenticationException.class, UsernameNotFoundException.class})
     public Map<AuthType, TokenDto> auth(AuthRequestDto authRequestDto) {
         checkBlackList(authRequestDto.getPhone());
         checkUnsub(authRequestDto.getPhone());
 
-        LocalDateTime now = LocalDateTime.now();
-        LocalDateTime requestTime = authRepository.findRequestTimeByPhone(authRequestDto.getPhone())
-            .orElseThrow(() -> new UsernameNotFoundException(authRequestDto.getPhone()));
+        Auth auth = authRepository.findByPhone(authRequestDto.getPhone())
+            .orElseThrow(() -> new ResourceNotFoundException(ResultCode.AUTH_NOT_FOUND));
 
-//        Duration duration = Duration.between(requestTime, now);
-//        if(duration.getSeconds() > 300) {
-//            throw new JwtAuthException(ResultCode.AUTH_TIME_ERROR);
-//        }
+        // 인증 쿨타임 시간일 경우
+        if (auth.getCoolTime() != null && LocalDateTime.now().isBefore(auth.getCoolTime())) {
+            throw new AuthenticationException(ResultCode.AUTH_COOL_TIME_LIMIT);
+        }
+
+        // 인증 시간이 지났을 경우
+        Duration duration = Duration.between(auth.getRequestTime(), LocalDateTime.now());
+        if (duration.getSeconds() > 300) {
+            throw new AuthenticationException(ResultCode.AUTH_TIME_OUT);
+        }
+
+        // 인증 번호가 옳지 않을 경우
+        // 인증 시도 횟수가 초과되었을 경우
+        String encAuthNumber = auth.getAuthNumber();
+        String authNumber = authRequestDto.getAuthNumber();
+        if(!passwordEncoder.matches(authNumber, encAuthNumber)) {
+            auth.plusAttemptCount();
+
+            // 인증 시도 제한 횟수
+            Integer limitAttemptCount = 5;
+            if (auth.getAttemptCount() > limitAttemptCount) {
+                // 인증 제한 쿨타임 시간(분)
+                Long coolTimeMinute = 5L;
+                auth.setCoolTime(coolTimeMinute);
+                auth.reset();
+
+                authRepository.save(auth);
+
+                throw new AuthenticationException(ResultCode.AUTH_ATTEMPT_COUNT_LIMIT);
+            }
+            authRepository.save(auth);
+
+            throw new AuthenticationException(ResultCode.AUTH_FAIL, AuthResponseDto.of(auth));
+        }
 
         if (userRepository.existsByPhone(authRequestDto.getPhone())) {
             return Map.of(AuthType.LOGIN, login(authRequestDto));
@@ -267,9 +300,33 @@ public class AuthService implements UserDetailsService {
         }
     }
 
+    // 테스트 전화번호 제외하도록 추가(테스트 기간 이후 삭제 예정)
+    @Transactional(readOnly = true)
+    public boolean checkTest(String phone) {
+        if (phone.equals("01011111111") || phone.equals("01022222222") ||
+            phone.equals("01033333333") || phone.equals("01044444444") || phone
+            .equals("01055555555")) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     // 휴대폰 인증 번호 전송
     @Transactional
     public MessageResponseDto sendSms(MessageRequestDto messageRequestDto) {
+        // 테스트 전화번호 제외하도록 추가(테스트 기간 이후 삭제 예정)
+        if (checkTest(messageRequestDto.getTo())) {
+            SendSmsResponseDto sendSmsResponseDto = SendSmsResponseDto.builder()
+                .statusCode("202")
+                .statusName("test status name")
+                .requestId("test request id")
+                .requestTime(LocalDateTime.now())
+                .build();
+
+            return MessageResponseDto.from(sendSmsResponseDto);
+        }
+
         checkBlackList(messageRequestDto.getTo());
         checkUnsub(messageRequestDto.getTo());
         try {
@@ -322,7 +379,8 @@ public class AuthService implements UserDetailsService {
 
             if (sendSmsResponseDto.getStatusCode().equals("202")) {
                 if (authRepository.existsByPhone(messageRequestDto.getTo())) {
-                    Auth auth = authRepository.findByPhone(messageRequestDto.getTo());
+                    Auth auth = authRepository.findByPhone(messageRequestDto.getTo()).orElseThrow(
+                        () -> new ResourceNotFoundException(ResultCode.AUTH_NOT_FOUND));
                     auth.reauth(passwordEncoder.encode(code), sendSmsResponseDto.getRequestId(),
                         sendSmsResponseDto.getRequestTime());
                     authRepository.save(auth);

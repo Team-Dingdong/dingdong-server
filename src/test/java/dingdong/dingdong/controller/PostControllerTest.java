@@ -146,6 +146,7 @@ class PostControllerTest {
             .id(id1)
             .phone(phone1)
             .authNumber(passwordEncoder.encode(authNumber))
+            .attemptCount(0)
             .requestId(requestId)
             .requestTime(requestTime)
             .build();
@@ -1022,4 +1023,3 @@ class PostControllerTest {
     }
 
 }
-
