@@ -256,7 +256,6 @@ include::{snippets}/profile-controller-test/update-profile/http-request.adoc[]
 ===== Response Http Example
 include::{snippets}/profile-controller-test/update-profile/http-response.adoc[]
 ===== Response Status
-
 |===
 | Status | Result | Code | Message
 
@@ -276,6 +275,12 @@ include::{snippets}/profile-controller-test/get-my-locals/http-request.adoc[]
 include::{snippets}/profile-controller-test/get-my-locals/response-fields.adoc[]
 ===== Response Http Example
 include::{snippets}/profile-controller-test/get-my-locals/http-response.adoc[]
+===== Response Status
+|===
+| Status | Result | Code | Message
+
+| `200` | `OK` | `LOCAL_READ_SUCCESS` | 동네 목록 조회 성공
+|===
 
 === 3-5. 신고하기
 ==== Request
