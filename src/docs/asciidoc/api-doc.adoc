@@ -52,9 +52,26 @@ include::{snippets}/auth-controller-test/auth/request-fields.adoc[]
 include::{snippets}/auth-controller-test/auth/http-request.adoc[]
 ==== Response
 ===== Response Fields
+- 인증 번호가 옳은 경우
 include::{snippets}/auth-controller-test/auth/response-fields.adoc[]
+- 인증 번호가 틀린 경우
+include::{snippets}/auth-controller-test/auth-fail/response-fields.adoc[]
 ===== Response Http Example
+- 인증 번호가 옳은 경우
 include::{snippets}/auth-controller-test/auth/http-response.adoc[]
+- 인증 번호가 틀린 경우
+include::{snippets}/auth-controller-test/auth-fail/http-response.adoc[]
+===== Response Status
+|===
+| Status | Result | Code | Message
+
+| `200` | `OK` | `LOGIN_SUCCESS` | 로그인 성공
+| `400` | `BAD_REQUEST` | `AUTH_FAIL` | 전화 번호나 인증 번호가 옳지 않습니다
+| `403` | `FORBIDDEN` | `AUTH_TIME_OUT` | 인증 시간을 초과하였습니다
+| `403` | `FORBIDDEN` | `AUTH_COOL_TIME_LIMIT` | 정회원 인증 제한 - 5분 후에 시도해주세요
+| `403` | `FORBIDDEN` | `AUTH_ATTEMPT_COUNT_LIMIT` | 정회원 인증 제한 - 인증 시도 횟수 초과
+| `404` | `NOT_FOUND` | `AUTH_NOT_FOUND` | 해당 사용자의 인증 정보를 찾을 수 없습니다
+|===
 
 === 2-3. 로그아웃
 ==== Request

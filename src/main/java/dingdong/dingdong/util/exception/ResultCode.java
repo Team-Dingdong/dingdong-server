@@ -75,7 +75,6 @@ public enum ResultCode {
     CHAT_PROMISE_VOTE_CREATE_SUCCESS(CREATED, "채팅방 약속 투표 성공"),
 
     /* 400 BAD_REQUEST : 잘못된 요청 */
-    AUTH_NOT_FOUND(BAD_REQUEST, "해당 사용자의 인증 정보를 찾을 수 없습니다"),
     AUTH_FAIL(BAD_REQUEST, "전화 번호나 인증 번호가 옳지 않습니다"),
 
     INVALID_REFRESH_TOKEN(BAD_REQUEST, "리프레시 토큰이 유효하지 않습니다"),
@@ -125,6 +124,7 @@ public enum ResultCode {
     AUTH_ATTEMPT_COUNT_LIMIT(FORBIDDEN, "정회원 인증 제한 - 인증 시도 횟수 초과"),
 
     /* 404 NOT_FOUND : Resource 를 찾을 수 없음 */
+    AUTH_NOT_FOUND(NOT_FOUND, "해당 사용자의 인증 정보를 찾을 수 없습니다"),
     USER_NOT_FOUND(NOT_FOUND, "해당 유저 정보를 찾을 수 없습니다"),
     REFRESH_TOKEN_NOT_FOUND(NOT_FOUND, "로그아웃 된 사용자입니다"),
     POST_NOT_FOUND(NOT_FOUND, "해당 포스트를 찾을 수 없습니다"),

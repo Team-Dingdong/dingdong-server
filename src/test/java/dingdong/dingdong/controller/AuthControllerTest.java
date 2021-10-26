@@ -196,6 +196,36 @@ class AuthControllerTest {
     }
 
     @Test
+    @DisplayName("휴대폰 인증 번호 확인 테스트-실패")
+    void authFail() throws Exception {
+        String phone = "01012345678";
+        String authNumber = "111111";
+        AuthRequestDto authRequestDto = AuthRequestDto.builder()
+            .phone(phone)
+            .authNumber(authNumber)
+            .build();
+
+        mockMvc.perform(RestDocumentationRequestBuilders.post("/api/v1/auth")
+            .content(objectMapper.writeValueAsString(authRequestDto))
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON))
+            .andDo(print()).andExpect(status().is4xxClientError())
+            .andDo(print()).andDo(document("{class-name}/{method-name}",
+            preprocessRequest(modifyUris().scheme(scheme).host(host).port(port), prettyPrint()),
+            preprocessResponse(prettyPrint()),
+            requestFields(
+                fieldWithPath("phone").type(JsonFieldType.STRING).description("인증 번호를 받은 휴대폰 번호"),
+                fieldWithPath("authNumber").type(JsonFieldType.STRING)
+                    .description("휴대폰으로 전송 받은 인증 번호")
+            ),
+            relaxedResponseFields(
+                fieldWithPath("data.attemptCount").type(JsonFieldType.NUMBER)
+                    .description("인증 시도 횟수")
+            )
+        ));
+    }
+
+    @Test
     @DisplayName("로그아웃 테스트")
     void logout() throws Exception {
         TokenDto tokenDto = getTokenDto();
