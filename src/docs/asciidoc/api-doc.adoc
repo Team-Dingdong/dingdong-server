@@ -210,6 +210,13 @@ include::{snippets}/profile-controller-test/get-my-profile/http-request.adoc[]
 include::{snippets}/profile-controller-test/get-my-profile/response-fields.adoc[]
 ===== Response Http Example
 include::{snippets}/profile-controller-test/get-my-profile/http-response.adoc[]
+===== Response Status
+|===
+| Status | Result | Code | Message
+
+| `200` | `OK` | `PROFILE_READ_SUCCESS` | 프로필 조회 성공
+| `404` | `NOT_FOUND` | `PROFILE_NOT_FOUND` | 해당 프로필을 찾을 수 없습니다
+|===
 
 === 3-2. 프로필 조회
 ==== Request
@@ -226,6 +233,13 @@ include::{snippets}/profile-controller-test/get-profile/http-request.adoc[]
 include::{snippets}/profile-controller-test/get-profile/response-fields.adoc[]
 ===== Response Http Example
 include::{snippets}/profile-controller-test/get-profile/http-response.adoc[]
+===== Response Status
+|===
+| Status | Result | Code | Message
+
+| `200` | `OK` | `PROFILE_READ_SUCCESS` | 프로필 조회 성공
+| `404` | `NOT_FOUND` | `PROFILE_NOT_FOUND` | 해당 프로필을 찾을 수 없습니다
+|===
 
 === 3-3. 프로필 수정
 ===== CURL
@@ -241,6 +255,14 @@ include::{snippets}/profile-controller-test/update-profile/http-request.adoc[]
 ==== Response
 ===== Response Http Example
 include::{snippets}/profile-controller-test/update-profile/http-response.adoc[]
+===== Response Status
+
+|===
+| Status | Result | Code | Message
+
+| `200` | `OK` | `PROFILE_UPDATE_SUCCESS` | 프로필 수정 성공
+| `404` | `NOT_FOUND` | `PROFILE_NOT_FOUND` | 해당 프로필을 찾을 수 없습니다
+|===
 
 === 3-4. 나의 동네 조회
 ===== CURL
