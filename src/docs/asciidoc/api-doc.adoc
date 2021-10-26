@@ -84,6 +84,13 @@ include::{snippets}/auth-controller-test/logout/http-request.adoc[]
 ==== Response
 ===== Response Http Example
 include::{snippets}/auth-controller-test/logout/http-response.adoc[]
+===== Response Status
+|===
+| Status | Result | Code | Message
+
+| `200` | `OK` | `LOGOUT_SUCCES` | 로그아웃 성공
+| `404` | `NOT_FOUND` | `USER_NOT_FOUND` | 해당 유저 정보를 찾을 수 없습니다
+|===
 
 === 2-4. 토큰 재발급
 ==== Request
