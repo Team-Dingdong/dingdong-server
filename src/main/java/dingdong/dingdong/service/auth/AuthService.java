@@ -239,7 +239,7 @@ public class AuthService implements UserDetailsService {
         return locals.stream().map(LocalResponseDto::from).collect(Collectors.toList());
     }
 
-    // 동네 인증
+    // 동네 설정
     @Transactional
     public void setLocal(User user, LocalRequestDto localRequestDto) {
         Local local1 = localRepository.findById(localRequestDto.getLocal1())
