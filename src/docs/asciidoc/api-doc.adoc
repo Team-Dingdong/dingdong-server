@@ -546,6 +546,19 @@ include::{snippets}/post-controller-test/confirmed/http-request.adoc[]
 ==== Response
 ===== Response Http Example
 include::{snippets}/post-controller-test/confirmed/http-response.adoc[]
+===== Response Status
+|===
+| Status | Result | Code | Message
+
+| `200` | `OK` | `POST_CONFIRMED_SUCCESS` | 거래 확정 성공
+| `400` | `BAD_REQUEST` | `POST_CONFIRMED_FAIL_PROMISE` | 약속이 확정되지 않아 거래 확정이 불가능합니다
+| `400` | `BAD_REQUEST` | `POST_CONFIRMED_FAIL_TIME` | 거래 약속 시간이 지나지 않아 거래 확정이 불가능합니다
+| `403` | `FORBIDDEN` | `CHAT_ROOM_NOT_OWNER` | 해당 채팅방의 방장이 아닙니다
+| `404` | `NOT_FOUND` | `CHAT_ROOM_NOT_FOUND` | 해당 채팅방을 찾을 수 없습니다
+| `404` | `NOT_FOUND` | `CHAT_JOIN_NOT_FOUND` | 해당 사용자가 채팅방에 속해 있지 않습니다
+| `404` | `NOT_FOUND` | `CHAT_PROMISE_NOT_FOUND` | 해당 채팅 약속을 찾을 수 없습니다
+| `409` | `CONFLICT` | `POST_CONFIRMED_DUPLICATION` | 이미 거래 확정하였습니다
+|===
 
 === 5-13. 나누기 검색
 ==== Request
@@ -575,6 +588,12 @@ include::{snippets}/chat-room-controller-test/find-chat-rooms/http-request.adoc[
 include::{snippets}/chat-room-controller-test/find-chat-rooms/response-fields.adoc[]
 ===== Response Http Example
 include::{snippets}/chat-room-controller-test/find-chat-rooms/http-response.adoc[]
+===== Response Status
+|===
+| Status | Result | Code | Message
+
+| `200` | `OK` | `CHAT_ROOM_READ_ALL_SUCCESS` | 채팅방 목록 조회 성공
+|===
 
 === 6-2. 채팅방 정보 조회
 ===== CURL
@@ -590,6 +609,14 @@ include::{snippets}/chat-room-controller-test/find-chat-room-by-room-id/http-req
 include::{snippets}/chat-room-controller-test/find-chat-room-by-room-id/response-fields.adoc[]
 ===== Response Http Example
 include::{snippets}/chat-room-controller-test/find-chat-room-by-room-id/http-response.adoc[]
+===== Response Status
+|===
+| Status | Result | Code | Message
+
+| `200` | `OK` | `CHAT_ROOM_READ_SUCCESS` | 채팅방 조회 성공
+| `404` | `NOT_FOUND` | `CHAT_ROOM_NOT_FOUND` | 해당 채팅방을 찾을 수 없습니다
+| `404` | `NOT_FOUND` | `CHAT_JOIN_NOT_FOUND` | 해당 사용자가 채팅방에 속해 있지 않습니다
+|===
 
 === 6-3. 채팅방 사용자 목록 조회
 ===== CURL
@@ -605,6 +632,15 @@ include::{snippets}/chat-room-controller-test/find-users-by-room-id/http-request
 include::{snippets}/chat-room-controller-test/find-users-by-room-id/response-fields.adoc[]
 ===== Response Http Example
 include::{snippets}/chat-room-controller-test/find-users-by-room-id/http-response.adoc[]
+===== Response Status
+|===
+| Status | Result | Code | Message
+
+| `200` | `OK` | `CHAT_ROOM_USER_READ_SUCCESS` | 채팅방 사용자 목록 조회 성공
+| `404` | `NOT_FOUND` | `CHAT_ROOM_NOT_FOUND` | 해당 채팅방을 찾을 수 없습니다
+| `404` | `NOT_FOUND` | `CHAT_JOIN_NOT_FOUND` | 해당 사용자가 채팅방에 속해 있지 않습니다
+
+|===
 
 === 6-4. 채팅방 입장
 ===== CURL
@@ -618,6 +654,17 @@ include::{snippets}/chat-room-controller-test/enter-chat-room/http-request.adoc[
 ==== Response
 ===== Response Http Example
 include::{snippets}/chat-room-controller-test/enter-chat-room/http-response.adoc[]
+===== Response Status
+|===
+| Status | Result | Code | Message
+
+| `201` | `CREATED` | `CHAT_ROOM_ENTER_SUCCESS` | 채팅방 입장 성공
+| `400` | `BAD_REQUEST` | `CHAT_ROOM_ENTER_FAIL_DONE` | 해당 거래가 완료되어 입장할 수 없습니다
+| `400` | `BAD_REQUEST` | `CHAT_ROOM_ENTER_FAIL_PROMISE` | 해당 거래 약속이 생성되어 입장할 수 없습니다
+| `400` | `BAD_REQUEST` | `CHAT_ROOM_ENTER_FAIL_LIMIT` | 해당 거래의 인원이 가득 찼습니다
+| `404` | `NOT_FOUND` | `CHAT_ROOM_NOT_FOUND` | 해당 채팅방을 찾을 수 없습니다
+| `409` | `CONFLICT` | `CHAT_ROOM_DUPLICATION` | 이미 입장한 채팅방입니다
+|===
 
 === 6-5. 채팅방 나가기
 ===== CURL
@@ -631,6 +678,16 @@ include::{snippets}/chat-room-controller-test/quit-chat-room/http-request.adoc[]
 ==== Response
 ===== Response Http Example
 include::{snippets}/chat-room-controller-test/quit-chat-room/http-response.adoc[]
+===== Response Status
+|===
+| Status | Result | Code | Message
+
+| `200` | `OK` | `CHAT_ROOM_QUIT_SUCCESS` | 채팅방 나가기 성공
+| `400` | `BAD_REQUEST` | `CHAT_ROOM_QUIT_FAIL` | 해당 거래 약속 때문에 퇴장할 수 없습니다
+| `403` | `FORBIDDEN` | `CHAT_ROOM_QUIT_FAIL_OWNER` | 방장은 채팅방을 나갈 수 없습니다
+| `404` | `NOT_FOUND` | `CHAT_ROOM_NOT_FOUND` | 해당 채팅방을 찾을 수 없습니다
+| `404` | `NOT_FOUND` | `CHAT_JOIN_NOT_FOUND` | 해당 사용자가 채팅방에 속해 있지 않습니다
+|===
 
 === 6-6. 채팅 메세지 조회
 ===== CURL
@@ -646,6 +703,14 @@ include::{snippets}/chat-room-controller-test/find-chat-messages-by-room-id/http
 include::{snippets}/chat-room-controller-test/find-chat-messages-by-room-id/response-fields.adoc[]
 ===== Response Http Example
 include::{snippets}/chat-room-controller-test/find-chat-messages-by-room-id/http-response.adoc[]
+===== Response Status
+|===
+| Status | Result | Code | Message
+
+| `200` | `OK` | `CHAT_MESSAGE_READ_SUCCESS` | 채팅 메세지 조회 성공
+| `404` | `NOT_FOUND` | `CHAT_ROOM_NOT_FOUND` | 해당 채팅방을 찾을 수 없습니다
+| `404` | `NOT_FOUND` | `CHAT_JOIN_NOT_FOUND` | 해당 사용자가 채팅방에 속해 있지 않습니다
+|===
 
 === 6-7. 채팅 약속 생성
 ===== CURL
@@ -661,6 +726,16 @@ include::{snippets}/chat-room-controller-test/create-chat-promise/http-request.a
 ==== Response
 ===== Response Http Example
 include::{snippets}/chat-room-controller-test/create-chat-promise/http-response.adoc[]
+===== Response Status
+|===
+| Status | Result | Code | Message
+
+| `201` | `CREATED` | `CHAT_PROMISE_CREATE_SUCCESS` | 채팅방 약속 생성 성공
+| `400` | `BAD_REQUEST` | `CHAT_PROMISE_CREATE_FAIL_ONLY` | 방장 혼자 거래 약속을 생성할 수 없습니다
+| `403` | `FORBIDDEN` | `CHAT_ROOM_NOT_OWNER` | 해당 채팅방의 방장이 아닙니다
+| `404` | `NOT_FOUND` | `CHAT_ROOM_NOT_FOUND` | 해당 채팅방을 찾을 수 없습니다
+| `409` | `CONFLICT` | `CHAT_PROMISE_DUPLICATION` | 이미 약속 투표가 진행중입니다
+|===
 
 === 6-8. 채팅 약속 수정
 ===== CURL
@@ -676,6 +751,16 @@ include::{snippets}/chat-room-controller-test/update-chat-promise/http-request.a
 ==== Response
 ===== Response Http Example
 include::{snippets}/chat-room-controller-test/update-chat-promise/http-response.adoc[]
+===== Response Status
+|===
+| Status | Result | Code | Message
+
+| `200` | `OK` | `CHAT_PROMISE_UPDATE_SUCCESS` | 채팅방 약속 수정 성공
+| `400` | `BAD_REQUEST` | `CHAT_PROMISE_UPDATE_FAIL_CONFIRMED` | 약속이 확정되어 수정할 수 없습니다
+| `403` | `FORBIDDEN` | `CHAT_ROOM_NOT_OWNER` | 해당 채팅방의 방장이 아닙니다
+| `404` | `NOT_FOUND` | `CHAT_ROOM_NOT_FOUND` | 해당 채팅방을 찾을 수 없습니다
+| `404` | `NOT_FOUND` | `CHAT_PROMISE_NOT_FOUND` | 해당 채팅 약속을 찾을 수 없습니다
+|===
 
 === 6-9. 채팅 약속 조회
 ===== CURL
@@ -691,6 +776,15 @@ include::{snippets}/chat-room-controller-test/find-chat-promise-by-post-id/http-
 include::{snippets}/chat-room-controller-test/find-chat-promise-by-post-id/response-fields.adoc[]
 ===== Response Http Example
 include::{snippets}/chat-room-controller-test/find-chat-promise-by-post-id/http-response.adoc[]
+===== Response Status
+|===
+| Status | Result | Code | Message
+
+| `200` | `OK` | `CHAT_PROMISE_READ_SUCCESS` | 채팅방 약속 조회 성공
+| `404` | `NOT_FOUND` | `CHAT_ROOM_NOT_FOUND` | 해당 채팅방을 찾을 수 없습니다
+| `404` | `NOT_FOUND` | `CHAT_JOIN_NOT_FOUND` | 해당 사용자가 채팅방에 속해 있지 않습니다
+| `404` | `NOT_FOUND` | `CHAT_PROMISE_NOT_FOUND` | 해당 채팅 약속을 찾을 수 없습니다
+|===
 
 === 6-10. 채팅 약속 투표
 ===== CURL
@@ -704,3 +798,14 @@ include::{snippets}/chat-room-controller-test/create-vote-promise/http-request.a
 ==== Response
 ===== Response Http Example
 include::{snippets}/chat-room-controller-test/create-vote-promise/http-response.adoc[]
+===== Response Status
+|===
+| Status | Result | Code | Message
+
+| `201` | `CREATED` | `CHAT_PROMISE_VOTE_CREATE_SUCCESS` | 채팅방 약속 투표 성공
+| `400` | `BAD_REQUEST` | `CHAT_PROMISE_NOT_IN_PROGRESS` | 약속 투표가 진행중이지 않습니다
+| `404` | `NOT_FOUND` | `CHAT_ROOM_NOT_FOUND` | 해당 채팅방을 찾을 수 없습니다
+| `404` | `NOT_FOUND` | `CHAT_JOIN_NOT_FOUND` | 해당 사용자가 채팅방에 속해 있지 않습니다
+| `404` | `NOT_FOUND` | `CHAT_PROMISE_NOT_FOUND` | 해당 채팅 약속을 찾을 수 없습니다
+| `409` | `CONFLICT` | `CHAT_PROMISE_VOTE_DUPLICATION` | 이미 투표하였습니다
+|===

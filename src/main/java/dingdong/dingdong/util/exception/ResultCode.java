@@ -40,6 +40,8 @@ public enum ResultCode {
     CHAT_ROOM_READ_SUCCESS(OK, "채팅방 조회 성공"),
     CHAT_ROOM_USER_READ_SUCCESS(OK, "채팅방 사용자 목록 조회 성공"),
     CHAT_ROOM_QUIT_SUCCESS(OK, "채팅방 나가기 성공"),
+    CHAT_PROMISE_UPDATE_SUCCESS(OK, "채팅방 약속 수정 성공"),
+    CHAT_PROMISE_READ_SUCCESS(OK, "채팅방 약속 조회 성공"),
 
     CHAT_MESSAGE_READ_SUCCESS(OK, "채팅 메세지 조회 성공"),
 
@@ -69,8 +71,6 @@ public enum ResultCode {
     CHAT_ROOM_ENTER_SUCCESS(CREATED, "채팅방 입장 성공"),
 
     CHAT_PROMISE_CREATE_SUCCESS(CREATED, "채팅방 약속 생성 성공"),
-    CHAT_PROMISE_UPDATE_SUCCESS(CREATED, "채팅방 약속 수정 성공"),
-    CHAT_PROMISE_READ_SUCCESS(CREATED, "채팅방 약속 조회 성공"),
 
     CHAT_PROMISE_VOTE_CREATE_SUCCESS(CREATED, "채팅방 약속 투표 성공"),
 
@@ -98,7 +98,7 @@ public enum ResultCode {
 
     CHAT_PROMISE_CREATE_FAIL_ONLY(BAD_REQUEST, "방장 혼자 거래 약속을 생성할 수 없습니다"),
     CHAT_PROMISE_UPDATE_FAIL_CONFIRMED(BAD_REQUEST, "약속이 확정되어 수정할 수 없습니다"),
-    CHAT_PROMISE_NOT_IN_PRGRESS(BAD_REQUEST, "약속 투표가 진행중이지 않습니다"),
+    CHAT_PROMISE_NOT_IN_PROGRESS(BAD_REQUEST, "약속 투표가 진행중이지 않습니다"),
 
     POST_CONFIRMED_FAIL_PROMISE(BAD_REQUEST, "약속이 확정되지 않아 거래 확정이 불가능합니다"),
     POST_CONFIRMED_FAIL_TIME(BAD_REQUEST, "거래 약속 시간이 지나지 않아 거래 확정이 불가능합니다"),
@@ -117,7 +117,8 @@ public enum ResultCode {
     RATING_CREATE_FAIL_SELF(FORBIDDEN, "본인은 평가할 수 없습니다"),
     RATING_CREATE_FAIL_FORBIDDEN(FORBIDDEN, "관계 없는 사용자를 평가할 수 없습니다"),
     REPORT_CREATE_FAIL_SELF(FORBIDDEN, "본인은 신고할 수 없습니다"),
-    FORBIDDEN_MEMBER(FORBIDDEN, "해당 권한이 없습니다."),
+    FORBIDDEN_MEMBER(FORBIDDEN, "해당 권한이 없습니다"),
+    CHAT_ROOM_NOT_OWNER(FORBIDDEN, "해당 채팅방의 방장이 아닙니다"),
 
     AUTH_COOL_TIME_LIMIT(FORBIDDEN, "정회원 인증 제한 - 5분 후에 시도해주세요"),
     AUTH_TIME_OUT(FORBIDDEN, "인증 시간을 초과하였습니다"),
