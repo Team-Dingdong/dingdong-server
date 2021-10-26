@@ -8,6 +8,8 @@ import static dingdong.dingdong.util.exception.ResultCode.USER_NOT_FOUND;
 
 import dingdong.dingdong.domain.chat.ChatJoin;
 import dingdong.dingdong.domain.chat.ChatJoinRepository;
+import dingdong.dingdong.domain.chat.ChatMessage;
+import dingdong.dingdong.domain.chat.ChatMessageRepository;
 import dingdong.dingdong.domain.chat.ChatPromiseRepository;
 import dingdong.dingdong.domain.chat.ChatRoom;
 import dingdong.dingdong.domain.chat.ChatRoomRepository;
@@ -57,6 +59,7 @@ public class PostService {
     private final ChatRoomRepository chatRoomRepository;
     private final ChatJoinRepository chatJoinRepository;
     private final ChatPromiseRepository chatPromiseRepository;
+    private final ChatMessageRepository chatMessageRepository;
 
     private final ChatService chatService;
 
@@ -428,10 +431,13 @@ public class PostService {
             throw new LimitException(POST_DELETE_FAIL_DONE);
         }
 
+
         postTagRepository.deleteByPostId(id);
         chatPromiseRepository.findByChatRoomId(id).ifPresent(chatPromise -> chatPromiseRepository.delete(chatPromise));
         List<ChatJoin> chatJoins = chatJoinRepository.findAllByChatRoom(chatRoom);
         chatJoins.stream().forEach(chatJoin -> chatJoinRepository.delete(chatJoin));
+        List<ChatMessage> chatMessages = chatMessageRepository.findAllByChatRoom(chatRoom);
+        chatMessages.stream().forEach(chatMessage -> chatMessageRepository.delete(chatMessage));
         chatRoomRepository.delete(chatRoom);
         postRepository.delete(post);
     }
