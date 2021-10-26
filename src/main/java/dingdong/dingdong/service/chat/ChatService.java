@@ -67,7 +67,7 @@ public class ChatService {
             .orElseThrow(() -> new ResourceNotFoundException(ResultCode.CHAT_ROOM_NOT_FOUND));
 
         if (!chatJoinRepository.existsByChatRoomAndUser(chatRoom, user)) {
-            throw new ForbiddenException(ResultCode.FORBIDDEN_MEMBER);
+            throw new ResourceNotFoundException(ResultCode.CHAT_JOIN_NOT_FOUND);
         }
 
         return ChatRoomResponseDto.from(chatRoom, user);
@@ -135,9 +135,9 @@ public class ChatService {
         ChatRoom chatRoom = chatRoomRepository.findByPostId(id)
             .orElseThrow(() -> new ResourceNotFoundException(ResultCode.CHAT_ROOM_NOT_FOUND));
 
-        if (!chatJoinRepository.existsByChatRoomAndUser(chatRoom, user)) {
-            throw new ForbiddenException(ResultCode.FORBIDDEN_MEMBER);
-        }
+        ChatJoin chatJoin = chatJoinRepository.findByChatRoomAndUser(chatRoom, user)
+            .orElseThrow(() -> new ResourceNotFoundException(ResultCode.CHAT_JOIN_NOT_FOUND));
+
         if (chatRoom.getPost().getUser().getId() == user.getId()) {
             throw new ForbiddenException(ResultCode.CHAT_ROOM_QUIT_FAIL_OWNER);
         }
@@ -146,8 +146,6 @@ public class ChatService {
             throw new LimitException(ResultCode.CHAT_ROOM_QUIT_FAIL);
         }
 
-        ChatJoin chatJoin = chatJoinRepository.findByChatRoomAndUser(chatRoom, user)
-            .orElseThrow(() -> new ResourceNotFoundException(ResultCode.CHAT_JOIN_NOT_FOUND));
         chatJoinRepository.delete(chatJoin);
 
         chatRoom.getPost().minusUserCount();
@@ -186,7 +184,7 @@ public class ChatService {
             .orElseThrow(() -> new ResourceNotFoundException(ResultCode.CHAT_ROOM_NOT_FOUND));
 
         if (!chatJoinRepository.existsByChatRoomAndUser(chatRoom, user)) {
-            throw new ForbiddenException(ResultCode.FORBIDDEN_MEMBER);
+            throw new ResourceNotFoundException(ResultCode.CHAT_JOIN_NOT_FOUND);
         }
 
         List<ChatJoin> chatJoins = chatJoinRepository.findAllByChatRoom(chatRoom);
@@ -203,7 +201,7 @@ public class ChatService {
             .orElseThrow(() -> new ResourceNotFoundException(ResultCode.CHAT_ROOM_NOT_FOUND));
 
         if (!chatJoinRepository.existsByChatRoomAndUser(chatRoom, user)) {
-            throw new ForbiddenException(ResultCode.FORBIDDEN_MEMBER);
+            throw new ResourceNotFoundException(ResultCode.CHAT_JOIN_NOT_FOUND);
         }
 
         List<ChatMessage> messages = chatRoom.getMessages();
@@ -218,7 +216,7 @@ public class ChatService {
             .orElseThrow(() -> new ResourceNotFoundException(ResultCode.CHAT_ROOM_NOT_FOUND));
 
         if (!chatJoinRepository.existsByChatRoomAndUser(chatRoom, user)) {
-            throw new ForbiddenException(ResultCode.FORBIDDEN_MEMBER);
+            throw new ResourceNotFoundException(ResultCode.CHAT_JOIN_NOT_FOUND);
         }
 
         ChatPromise chatPromise = chatPromiseRepository.findByChatRoomId(chatRoom.getId())
@@ -236,7 +234,7 @@ public class ChatService {
             .orElseThrow(() -> new ResourceNotFoundException(ResultCode.CHAT_PROMISE_NOT_FOUND));
 
         if (chatRoom.getPost().getUser().getId() != user.getId()) {
-            throw new ForbiddenException(ResultCode.FORBIDDEN_MEMBER);
+            throw new ForbiddenException(ResultCode.CHAT_ROOM_NOT_OWNER);
         }
         if (chatPromise.getType() == PromiseType.CONFIRMED) {
             throw new LimitException(ResultCode.CHAT_PROMISE_UPDATE_FAIL_CONFIRMED);
@@ -300,7 +298,7 @@ public class ChatService {
             .orElseThrow(() -> new ResourceNotFoundException(ResultCode.CHAT_ROOM_NOT_FOUND));
 
         if (chatRoom.getPost().getUser().getId() != user.getId()) {
-            throw new ForbiddenException(ResultCode.FORBIDDEN_MEMBER);
+            throw new ForbiddenException(ResultCode.CHAT_ROOM_NOT_OWNER);
         }
         if (chatPromiseRepository.existsByChatRoomId(chatRoom.getId())) {
             throw new DuplicateException(ResultCode.CHAT_PROMISE_DUPLICATION);
@@ -366,10 +364,10 @@ public class ChatService {
             .orElseThrow(() -> new ResourceNotFoundException(ResultCode.CHAT_PROMISE_NOT_FOUND));
 
         if (!chatJoinRepository.existsByChatRoomAndUser(chatRoom, user)) {
-            throw new ForbiddenException(ResultCode.FORBIDDEN_MEMBER);
+            throw new ResourceNotFoundException(ResultCode.CHAT_JOIN_NOT_FOUND);
         }
         if (chatPromise.getType() != PromiseType.PROGRESS) {
-            throw new LimitException(ResultCode.CHAT_PROMISE_NOT_IN_PRGRESS);
+            throw new LimitException(ResultCode.CHAT_PROMISE_NOT_IN_PROGRESS);
         }
 
         if (!chatPromiseVoteRepository.existsByChatRoomAndUser(chatRoom, user)) {
@@ -424,10 +422,10 @@ public class ChatService {
             .orElseThrow(() -> new ResourceNotFoundException(ResultCode.CHAT_PROMISE_NOT_FOUND));
 
         if (!chatJoinRepository.existsByChatRoomAndUser(chatRoom, user)) {
-            throw new ForbiddenException(ResultCode.FORBIDDEN_MEMBER);
+            throw new ResourceNotFoundException(ResultCode.CHAT_JOIN_NOT_FOUND);
         }
         if (chatRoom.getPost().getUser().getId() != user.getId()) {
-            throw new ForbiddenException(ResultCode.FORBIDDEN_MEMBER);
+            throw new ForbiddenException(ResultCode.CHAT_ROOM_NOT_OWNER);
         }
         if (chatRoom.getPost().getDone()) {
             throw new DuplicateException(ResultCode.POST_CONFIRMED_DUPLICATION);

@@ -239,16 +239,13 @@ public class AuthService implements UserDetailsService {
         return locals.stream().map(LocalResponseDto::from).collect(Collectors.toList());
     }
 
-    // 동네 인증
+    // 동네 설정
     @Transactional
     public void setLocal(User user, LocalRequestDto localRequestDto) {
         Local local1 = localRepository.findById(localRequestDto.getLocal1())
             .orElseThrow(() -> new ResourceNotFoundException(ResultCode.LOCAL_NOT_FOUND));
         Local local2 = localRepository.findById(localRequestDto.getLocal2())
             .orElseThrow(() -> new ResourceNotFoundException(ResultCode.LOCAL_NOT_FOUND));
-        if (local1 == null || local2 == null) {
-            throw new ResourceNotFoundException(ResultCode.LOCAL_NOT_FOUND);
-        }
         user.setLocal(local1, local2);
         userRepository.save(user);
     }
