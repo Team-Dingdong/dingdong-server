@@ -321,6 +321,13 @@ include::{snippets}/rating-controller-test/get-my-rating/http-request.adoc[]
 include::{snippets}/rating-controller-test/get-my-rating/response-fields.adoc[]
 ===== Response Http Example
 include::{snippets}/rating-controller-test/get-my-rating/http-response.adoc[]
+===== Response Status
+|===
+| Status | Result | Code | Message
+
+| `200` | `OK` | `RATING_READ_SUCCESS` | 평가 조회 성공
+| `404` | `NOT_FOUND` | `RATING_NOT_FOUND` | 해당 유저에 대한 평가를 찾을 수 없습니다
+|===
 
 === 4-2. 평가 조회
 ==== Request
@@ -337,6 +344,13 @@ include::{snippets}/rating-controller-test/get-rating/http-request.adoc[]
 include::{snippets}/rating-controller-test/get-rating/response-fields.adoc[]
 ===== Response Http Example
 include::{snippets}/rating-controller-test/get-rating/http-response.adoc[]
+===== Response Status
+|===
+| Status | Result | Code | Message
+
+| `200` | `OK` | `RATING_READ_SUCCESS` | 평가 조회 성공
+| `404` | `NOT_FOUND` | `RATING_NOT_FOUND` | 해당 유저에 대한 평가를 찾을 수 없습니다
+|===
 
 === 4-3. 평가 생성
 ==== Request
@@ -353,6 +367,14 @@ include::{snippets}/rating-controller-test/create-rating/http-request.adoc[]
 ==== Response
 ===== Response Http Example
 include::{snippets}/rating-controller-test/create-rating/http-response.adoc[]
+===== Response Status
+|===
+| Status | Result | Code | Message
+
+| `201` | `CREATED` | `RATING_CREATE_SUCCESS` | 평가 생성 성공
+| `403` | `FORBIDDEN` | `RATING_CREATE_FAIL_SELF` | 본인은 평가할 수 없습니다
+| `403` | `FORBIDDEN` | `RATING_CREATE_FAIL_FORBIDDEN` | 관계 없는 사용자를 평가할 수 없습니다
+|===
 
 == 5. 나누기
 === 5-1. 나누기 생성
