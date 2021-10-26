@@ -415,7 +415,7 @@ public class PostService {
             .orElseThrow(() -> new ResourceNotFoundException(ResultCode.CHAT_ROOM_NOT_FOUND));
 
         if (post.getUser().getId() != user.getId()) {
-            throw new ForbiddenException(ResultCode.FORBIDDEN_MEMBER);
+            throw new ForbiddenException(ResultCode.CHAT_ROOM_NOT_OWNER);
         }
 
         if (chatRoom.getChatPromise() != null
