@@ -1,4 +1,3 @@
-
 # OSS Notice | dingdong-server #
 
 This application is Copyright © (owner name). All rights reserved.
