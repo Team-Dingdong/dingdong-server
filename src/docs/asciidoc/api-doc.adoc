@@ -297,6 +297,15 @@ include::{snippets}/profile-controller-test/create-report/http-request.adoc[]
 ==== Response
 ===== Response Http Example
 include::{snippets}/rating-controller-test/create-rating/http-response.adoc[]
+===== Response Status
+|===
+| Status | Result | Code | Message
+
+| `201` | `CREATED` | `REPORT_CREATE_SUCCESS` | 신고 생성 성공
+| `403` | `FORBIDDEN` | `REPORT_CREATE_FAIL_SELF` | 본인은 신고할 수 없습니다
+| `404` | `NOT_FOUND` | `USER_NOT_FOUND` | 해당 유저 정보를 찾을 수 없습니다
+| `409` | `CONFLICT` | `REPORT_DUPLICATION` | 이미 신고한 사용자입니다
+|===
 
 == 4. 평가
 === 4-1. 본인 평가 조회
