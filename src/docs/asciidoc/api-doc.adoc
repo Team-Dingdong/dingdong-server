@@ -170,6 +170,13 @@ include::{snippets}/auth-controller-test/local/http-request.adoc[]
 ==== Response
 ===== Response Http Example
 include::{snippets}/auth-controller-test/local/http-response.adoc[]
+===== Response Status
+|===
+| Status | Result | Code | Message
+
+| `201` | `CREATED` | `LOCAL_CREATE_SUCCESS` | 동네 설정 성공
+| `404` | `NOT_FOUND` | `LOCAL_NOT_FOUND` | 해당 동네를 찾을 수 없습니다
+|===
 
 === 2-8. 회원 탈퇴
 ==== Request

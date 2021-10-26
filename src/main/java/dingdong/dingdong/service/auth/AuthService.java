@@ -246,9 +246,6 @@ public class AuthService implements UserDetailsService {
             .orElseThrow(() -> new ResourceNotFoundException(ResultCode.LOCAL_NOT_FOUND));
         Local local2 = localRepository.findById(localRequestDto.getLocal2())
             .orElseThrow(() -> new ResourceNotFoundException(ResultCode.LOCAL_NOT_FOUND));
-        if (local1 == null || local2 == null) {
-            throw new ResourceNotFoundException(ResultCode.LOCAL_NOT_FOUND);
-        }
         user.setLocal(local1, local2);
         userRepository.save(user);
     }
