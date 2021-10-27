@@ -249,6 +249,7 @@ class PostControllerTest {
             .user(user1)
             .category(category1)
             .local(local1)
+            .user(user1)
             .done(Boolean.FALSE)
             .build();
         postRepository.save(post1);
@@ -270,6 +271,24 @@ class PostControllerTest {
             .done(Boolean.TRUE)
             .build();
         postRepository.save(post2);
+
+        Post post3 = Post.builder()
+            .id(3L)
+            .title("title3")
+            .cost(3000)
+            .people(3)
+            .gatheredPeople(3)
+            .bio("bio3")
+            .location("location3")
+            .imageUrl1("imageUrl1")
+            .imageUrl2("imageUrl2")
+            .imageUrl3("imageUrl3")
+            .user(user1)
+            .local(local2)
+            .category(category2)
+            .done(Boolean.TRUE)
+            .build();
+        postRepository.save(post3);
 
         PostTag postTag = PostTag.builder()
             .id(1L)
@@ -301,6 +320,14 @@ class PostControllerTest {
             .build();
         chatRoomRepository.save(chatRoom2);
 
+        ChatRoom chatRoom3 = ChatRoom.builder()
+            .id(3L)
+            .post(post3)
+            .endDate(LocalDateTime.now())
+            .lastChatTime(LocalDateTime.now())
+            .build();
+        chatRoomRepository.save(chatRoom3);
+
         ChatJoin chatJoin1 = ChatJoin.builder()
             .id(1L)
             .chatRoom(chatRoom1)
@@ -314,6 +341,13 @@ class PostControllerTest {
             .user(user1)
             .build();
         chatJoinRepository.save(chatJoin2);
+
+        ChatJoin chatJoin3 = ChatJoin.builder()
+            .id(3L)
+            .chatRoom(chatRoom3)
+            .user(user2)
+            .build();
+        chatJoinRepository.save(chatJoin3);
 
         ChatPromise chatPromise1 = ChatPromise.builder()
                 .id(1L)
@@ -340,6 +374,19 @@ class PostControllerTest {
             .type(PROGRESS)
             .build();
         chatPromiseRepository.save(chatPromise2);
+
+        ChatPromise chatPromise3 = ChatPromise.builder()
+            .id(3L)
+            .chatRoom(chatRoom3)
+            .promiseDate(LocalDate.now())
+            .promiseTime(LocalTime.now().minusHours(5))
+            .promiseLocal("test")
+            .totalPeople(3)
+            .votingPeople(3)
+            .promiseEndTime(LocalDateTime.now())
+            .type(PROGRESS)
+            .build();
+        chatPromiseRepository.save(chatPromise3);
 
         ChatPromiseVote chatPromiseVote1 = ChatPromiseVote.builder()
             .id(1L)
@@ -455,7 +502,6 @@ class PostControllerTest {
         ));
     }
 
-
     @Test
     @DisplayName("지역별 모든 나누기 불러오기(정렬방식: 마감임박순)")
     void findPostsSortByEndDate() throws Exception {
@@ -499,7 +545,7 @@ class PostControllerTest {
     }
 
     @Test
-    @DisplayName("카테고리별 나누기 피드들 불러오기(카테고리 화면)(정렬 방식: 최신순)")
+    @DisplayName("카테고리별 나누기 피드들 불러오기(정렬 방식: 최신순)")
     void findPostByCategoryIdSortByCreatedDate() throws Exception {
         TokenDto tokenDto = getTokenDto();
         String token = "Bearer " + tokenDto.getAccessToken();
@@ -543,7 +589,7 @@ class PostControllerTest {
     }
 
     @Test
-    @DisplayName("카테고리별 나누기 피드들 불러오기(카테고리 화면)(정렬 방식: 마감임박순)")
+    @DisplayName("카테고리별 나누기 피드들 불러오기(정렬 방식: 마감임박순)")
     void findPostByCategoryIdSortByEndDate() throws Exception {
         TokenDto tokenDto = getTokenDto();
         String token = "Bearer " + tokenDto.getAccessToken();
@@ -659,7 +705,6 @@ class PostControllerTest {
         ));
     }
 
-
     @Test
     @DisplayName("나누기 수정")
     void updatePost() throws Exception {
@@ -749,7 +794,7 @@ class PostControllerTest {
     }
 
     @Test
-    @DisplayName("특정 유저(본인 제외)가 생성한 나누기 피드들 불러오기")
+    @DisplayName("특정 유저가 생성한 나누기 피드들 불러오기")
     void findPostByUserId() throws Exception{
         TokenDto tokenDto = getTokenDto();
         String token = "Bearer " + tokenDto.getAccessToken();
@@ -891,7 +936,7 @@ class PostControllerTest {
     }
 
     @Test
-    @DisplayName("홈화면, 모든 나누기 불러오기(정렬방식: 최신순)(local 정보를 무시)")
+    @DisplayName("모든 나누기 불러오기(정렬방식: 최신순)(local 정보를 무시)")
     void findPostsSortByCreatedDateNotLocal() throws Exception {
         TokenDto tokenDto = getTokenDto();
         String token = "Bearer " + tokenDto.getAccessToken();
@@ -929,7 +974,7 @@ class PostControllerTest {
     }
 
     @Test
-    @DisplayName("홈화면, 모든 나누기 불러오기(정렬방식: 마감임박순)(local 정보를 무시)")
+    @DisplayName("모든 나누기 불러오기(정렬방식: 마감임박순)(local 정보를 무시)")
     void findPostsSortByEndDateNotLocal() throws Exception {
         TokenDto tokenDto = getTokenDto();
         String token = "Bearer " + tokenDto.getAccessToken();
@@ -967,7 +1012,7 @@ class PostControllerTest {
     }
 
     @Test
-    @DisplayName("카테고리별 나누기 피드들 불러오기(카테고리 화면)(정렬 방식: 최신순)(local 정보를 무시)")
+    @DisplayName("카테고리별 나누기 피드들 불러오기(정렬 방식: 최신순)(local 정보를 무시)")
     void findPostByCategoryIdSortByCreatedDateNotLocal() throws Exception {
         TokenDto tokenDto = getTokenDto();
         String token = "Bearer " + tokenDto.getAccessToken();
@@ -1008,7 +1053,7 @@ class PostControllerTest {
     }
 
     @Test
-    @DisplayName("카테고리별 나누기 피드들 불러오기(카테고리 화면)(정렬 방식: 마감임박순)(local 정보를 무시)")
+    @DisplayName("카테고리별 나누기 피드들 불러오기(정렬 방식: 마감임박순)(local 정보를 무시)")
     void findPostByCategoryIdSortByEndDateNotLocal() throws Exception {
         TokenDto tokenDto = getTokenDto();
         String token = "Bearer " + tokenDto.getAccessToken();
@@ -1047,5 +1092,4 @@ class PostControllerTest {
             )
         ));
     }
-
 }
