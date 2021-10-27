@@ -1,7 +1,6 @@
 package dingdong.dingdong.controller;
 
 import static dingdong.dingdong.domain.chat.PromiseType.CONFIRMED;
-import static dingdong.dingdong.domain.chat.PromiseType.END;
 import static dingdong.dingdong.domain.chat.PromiseType.PROGRESS;
 import static dingdong.dingdong.util.exception.ResultCode.POST_NOT_FOUND;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
@@ -63,15 +62,15 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.restdocs.payload.JsonFieldType;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -352,7 +351,7 @@ class PostControllerTest {
         ChatPromise chatPromise1 = ChatPromise.builder()
                 .id(1L)
                 .chatRoom(chatRoom1)
-                .promiseDate(LocalDate.now())
+                .promiseDate(LocalDate.now().minusDays(1))
                 .promiseTime(LocalTime.now().minusHours(5))
                 .promiseLocal("test")
                 .totalPeople(3)

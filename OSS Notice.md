@@ -1,8 +1,6 @@
-# OSS Notice | dingdong-server #
+The following sets forth attribution notices for third party software that may be contained in this repository.
 
-This application is Copyright © (owner name). All rights reserved.
-
-The following sets forth attribution notices for third party software that may be contained in this application.
+---
 
  **Apache HttpComponents Client**
 
