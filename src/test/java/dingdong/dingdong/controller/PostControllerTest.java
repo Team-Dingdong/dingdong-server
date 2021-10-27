@@ -754,7 +754,7 @@ class PostControllerTest {
     }
 
     @Test
-    @DisplayName("현재 유저가 올린 나누기 목록 보기(프로필 판매내역 보기 화면)")
+    @DisplayName("현재 유저가 올린 나누기 목록 보기")
     void findPostByUser() throws Exception{
         TokenDto tokenDto = getTokenDto();
         String token = "Bearer " + tokenDto.getAccessToken();
@@ -835,7 +835,7 @@ class PostControllerTest {
     }
 
     @Test
-    @DisplayName("현재 유저가 참여한 나누기 목록 보기(프로필 구매내역 보기 화면)")
+    @DisplayName("현재 유저가 참여한 나누기 목록 보기")
     void findPostByUserIdOnChatJoin() throws Exception{
         TokenDto tokenDto = getTokenDto();
         String token = "Bearer " + tokenDto.getAccessToken();
