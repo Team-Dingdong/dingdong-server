@@ -177,6 +177,7 @@ class PostControllerTest {
             .local2(local2)
             .build();
 
+        userRepository.save(user1);
         //profile 설정
         String nickname1 = "testNickname1";
         String profileImageUrl1 = "testProfileImageUrl1";
@@ -188,8 +189,6 @@ class PostControllerTest {
             .good(0L)
             .bad(0L)
             .build();
-
-        userRepository.save(user1);
         profileRepository.save(profile1);
 
         Long id2 = 2L;
@@ -233,6 +232,8 @@ class PostControllerTest {
             .id(2L)
             .name("과일")
             .build();
+        categoryRepository.save(category1);
+        categoryRepository.save(category2);
 
         Post post1 = Post.builder()
             .id(1L)
@@ -465,7 +466,7 @@ class PostControllerTest {
         String token = "Bearer " + tokenDto.getAccessToken();
 
         mockMvc.perform(
-            RestDocumentationRequestBuilders.get("/api/v1/post/sort=desc&sortby=createdDate&local/{localId}",1L)
+            RestDocumentationRequestBuilders.get("/api/v1/post/sort=desc&sortby=createdDate&local/{localId}",2L)
                 .param("page", "1")
                 .header(HttpHeaders.AUTHORIZATION, token)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -676,7 +677,6 @@ class PostControllerTest {
                 fieldWithPath("data.imageUrl2").type("String").description("나누기의 이미지2"),
                 fieldWithPath("data.imageUrl3").type("String").description("나누기의 이미지3"),
                 fieldWithPath("data.tags").type(JsonFieldType.ARRAY).description("나누기의 태그 리스트")
-
             )
         ));
     }

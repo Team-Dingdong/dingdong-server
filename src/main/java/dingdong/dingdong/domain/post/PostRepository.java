@@ -88,7 +88,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
         nativeQuery = true)
     Page<Post> findPostByCategoryIdSortByCreatedDateNotLocal(Long categoryId, Pageable pageable);
 
-    @Query(value = "select * from post WHERE post.category_id = :categoryId and (post.gathered_people / post.people) != 1  order by (post.gathered_people / post.people) desc",
+    @Query(value = "select * from post WHERE post.category_id = :categoryId and (post.gathered_people / post.people) != 1 order by (post.gathered_people / post.people) desc",
         countQuery = "select count(*) from post",
         nativeQuery = true)
     Page<Post> findPostByCategoryIdSortByEndDateNotLocal(Long categoryId, Pageable pageable);
