@@ -31,7 +31,7 @@ public class Profile {
 
     private String nickname;
 
-    @ColumnDefault("'https://dingdongbucket.s3.ap-northeast-2.amazonaws.com/static/default_profile.jpg'")
+    @ColumnDefault("'https://dingdongbucket.s3.ap-northeast-2.amazonaws.com/static/default_profile.png'")
     private String profileImageUrl;
 
     @ColumnDefault("0")
@@ -45,7 +45,7 @@ public class Profile {
         this.good = this.good == null ? 0 : this.good;
         this.bad = this.bad == null ? 0 : this.bad;
         this.profileImageUrl = this.profileImageUrl == null
-            ? "https://dingdongbucket.s3.ap-northeast-2.amazonaws.com/static/default_profile.jpg"
+            ? "https://dingdongbucket.s3.ap-northeast-2.amazonaws.com/static/default_profile.png"
             : this.profileImageUrl;
     }
 
@@ -63,7 +63,7 @@ public class Profile {
     }
 
     public void setUnsubscribe() {
-        this.profileImageUrl = "https://dingdongbucket.s3.ap-northeast-2.amazonaws.com/static/default_profile.jpg";
+        this.profileImageUrl = "https://dingdongbucket.s3.ap-northeast-2.amazonaws.com/static/default_profile.png";
         this.nickname = "탈퇴한 회원";
     }
 }
