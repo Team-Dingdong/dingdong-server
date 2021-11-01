@@ -64,6 +64,6 @@ public class Profile {
 
     public void setUnsubscribe() {
         this.profileImageUrl = "https://dingdongbucket.s3.ap-northeast-2.amazonaws.com/static/default_profile.png";
-        this.nickname = "탈퇴한 회원";
+        this.nickname = "leave";
     }
 }
