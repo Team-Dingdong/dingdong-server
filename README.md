@@ -14,6 +14,10 @@
 
 > 이러한 배경들로 1 인가구들이 식재료를 나눔으로써 1인 가구에게 딱 맞는 양의 섭취와 보관을 도와주고 배달 음식 소비, 일회용품 쓰레기 배출량, 먹고 남은 음식물 쓰레기 배출을 줄일 수 있는 '띵-동'을 개발하게 되었습니다.
 
+### 시연 영상
+- [띵-동 시연 영상 링크](https://youtu.be/UoNlBJbi2Jo)
+
+
 ### Tech Stack
 <p align="center">
   <img src="https://img.shields.io/badge/Java-v11-007396?style=flat-square&logo=Java&logoColor=white"/></a>&nbsp 
@@ -44,6 +48,6 @@
 ![dingdong](https://user-images.githubusercontent.com/46434694/138575222-d4f84727-7433-4788-b115-a2970aabc5a4.png)
 
 ### Architecture
-<img width="1173" alt="스크린샷 2021-10-19 오후 1 12 26" src="https://user-images.githubusercontent.com/46434694/137842786-281915ab-6794-4214-ab87-98ccbe219ebd.png">  
+<img width="1619" alt="스크린샷 2021-11-15 오후 10 23 57" src="https://user-images.githubusercontent.com/46434694/141791900-63bd9c21-b001-41f1-ade0-58d59532a1cb.png">
 
 ### Developers
