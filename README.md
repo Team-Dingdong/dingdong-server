@@ -18,7 +18,7 @@
 - [띵-동 시연 영상 링크](https://youtu.be/UoNlBJbi2Jo)
 
 
-### Tech Stack
+### 기술 스택
 <p align="center">
   <img src="https://img.shields.io/badge/Java-v11-007396?style=flat-square&logo=Java&logoColor=white"/></a>&nbsp 
   <img src="https://img.shields.io/badge/Gradle-v7.1.1-007396?style=flat-square&logo=Gradle&logoColor=white"/></a>&nbsp 
